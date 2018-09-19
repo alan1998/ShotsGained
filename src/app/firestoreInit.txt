@@ -1,0 +1,14 @@
+
+<script src="https://www.gstatic.com/firebasejs/5.5.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyC6A0J_G_Jxz6HMnbNfap7jaEXHew8pIss",
+    authDomain: "courses-8f7b2.firebaseapp.com",
+    databaseURL: "https://courses-8f7b2.firebaseio.com",
+    projectId: "courses-8f7b2",
+    storageBucket: "courses-8f7b2.appspot.com",
+    messagingSenderId: "1036722106145"
+  };
+  firebase.initializeApp(config);
+</script>
