@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+
+  ngOnInit(){
+    //const collection: AngularFirestoreCollection<Item> = aft.collection('items')
+
+    //collection.update(data)
+    //collection.delete()
+  }
 }

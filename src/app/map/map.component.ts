@@ -7,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MapComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+    let a : number = 8;
+   }
 
   ngOnInit() {
   }
