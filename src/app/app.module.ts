@@ -10,6 +10,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 export const firebaseConfig = environment.firebaseConfig;
 
+import { SGCouresService } from './sgcoures.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -20,10 +22,11 @@ export const firebaseConfig = environment.firebaseConfig;
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule
   ],
-  providers: [],
+  providers: [SGCouresService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
+  
   ngOnInit(){
     
   }

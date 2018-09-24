@@ -6,7 +6,7 @@
 </div>
 <h2>start: </h2>
 <ul>
- <li *ngFor="let Cor of items | async"> {{ Cor.Name }}  </li>
+ <li *ngFor="let Cor of srvRef.items | async"> {{ Cor.Name }}  </li>
 </ul>
 <div>
 	<app-map></app-map>
