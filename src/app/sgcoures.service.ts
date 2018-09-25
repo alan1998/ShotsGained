@@ -6,18 +6,22 @@ import { AngularFirestoreModule,
           AngularFirestoreDocument
         } from '@angular/fire/firestore';
 //import { AngularFireDatabase } from '@angular/fire/database';
+import * as firebase from 'firebase/app'
 import { Observable } from 'rxjs';
 import 'rxjs/Rx';
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 export interface ICourse {
   Name : string;
-  Boundary : any[];
+  Boundary : firebase.firestore.GeoPoint[];
 }
 
 export class Course implements ICourse {
   Name : string;
-  Boundary : any[];
+  Boundary : firebase.firestore.GeoPoint[];
+  constructor(){
+    this.Boundary = new Array<firebase.firestore.GeoPoint>();
+  }
 } 
 
 @Injectable({
@@ -52,8 +56,10 @@ export class SGCouresService {
     });
   }
 
-  AddNew(c:ICourse){
-    this.coursesColl.add(c);   // Catch  & then
+  AddNew(c:Course){
+    // Should be checking uniqueness?
+    let dbObj = Object.assign({},c)
+    this.coursesColl.add(dbObj);   // Catch  & then
   }
 
 

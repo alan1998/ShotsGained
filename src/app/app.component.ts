@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { SGCouresService, Course } from './sgcoures.service';
+import * as firebase from 'firebase/app'
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ export class AppComponent {
     let c:Course;
     c = new Course;
     c.Name = "Fred";
+    c.Boundary.push(new firebase.firestore.GeoPoint(51.5, -1));
     this.srvRef.AddNew(c);
   }
 }
