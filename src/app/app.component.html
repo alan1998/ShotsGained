@@ -1,14 +1,22 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
+<div class="main-container">
+	<header class="header-3">
+		<div class="branding">
+			<a class="nav-link">
+				<clr-icon shape="home" size="24"></clr-icon>
+				<span class="title">Project SG</span>
+			</a>
+		</div>
+		<div class="header-nav">
+			<a class="active nav-link nav-text">Home</a>
+		</div>
+	</header>
+	<div class="content-container">
+		<div class="content-area">
+			<h3>Starter Instructions:</h3>
+			<ul>
+        <li *ngFor="let Cor of srvRef.items | async"> {{ Cor.Name }}  </li>
+			</ul>
+		</div>
+	</div>
 </div>
-<h2>start: </h2>
-<ul>
- <li *ngFor="let Cor of srvRef.items | async"> {{ Cor.Name }}  </li>
-</ul>
-<div>
-	<app-map></app-map>
-</div>
-

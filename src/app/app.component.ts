@@ -22,10 +22,10 @@ export class AppComponent {
   }
   ngOnInit(){
     this.srvRef.Init();
-    let c:Course;
-    c = new Course;
-    c.Name = "Fred";
-    c.Boundary.push(new firebase.firestore.GeoPoint(51.5, -1));
-    this.srvRef.AddNew(c);
+    // let c:Course;
+    // c = new Course;
+    // c.Name = "Fred";
+    // c.Boundary.push(new firebase.firestore.GeoPoint(51.5, -1));
+    // this.srvRef.AddNew(c);
   }
 }

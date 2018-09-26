@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FormsModule } from '@angular/forms';
+import { ClarityModule } from "@clr/angular";
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 
@@ -19,8 +21,11 @@ import { SGCouresService } from './sgcoures.service';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AngularFireModule.initializeApp(firebaseConfig),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    ClarityModule,
+    FormsModule
   ],
   providers: [SGCouresService],
   bootstrap: [AppComponent]
