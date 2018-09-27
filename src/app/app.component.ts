@@ -3,6 +3,11 @@ import { Component } from '@angular/core';
 import { SGCouresService, Course } from './sgcoures.service';
 import * as firebase from 'firebase/app'
 
+/*
+  Next use the id to get a Course instance and all that goes with it
+  Display the location in the map component
+*/
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,12 +16,7 @@ import * as firebase from 'firebase/app'
 export class AppComponent {
   title = 'app';
   srvRef: SGCouresService;
-  /* Later change ctor to database
-  and get objects
-  how does ctor get called ?
-  see info on setup proj for database
-  and is it evene applySourceSpanToExpressionIfNeeded. Get interface update etc
-  how to do array on interface to match firestore array type */
+
   constructor( srvCourses : SGCouresService){
     this.srvRef = srvCourses;  
   }
@@ -33,6 +33,8 @@ export class AppComponent {
   }
 
   courseSel(event){
-    console.log(event);
+    let v = event.currentTarget.id;
+    console.log(v);
+
   }
 }
