@@ -29,6 +29,10 @@ export class AppComponent {
 
     
     // c.Boundary.push(new firebase.firestore.GeoPoint(51.5, -1));
-    this.srvRef.AddNew(c);
+    //this.srvRef.AddNew(c);
+  }
+
+  courseSel(event){
+    console.log(event);
   }
 }
