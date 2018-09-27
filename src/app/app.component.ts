@@ -21,11 +21,14 @@ export class AppComponent {
     this.srvRef = srvCourses;  
   }
   ngOnInit(){
-    this.srvRef.Init();
-    // let c:Course;
-    // c = new Course;
-    // c.Name = "Fred";
+    this.srvRef.Refresh();
+    let c:Course;
+    c = new Course;
+    c.name = "Another";
+    c.location = new firebase.firestore.GeoPoint( 50.0, -1.5);
+
+    
     // c.Boundary.push(new firebase.firestore.GeoPoint(51.5, -1));
-    // this.srvRef.AddNew(c);
+    this.srvRef.AddNew(c);
   }
 }

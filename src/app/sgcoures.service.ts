@@ -9,20 +9,37 @@ import { AngularFirestoreModule,
 import * as firebase from 'firebase/app'
 import { Observable } from 'rxjs';
 import 'rxjs/Rx';
+import { map } from 'rxjs/operators';
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 
 export interface ICourse {
-  Name : string;
-  Boundary : firebase.firestore.GeoPoint[];
+  name : string;
+  boundary : firebase.firestore.GeoPoint[];
+  location:firebase.firestore.GeoPoint;
+}
+
+export interface ICourseId extends ICourse {
+  id : string;
 }
 
 export class Course implements ICourse {
-  Name : string;
-  Boundary : firebase.firestore.GeoPoint[];
+  name : string;
+  boundary : firebase.firestore.GeoPoint[];
+  location:firebase.firestore.GeoPoint;
   constructor(){
-    this.Boundary = new Array<firebase.firestore.GeoPoint>();
+    this.boundary = new Array<firebase.firestore.GeoPoint>();
+    this.location = new firebase.firestore.GeoPoint(51.5,-1.2);
   }
 } 
+
+export class CourseMinInf {
+  name:string;
+  id:string;
+  location:firebase.firestore.GeoPoint;
+  constructor(){
+    this.location = new firebase.firestore.GeoPoint(51.5,-1.2);
+  }
+}
 
 @Injectable({
   providedIn: 'root'
@@ -32,24 +49,47 @@ export class SGCouresService {
   coursesColl: AngularFirestoreCollection<ICourse>;
   public items : Observable<ICourse[]>;
   itemObjs : Observable<any[]>;
-  nas : string[] = [] ;
+  names : string[] = [] ;
+  CoursesObs: Observable<ICourseId[]>;
+  Courses: CourseMinInf[];
 
   constructor(private db: AngularFirestore){
     this.coursesColl = db.collection<ICourse>(this.coll_endpoint);
     this.items = this.coursesColl.valueChanges();
     console.log("Ctor service");
-    
-   }
 
-   Init ()
-   {
-     this.items.subscribe((c:ICourse[]) =>  {
-       console.log("Here");
-       console.log(c.length)
-       c.forEach((v:ICourse)=> {
-        console.log(v.Name);
-        console.log(v.Boundary.length);
-        v.Boundary.forEach((pt)=>{
+    this.CoursesObs = this.coursesColl.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as ICourse;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
+  Refresh(){
+    this.Courses = new Array<CourseMinInf>();
+    this.CoursesObs.subscribe((c:ICourseId[]) => {
+      c.forEach((cI:ICourseId)=>{
+        console.log(cI.id);
+        console.log(cI.name);
+        let cInf:CourseMinInf = new CourseMinInf();;
+        cInf.id = cI.id;
+        cInf.name = cI.name;
+        this.Courses.push(cInf);
+        })
+      }
+    ); 
+  }
+
+  Init (){
+    this.items.subscribe((c:ICourse[]) =>  {
+      console.log("Here");
+      console.log(c.length)
+      c.forEach((v:ICourse)=> {
+        console.log(v.name);
+        console.log(v.boundary.length);
+        v.boundary.forEach((pt)=>{
           console.log(pt["_lat"]);
         })
      });
@@ -62,19 +102,17 @@ export class SGCouresService {
     this.coursesColl.add(dbObj);   // Catch  & then
   }
 
-
-
   ngOnInit(){   //this.items = this.db.collection<Course>(this.coll_endpoint).valueChanges();     
      
-     let c : AngularFirestoreDocument<ICourse> = this.db.doc<ICourse>('Courses/Course1');
+    let c : AngularFirestoreDocument<ICourse> = this.db.doc<ICourse>('Courses/Course1');
       
-     this.items.forEach(c => {
-       var pts = c[0].Name ;
-       //var obj = c[0].Boundary;
-       console.log(pts);
-       this.nas.push(pts);
-     })
-     //this.itemObjs = this.db.
-     //console.log(c.snapshotChanges.);
+    this.items.forEach(c => {
+      var pts = c[0].name ;
+      //var obj = c[0].Boundary;
+      console.log(pts);
+      this.names.push(pts);
+    })
+    //this.itemObjs = this.db.
+    //console.log(c.snapshotChanges.);
   }
 }
