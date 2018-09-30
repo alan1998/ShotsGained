@@ -34,7 +34,8 @@ export class AppComponent {
 
   courseSel(event){
     let v = event.currentTarget.id;
-    console.log(v);
+    this.srvRef.GetCourse(v);
+    console.log(this.srvRef.retrivedCourse$.value["name"]);
 
   }
 }

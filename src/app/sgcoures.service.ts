@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import 'rxjs/Rx';
 import { map } from 'rxjs/operators';
 import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
+import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 export interface ICourse {
   name : string;
@@ -52,6 +53,7 @@ export class SGCouresService {
   names : string[] = [] ;
   CoursesObs: Observable<ICourseId[]>;
   Courses: CourseMinInf[];
+  retrivedCourse$ = new BehaviorSubject<any>({});
 
   constructor(private db: AngularFirestore){
     this.coursesColl = db.collection<ICourse>(this.coll_endpoint);
@@ -94,6 +96,17 @@ export class SGCouresService {
         })
      });
     });
+  }
+
+  GetCourse( id:string){
+    
+    let itemDoc: AngularFirestoreDocument<ICourse>;
+    //item = this.db.collection<ICourse>(this.coll_endpoint, ref => (ref.where ('id','==',id)));
+    itemDoc = this.db.doc<ICourse>(this.coll_endpoint + "/" + id);
+
+    const data = itemDoc.valueChanges();
+    data.map( data => this.retrivedCourse$.next(data)).subscribe((query) =>{});
+    console.log("out " );
   }
 
   AddNew(c:Course){
