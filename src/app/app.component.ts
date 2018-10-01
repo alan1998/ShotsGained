@@ -34,8 +34,13 @@ export class AppComponent {
 
   courseSel(event){
     let v = event.currentTarget.id;
-    this.srvRef.GetCourse(v);
-    console.log(this.srvRef.retrivedCourse$.value["name"]);
-
+    let cc : Course;
+    this.srvRef.GetCourse(v).then((c) => {
+      cc = c;
+      console.log("Course selected ");
+      console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
+      }).catch(()=>{
+        console.log("err selecting course")}
+      );
   }
 }

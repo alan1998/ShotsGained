@@ -28,6 +28,7 @@ export class Course implements ICourse {
   boundary : firebase.firestore.GeoPoint[];
   location:firebase.firestore.GeoPoint;
   constructor(){
+    this.name = "";
     this.boundary = new Array<firebase.firestore.GeoPoint>();
     this.location = new firebase.firestore.GeoPoint(51.5,-1.2);
   }
@@ -53,7 +54,8 @@ export class SGCouresService {
   names : string[] = [] ;
   CoursesObs: Observable<ICourseId[]>;
   Courses: CourseMinInf[];
-  retrivedCourse$ = new BehaviorSubject<any>({});
+  //retrivedCourse$ = new BehaviorSubject<any>({});
+  retrivedCourse : Course = new Course();
 
   constructor(private db: AngularFirestore){
     this.coursesColl = db.collection<ICourse>(this.coll_endpoint);
@@ -98,15 +100,22 @@ export class SGCouresService {
     });
   }
 
-  GetCourse( id:string){
-    
-    let itemDoc: AngularFirestoreDocument<ICourse>;
-    //item = this.db.collection<ICourse>(this.coll_endpoint, ref => (ref.where ('id','==',id)));
-    itemDoc = this.db.doc<ICourse>(this.coll_endpoint + "/" + id);
-
-    const data = itemDoc.valueChanges();
-    data.map( data => this.retrivedCourse$.next(data)).subscribe((query) =>{});
-    console.log("out " );
+  GetCourse(id:string):Promise<Course>{
+    return new Promise((resolve,reject)=>{
+      let c:Course = new Course();
+      let itemDoc: AngularFirestoreDocument<ICourse>;
+      itemDoc = this.db.doc<ICourse>(this.coll_endpoint + "/" + id);
+      const data = itemDoc.valueChanges();
+      data.subscribe((a)=>{
+        c.name = a["name"];
+        c.location = a["location"];
+        c.boundary = a["boundary"];
+        resolve(c)
+        },
+        ()=>{console.log("Subscribe error");
+        reject("Reject error")})
+      }
+    )
   }
 
   AddNew(c:Course){
@@ -125,7 +134,6 @@ export class SGCouresService {
       console.log(pts);
       this.names.push(pts);
     })
-    //this.itemObjs = this.db.
-    //console.log(c.snapshotChanges.);
+    
   }
 }
