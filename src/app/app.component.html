@@ -18,5 +18,10 @@
         		<li *ngFor="let Cor of srvRef.Courses" (click)="courseSel($event)" id="{{Cor.id}}">{{ Cor.name }}</li>
 			</ul>
 		</div>
+		<div class="content-area">
+			<h3>Map:</h3>
+			<app-map></app-map>
+		</div>
+
 	</div>
 </div>

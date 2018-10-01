@@ -123,17 +123,5 @@ export class SGCouresService {
     let dbObj = Object.assign({},c)
     this.coursesColl.add(dbObj);   // Catch  & then
   }
-
-  ngOnInit(){   //this.items = this.db.collection<Course>(this.coll_endpoint).valueChanges();     
-     
-    let c : AngularFirestoreDocument<ICourse> = this.db.doc<ICourse>('Courses/Course1');
-      
-    this.items.forEach(c => {
-      var pts = c[0].name ;
-      //var obj = c[0].Boundary;
-      console.log(pts);
-      this.names.push(pts);
-    })
-    
-  }
+ 
 }

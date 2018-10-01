@@ -11,6 +11,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 
 import { environment } from '../environments/environment';
 export const firebaseConfig = environment.firebaseConfig;
+export const olConfig = environment.olConfig;
 
 import { SGCouresService } from './sgcoures.service';
 

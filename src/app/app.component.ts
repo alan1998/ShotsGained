@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { SGCouresService, Course } from './sgcoures.service';
 import * as firebase from 'firebase/app'
+import {MapComponent} from './map/map.component';
 
 /*
   Next use the id to get a Course instance and all that goes with it
@@ -42,5 +43,7 @@ export class AppComponent {
       }).catch(()=>{
         console.log("err selecting course")}
       );
+    
+      
   }
 }

@@ -11,6 +11,9 @@ export const environment = {
     projectId: "courses-8f7b2",
     storageBucket: "courses-8f7b2.appspot.com",
     messagingSenderId: "1036722106145"
+  },
+  olConfig:{
+    apikey: "AoZMNXp87zjIQXWvP83jlfYY7vEid3ObC3vg1I01GGPWpQkf6qmoMjLSEhXiSW1o"
   }
 };
 
