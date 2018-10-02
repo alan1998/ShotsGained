@@ -5,7 +5,7 @@ import * as firebase from 'firebase/app'
 import {MapComponent} from './map/map.component';
 
 /*
-  Stop database changes giving list multiple times over
+  
   Fix size of map
   Introduce navigations / edit mode so
     just 1 name visible 

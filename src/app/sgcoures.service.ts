@@ -72,8 +72,8 @@ export class SGCouresService {
   }
 
   Refresh(){
-    this.Courses = new Array<CourseMinInf>();
     this.CoursesObs.subscribe((c:ICourseId[]) => {
+      this.Courses = new Array<CourseMinInf>();
       c.forEach((cI:ICourseId)=>{
         let cInf:CourseMinInf = new CourseMinInf();;
         cInf.id = cI.id;

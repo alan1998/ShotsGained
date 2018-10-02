@@ -1,4 +1,4 @@
-<!--The content below is only a placeholder and can be replaced.-->
+
 <div class="main-container">
 	<header class="header-3">
 		<div class="branding">
@@ -12,16 +12,16 @@
 		</div>
 	</header>
 	<div class="content-container">
-		<div class="content-area">
+		<div class="sidenav">
 			<h3>Starter Instructions:</h3>
 			<ul>
-        		<li *ngFor="let Cor of srvRef.Courses" (click)="courseSel($event)" id="{{Cor.id}}">{{ Cor.name }}</li>
+				<li *ngFor="let Cor of srvRef.Courses" (click)="courseSel($event)" id="{{Cor.id}}">{{ Cor.name }}</li>
 			</ul>
 		</div>
 		<div class="content-area">
 			<h3>Map:</h3>
 			<app-map id='mapView'></app-map>
 		</div>
-
 	</div>
+	
 </div>
