@@ -10,7 +10,6 @@
     "experimentalDecorators": true,
     "target": "es5",
     "typeRoots": [
-      //"./app/viewer-openlayers/@types/",
       "node_modules/@types"
     ],
     "lib": [

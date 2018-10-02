@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { SGCouresService, Course } from './sgcoures.service';
 import * as firebase from 'firebase/app'
@@ -17,6 +17,7 @@ import {MapComponent} from './map/map.component';
 export class AppComponent {
   title = 'app';
   srvRef: SGCouresService;
+  @ViewChild(MapComponent) mapView:MapComponent;
 
   constructor( srvCourses : SGCouresService){
     this.srvRef = srvCourses;  
@@ -40,6 +41,7 @@ export class AppComponent {
       cc = c;
       console.log("Course selected ");
       console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
+      this.mapView.initOnLocation();
       }).catch(()=>{
         console.log("err selecting course")}
       );
