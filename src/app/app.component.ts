@@ -5,8 +5,13 @@ import * as firebase from 'firebase/app'
 import {MapComponent} from './map/map.component';
 
 /*
-  Next use the id to get a Course instance and all that goes with it
-  Display the location in the map component
+  Stop database changes giving list multiple times over
+  Fix size of map
+  Introduce navigations / edit mode so
+    just 1 name visible 
+    tool to allow centre/location to be set 
+    add holes
+    edit centre line of holes
 */
 
 @Component({
@@ -41,7 +46,7 @@ export class AppComponent {
       cc = c;
       console.log("Course selected ");
       console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
-      this.mapView.initOnLocation();
+      this.mapView.initOnLocation(cc.location.longitude,cc.location.latitude);
       }).catch(()=>{
         console.log("err selecting course")}
       );

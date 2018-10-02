@@ -10,8 +10,7 @@ import { fromLonLat } from '../../../node_modules/ol/proj';
 import {olConfig} from "../app.module";
 
 /* Next todo
-  test if have map - if not create otherwise just goto location in  initOnLocation
-  Bing source
+
 */
 
 @Component({
@@ -21,7 +20,8 @@ import {olConfig} from "../app.module";
 })
 export class MapComponent implements OnInit {
   map;
-  source: olXYZ;
+  sourceXYZ: olXYZ;
+  source : olBingSource;
   layer: olTileLayer;
   view: olView;
 
@@ -33,21 +33,33 @@ export class MapComponent implements OnInit {
   ngOnInit() {
   }
 
-  initOnLocation(){
-    console.log("initMap");
-    let firstPlace = fromLonLat([-1.5,51.5]);
-    this.view = new olView({ center: firstPlace, zoom: 15 });
-    this.source = new olXYZ({
-      url: 'http://tile.osm.org/{z}/{x}/{y}.png'
-    });
-    this.layer = new olTileLayer({
-      source: this.source
-    });
+  initOnLocation(lon:number, lat:number){
+    
+    let firstPlace = fromLonLat([lon,lat]);
+    if(this.map==null){
+      this.view = new olView({ center: firstPlace, zoom: 15 });
+      this.sourceXYZ = new olXYZ({
+        url: 'http://tile.osm.org/{z}/{x}/{y}.png'
+      });
+      this.source = new olBingSource({
+        key : olConfig.apikey,
+        imagerySet: 'Aerial',
+        // use maxZoom 19 to see stretched tiles instead of the BingMaps
+        // "no photos at this zoom level" tiles
+        maxZoom: 19 
+      });
+      this.layer = new olTileLayer({
+        source: this.source
+      });
 
-    this.map = new olMap({target: 'map',
-      layers: [this.layer],
-      view: this.view
-    });
+      this.map = new olMap({target: 'map',
+        layers: [this.layer],
+        view: this.view
+      });
+    }
+    else{
+      this.view.setCenter(firstPlace);
+    }
     //let s = new olBingSource()
     //let v = new ol.Map({ view: new ol.View({ center: [0, 0], zoom: 1 }), layers: [ new layer.Tile({ source: new ol.source.OSM() }) ], target: 'map' });
     /*
