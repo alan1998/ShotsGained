@@ -6,7 +6,6 @@ import {MapComponent} from './map/map.component';
 
 /*
   
-  Fix size of map
   Introduce navigations / edit mode so
     just 1 name visible 
     tool to allow centre/location to be set 
