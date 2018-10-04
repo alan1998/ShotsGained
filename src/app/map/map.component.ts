@@ -53,10 +53,11 @@ export class MapComponent implements OnInit {
         source: this.source
       });
       //this.controls = new  olControl();
-
+      
       this.map = new olMap({target: 'map',
         layers: [this.layer],
-        view: this.view
+        view: this.view,
+        controls: []
       });
     }
     else{

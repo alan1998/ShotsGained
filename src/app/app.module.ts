@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from '@angular/forms';
 import { ClarityModule } from "@clr/angular";
+import { routing} from "./app.routing";
+
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 
@@ -26,7 +28,8 @@ import { SGCouresService } from './sgcoures.service';
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
     ClarityModule,
-    FormsModule
+    FormsModule,
+    routing
   ],
   providers: [SGCouresService],
   bootstrap: [AppComponent]
