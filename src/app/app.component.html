@@ -1,28 +1,14 @@
-
 <div class="main-container">
 	<header class="header-3">
 		<div class="branding">
-			<a class="nav-link">
+			<a class="nav-link" routerLink="">
 				<clr-icon shape="home" size="24"></clr-icon>
-				<span class="title">Project SG</span>
+				<span class="title">SG</span>
 			</a>
 		</div>
 		<div class="header-nav">
-			<a class="active nav-link nav-text">Home</a>
-			<a class="active nav-link nav-text" routerLink="/course/edit">Edit Hoho</a>
+			<a class="active nav-link nav-text" routerLink="/course/edit">Edit</a>
 		</div>
 	</header>
-	<div class="content-container">
-		<div class="sidenav">
-			<h3>Starter Instructions:</h3>
-			<ul>
-				<li *ngFor="let Cor of srvRef.Courses" (click)="courseSel($event)" id="{{Cor.id}}">{{ Cor.name }}</li>
-			</ul>
-		</div>
-		<div class="content-area">
-			<h3>Map:</h3>
-			<app-map id='mapView'></app-map>
-		</div>
-	</div>
-	
+	<router-outlet></router-outlet>
 </div>

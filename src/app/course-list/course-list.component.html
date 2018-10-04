@@ -1,0 +1,11 @@
+<div class="content-container">
+  <div class="sidenav">
+    <h3>Courses:</h3>
+    <ul>
+      <li *ngFor="let Cor of srvRef.Courses" (click)="courseSel($event)" id="{{Cor.id}}">{{ Cor.name }}</li>
+    </ul>
+  </div>
+  <div class="content-area">
+    <app-map id='mapView'></app-map>
+  </div>
+</div>

@@ -8,7 +8,8 @@ import olTileLayer from '../../../node_modules/ol/layer/Tile';
 import olControl from '../../../node_modules/ol/control/control';
 import { fromLonLat } from '../../../node_modules/ol/proj';
 
-import {olConfig} from "../app.module";
+import { environment } from '../../environments/environment';
+//import {olConfig} from "../app.module";
 
 /* Next todo
   Switch sources from a control?
@@ -43,7 +44,7 @@ export class MapComponent implements OnInit {
         url: 'http://tile.osm.org/{z}/{x}/{y}.png'
       });
       this.source = new olBingSource({
-        key : olConfig.apikey,
+        key : environment.olConfig.apikey,
         imagerySet: 'Aerial',
         // use maxZoom 19 to see stretched tiles instead of the BingMaps
         // "no photos at this zoom level" tiles
