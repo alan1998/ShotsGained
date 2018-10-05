@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+import { SGCouresService, Course } from '../sgcoures.service';
 
 @Component({
   selector: 'app-course-edit',
@@ -7,9 +10,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CourseEditComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private route : ActivatedRoute,
+    private router : Router,
+    private srvDB : SGCouresService
+  ) { }
 
   ngOnInit() {
+    var id = this.route.snapshot.paramMap.get('id');
+    console.log(id);
   }
 
 }

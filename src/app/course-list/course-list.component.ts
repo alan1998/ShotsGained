@@ -10,6 +10,7 @@ import { SGCouresService, Course } from '../sgcoures.service';
 export class CourseListComponent implements OnInit {
   @ViewChild(MapComponent) mapView:MapComponent;
   srvRef: SGCouresService;
+  selId: string;
 
   constructor(srvCourses : SGCouresService) {
     this.srvRef = srvCourses;
@@ -20,6 +21,7 @@ export class CourseListComponent implements OnInit {
 
   courseSel(event){
     let v = event.currentTarget.id;
+    this.selId = v;
     let cc : Course;
     this.srvRef.GetCourse(v).then((c) => {
       cc = c;
@@ -30,4 +32,6 @@ export class CourseListComponent implements OnInit {
         console.log("err selecting course")}
       );
   }
+
+
 }

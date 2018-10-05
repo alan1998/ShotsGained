@@ -4,9 +4,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule } from '@angular/forms';
 import { ClarityModule } from "@clr/angular";
 
-import {RouterModule, Routes} from "@angular/router"
-//import { routing} from "./app.routing";
-
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 
@@ -20,13 +17,8 @@ export const olConfig = environment.olConfig;
 import { SGCouresService } from './sgcoures.service';
 import { CourseListComponent } from './course-list/course-list.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import { CourseEditComponent } from './course-edit/course-edit.component'
-
-const routes:Routes = [
-  {path: "course/edit", component : CourseEditComponent},
-  {path: "", component : CourseListComponent},
-  {path:'**',component: PageNotFoundComponent}
-];
+import { CourseEditComponent } from './course-edit/course-edit.component';
+import { AppRoutingModule } from './/app-routing.module'
 
 @NgModule({
   declarations: [
@@ -43,7 +35,7 @@ const routes:Routes = [
     AngularFirestoreModule,
     ClarityModule,
     FormsModule,
-    RouterModule.forRoot(routes, {enableTracing:true})
+    AppRoutingModule
   ],
   providers: [SGCouresService],
   bootstrap: [AppComponent]
