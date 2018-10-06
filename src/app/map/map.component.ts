@@ -6,7 +6,7 @@ import olBingSource from "../../../node_modules/ol/source/BingMaps"
 import olXYZ from '../../../node_modules/ol/source/XYZ';
 import olTileLayer from '../../../node_modules/ol/layer/Tile';
 import olControl from '../../../node_modules/ol/control/control';
-import { fromLonLat } from '../../../node_modules/ol/proj';
+import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
 
 import { environment } from '../../environments/environment';
 //import {olConfig} from "../app.module";
@@ -64,5 +64,12 @@ export class MapComponent implements OnInit {
     else{
       this.view.setCenter(firstPlace);
     }
+  }
+
+  getCenterLoc(){
+    let loc = this.view.getCenter();
+    loc = toLonLat(loc);
+    console.log(loc);
+    return loc;
   }
 }

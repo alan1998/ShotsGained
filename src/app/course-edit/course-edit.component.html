@@ -1,9 +1,16 @@
 <div class="content-container">
   <div class="content-area">
-    <h3>Name:</h3>
-
+    <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
+      <label>Name: </label>
+      <input name="name" [(ngModel)]="course.name" 
+              required minlength="2" pattern="^[A-Za-z ]+$"/>
+      <!--<input (keyup.enter)="course.name=$event.target.value" />-->
+      <button type="submit">Save</button>
+    </form>
+    <button (click)="onClickUpdateLocation()">Set location</button>
   </div>
   <div class="content-area">
     <app-map id='mapView'></app-map>
   </div>
+
 </div>

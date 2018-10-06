@@ -14,13 +14,10 @@ import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 export interface ICourse {
+  id? : string;
   name : string;
   boundary : firebase.firestore.GeoPoint[];
   location:firebase.firestore.GeoPoint;
-}
-
-export interface ICourseId extends ICourse {
-  id : string;
 }
 
 export class Course implements ICourse {
@@ -34,14 +31,6 @@ export class Course implements ICourse {
   }
 } 
 
-export class CourseMinInf {
-  name:string;
-  id:string;
-  location:firebase.firestore.GeoPoint;
-  constructor(){
-    this.location = new firebase.firestore.GeoPoint(51.5,-1.2);
-  }
-}
 
 @Injectable({
   providedIn: 'root'
@@ -49,71 +38,71 @@ export class CourseMinInf {
 export class SGCouresService {
   coll_endpoint : string  ='Courses';
   coursesColl: AngularFirestoreCollection<ICourse>;
-  public items : Observable<ICourse[]>;
-  itemObjs : Observable<any[]>;
-  names : string[] = [] ;
-  CoursesObs: Observable<ICourseId[]>;
-  Courses: CourseMinInf[];
-  //retrivedCourse$ = new BehaviorSubject<any>({});
-  retrivedCourse : Course = new Course();
+  //public items : Observable<ICourse[]>;
+  //itemObjs : Observable<any[]>;
+  //names : string[] = [] ;
+  Courses$: Observable<ICourse[]>;
+  
+  //retrivedCourse : Course = new Course();
 
   constructor(private db: AngularFirestore){
     this.coursesColl = db.collection<ICourse>(this.coll_endpoint);
-    this.items = this.coursesColl.valueChanges();
+    //this.items = this.coursesColl.valueChanges();
     console.log("Ctor service");
 
-    this.CoursesObs = this.coursesColl.snapshotChanges().pipe(
-      map(actions => actions.map(a => {
+    this.Courses$ = this.coursesColl.snapshotChanges().map( actions => {
+      return actions.map(a => {
         const data = a.payload.doc.data() as ICourse;
         const id = a.payload.doc.id;
         return { id, ...data };
-      }))
-    );
-  }
-
-  Refresh(){
-    this.CoursesObs.subscribe((c:ICourseId[]) => {
-      this.Courses = new Array<CourseMinInf>();
-      c.forEach((cI:ICourseId)=>{
-        let cInf:CourseMinInf = new CourseMinInf();;
-        cInf.id = cI.id;
-        cInf.name = cI.name;
-        this.Courses.push(cInf);
-        })
-      }
-    ); 
-  }
-
-  Init (){
-    this.items.subscribe((c:ICourse[]) =>  {
-      console.log("Here");
-      console.log(c.length)
-      c.forEach((v:ICourse)=> {
-        console.log(v.name);
-        console.log(v.boundary.length);
-        v.boundary.forEach((pt)=>{
-          console.log(pt["_lat"]);
-        })
-     });
+      });
     });
   }
 
-  GetCourse(id:string):Promise<Course>{
+  // Init (){
+  //   this.items.subscribe((c:ICourse[]) =>  {
+  //     console.log("Here");
+  //     console.log(c.length)
+  //     c.forEach((v:ICourse)=> {
+  //       console.log(v.name);
+  //       console.log(v.boundary.length);
+  //       v.boundary.forEach((pt)=>{
+  //         console.log(pt["_lat"]);
+  //       })
+  //    });
+  //   });
+  // }
+
+  GetCourse(id:string):Promise<ICourse>{
     return new Promise((resolve,reject)=>{
-      let c:Course = new Course();
+      let c:ICourse = new Course();
       let itemDoc: AngularFirestoreDocument<ICourse>;
       itemDoc = this.db.doc<ICourse>(this.coll_endpoint + "/" + id);
       const data = itemDoc.valueChanges();
       data.subscribe((a)=>{
+        c.id = a["id"];
         c.name = a["name"];
         c.location = a["location"];
         c.boundary = a["boundary"];
+        console.log("Resolve with id = "+ c.id);
         resolve(c)
         },
         ()=>{console.log("Subscribe error");
         reject("Reject error")})
       }
     )
+  }
+
+  Update(id:string, crs:ICourse){
+    //let itemDoc: AngularFirestoreDocument<ICourse>;
+    //itemDoc = this.db.doc<ICourse>(this.coll_endpoint + "/" + id);
+    crs.id = id;
+    let dbObj = Object.assign({},crs)
+    this.coursesColl.doc(id).update(dbObj);
+  }
+
+  Delete(id:string){
+    this.coursesColl.doc(id).delete();
   }
 
   AddNew(c:Course){

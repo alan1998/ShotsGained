@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import { SGCouresService, Course } from '../sgcoures.service';
+import * as firebase from 'firebase/app';
+
+import { SGCouresService, ICourse } from '../sgcoures.service';
+import { MapComponent } from '../map/map.component'
 
 @Component({
   selector: 'app-course-edit',
@@ -9,16 +12,50 @@ import { SGCouresService, Course } from '../sgcoures.service';
   styleUrls: ['./course-edit.component.css']
 })
 export class CourseEditComponent implements OnInit {
+  course : ICourse;
+  selId : string;
+  @ViewChild(MapComponent) mapView:MapComponent;
 
   constructor(
     private route : ActivatedRoute,
     private router : Router,
     private srvDB : SGCouresService
+    
   ) { }
 
+  /*
+    
+    Design hole structure/db persistance
+    Add hole button and hard code to add a hole
+    Make save of hole work
+    
+  */
   ngOnInit() {
-    var id = this.route.snapshot.paramMap.get('id');
-    console.log(id);
+    this.selId = this.route.snapshot.paramMap.get('id');
+    console.log(this.selId);
+        
+    this.srvDB.GetCourse(this.selId).then((c) => {
+      this.course = c;
+      console.log("Course selected for edit");
+      console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
+      
+      this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude);
+      }).catch(()=>{
+        console.log("err selecting course to edit")}
+      );
   }
 
+  onSave(){
+    //Could this be new or update?
+    // Test from this.course.selid?
+    console.log("In save");
+    console.log(this.course);
+    console.log(this.selId);
+    this.srvDB.Update(this.selId,this.course);
+  }
+
+  onClickUpdateLocation(){
+    let loc = this.mapView.getCenterLoc();
+    this.course.location = new firebase.firestore.GeoPoint(loc[1],loc[0]);
+  }
 }

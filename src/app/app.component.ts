@@ -33,13 +33,6 @@ export class AppComponent {
   constructor( srvCourses : SGCouresService){
     this.srvRef = srvCourses;  
   }
-  ngOnInit(){
-    this.srvRef.Refresh();
-    
-
-  }
-
-  
-      
-  
+  ngOnInit(){ 
+  } 
 }
