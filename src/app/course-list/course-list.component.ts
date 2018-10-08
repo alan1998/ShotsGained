@@ -11,6 +11,7 @@ export class CourseListComponent implements OnInit {
   @ViewChild(MapComponent) mapView:MapComponent;
   srvRef: SGCouresService;
   selId: string;
+  selName: string;
 
   constructor(srvCourses : SGCouresService) {
     this.srvRef = srvCourses;
@@ -25,12 +26,18 @@ export class CourseListComponent implements OnInit {
     let cc : Course;
     this.srvRef.GetCourse(v).then((c) => {
       cc = c;
+      this.selName = c.name;
       console.log("Course selected ");
-      console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
+      //console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
       this.mapView.initOnLocation(cc.location.longitude,cc.location.latitude);
+      console.log(c);
       }).catch(()=>{
         console.log("err selecting course")}
       );
+  }
+
+  nonSelected() : boolean {
+    return this.selId == null;
   }
 
 

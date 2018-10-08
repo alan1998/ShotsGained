@@ -24,11 +24,16 @@ export class CourseEditComponent implements OnInit {
   ) { }
 
   /*
-    
+    Next: ngFor to file table from hole array of course (cope with no data)  
+        Form for adding hole ( ignore center line for now)
+
     Design hole structure/db persistance
     Add hole button and hard code to add a hole
     Make save of hole work
     
+    Hole:
+    id(number),SI,Par, SG_Scr
+    Sequence from the array
   */
   ngOnInit() {
     this.selId = this.route.snapshot.paramMap.get('id');

@@ -27,7 +27,7 @@ export class MapComponent implements OnInit {
   layer: olTileLayer;
   view: olView;
   controls : olControl;
-
+  
   constructor() {
    
    

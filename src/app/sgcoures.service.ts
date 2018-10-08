@@ -18,16 +18,19 @@ export interface ICourse {
   name : string;
   boundary : firebase.firestore.GeoPoint[];
   location:firebase.firestore.GeoPoint;
+  holes : object[];
 }
 
 export class Course implements ICourse {
   name : string;
   boundary : firebase.firestore.GeoPoint[];
   location:firebase.firestore.GeoPoint;
+  holes:object[];
   constructor(){
     this.name = "";
     this.boundary = new Array<firebase.firestore.GeoPoint>();
     this.location = new firebase.firestore.GeoPoint(51.5,-1.2);
+    this.holes = new Array<object>();
   }
 } 
 
@@ -59,20 +62,6 @@ export class SGCouresService {
     });
   }
 
-  // Init (){
-  //   this.items.subscribe((c:ICourse[]) =>  {
-  //     console.log("Here");
-  //     console.log(c.length)
-  //     c.forEach((v:ICourse)=> {
-  //       console.log(v.name);
-  //       console.log(v.boundary.length);
-  //       v.boundary.forEach((pt)=>{
-  //         console.log(pt["_lat"]);
-  //       })
-  //    });
-  //   });
-  // }
-
   GetCourse(id:string):Promise<ICourse>{
     return new Promise((resolve,reject)=>{
       let c:ICourse = new Course();
@@ -84,7 +73,7 @@ export class SGCouresService {
         c.name = a["name"];
         c.location = a["location"];
         c.boundary = a["boundary"];
-        console.log("Resolve with id = "+ c.id);
+        c.holes = a["holes"];
         resolve(c)
         },
         ()=>{console.log("Subscribe error");

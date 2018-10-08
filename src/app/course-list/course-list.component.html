@@ -1,15 +1,22 @@
 <div class="content-container">
   <span>
-    <button [routerLink]="['/edit',selId]">Edit</button>
+    <button [disabled]="nonSelected()" [routerLink]="['/edit',selId]">Edit</button>
     <!--<button routerLink="/edit/{{selId}}">Edit</button>-->
   </span>
   <div class="sidenav">
-    <h3>Courses:</h3>
-    <ul>
-      <li *ngFor="let Cor of srvRef.Courses$ | async" (click)="courseSel($event)" id="{{Cor.id}}">{{ Cor.name }}</li>
-    </ul>
+    <section class="sidenav-content">
+      <section class="nav-group">
+        <h3>Courses:</h3>
+        <ul class="nav-list" >
+          <li *ngFor="let Cor of srvRef.Courses$ | async" (click)="courseSel($event)" id="{{Cor.id}}">
+            <a class="nav-link">{{ Cor.name }}</a>
+          </li>
+        </ul>
+      </section>
+    </section>
   </div>
   <div class="content-area">
-    <app-map id='mapView'></app-map>
+    <h4>{{selName}}</h4>
+      <app-map id='mapView'></app-map>   
   </div>
 </div>
