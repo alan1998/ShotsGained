@@ -22,14 +22,20 @@
               </tr>
           </thead>
           <tbody>
-              <tr>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>I</td>
+              <tr *ngFor="let h of course.holes"  >
+                  <td>{{h["id"]}}</td>
+                  <td>{{h["par"]}}</td>
+                  <td>{{h["si"]}}</td>
+                  <td>{{h["sg_scr"]}}</td>
               </tr>
           </tbody>
         </table>
+        <div class="btn-group btn-icon">
+          <button class="btn">
+            <clr-icon shape="add-text" size="24"></clr-icon>
+            <span class="clr-icon-title">Add hole</span>
+          </button>
+        </div>
       </div>
       <div class="clr-col-8">
         <app-map id='mapView'></app-map>
