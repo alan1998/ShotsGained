@@ -21,6 +21,13 @@ export interface ICourse {
   holes : object[];
 }
 
+export class Hole {
+  id:string;
+  par:number;
+  si:number;
+  sg_scr:number;
+}
+
 export class Course implements ICourse {
   name : string;
   boundary : firebase.firestore.GeoPoint[];

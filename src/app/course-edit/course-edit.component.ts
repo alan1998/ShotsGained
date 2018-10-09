@@ -3,8 +3,9 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 
-import { SGCouresService, ICourse } from '../sgcoures.service';
+import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { MapComponent } from '../map/map.component'
+
 
 @Component({
   selector: 'app-course-edit',
@@ -15,6 +16,7 @@ export class CourseEditComponent implements OnInit {
   course : ICourse;
   selId : string;
   @ViewChild(MapComponent) mapView:MapComponent;
+  h;
 
   constructor(
     private route : ActivatedRoute,
@@ -45,11 +47,15 @@ export class CourseEditComponent implements OnInit {
       console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
       
       this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude);
+      if(this.course.holes== null)
+        this.course.holes =  new Array<Object>();
       }).catch(()=>{
         console.log("err selecting course to edit")}
       );
   }
-
+  selectedHole(i:number){
+    console.log("Selected table row = "+i.toString());
+  }
   onSave(){
     //Could this be new or update?
     // Test from this.course.selid?
@@ -62,5 +68,17 @@ export class CourseEditComponent implements OnInit {
   onClickUpdateLocation(){
     let loc = this.mapView.getCenterLoc();
     this.course.location = new firebase.firestore.GeoPoint(loc[1],loc[0]);
+  }
+
+  onAddHole(){
+    // TODO enable/show form enable button for centre line etc
+    let h = new Hole();
+    h.id = "3a";
+    h.par = 5;
+    h.si = 2;
+    h.sg_scr = 4.7;
+    if(this.course.holes== null)
+      this.course.holes =  new Array<Object>();
+    this.course.holes.push(Object.assign({},h));
   }
 }
