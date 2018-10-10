@@ -17,6 +17,7 @@ export class CourseEditComponent implements OnInit {
   selId : string;
   @ViewChild(MapComponent) mapView:MapComponent;
   h;
+  selHole;
 
   constructor(
     private route : ActivatedRoute,
@@ -53,9 +54,7 @@ export class CourseEditComponent implements OnInit {
         console.log("err selecting course to edit")}
       );
   }
-  selectedHole(i:number){
-    console.log("Selected table row = "+i.toString());
-  }
+  
   onSave(){
     //Could this be new or update?
     // Test from this.course.selid?
@@ -72,6 +71,7 @@ export class CourseEditComponent implements OnInit {
 
   onAddHole(){
     // TODO enable/show form enable button for centre line etc
+    this.selHole = -1;
     let h = new Hole();
     h.id = "3a";
     h.par = 5;

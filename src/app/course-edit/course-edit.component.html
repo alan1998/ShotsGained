@@ -35,7 +35,7 @@
               </tr>
           </thead>
           <tbody>
-              <tr *ngFor="let h of course.holes; let i=index"  (click)="selectedHole(i)">
+                <tr *ngFor="let h of course.holes; let i=index" [ngClass] ="{'activeHole':this.selHole==i}" (click)="this.selHole =i">
                   <td>{{h["id"]}}</td>
                   <td>{{h["par"]}}</td>
                   <td>{{h["si"]}}</td>
