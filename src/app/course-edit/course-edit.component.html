@@ -43,6 +43,12 @@
               </tr>
           </tbody>
         </table>
+        <div>
+          <form [formGroup]="newHoleForm">
+            <input type="text" [formControl]="newHoleId" >  
+          </form>      
+          
+        </div>
         <div class="btn-group btn-icon">
           <button (click)="onAddHole()"  class="btn">
             <clr-icon shape="plus" size="16"></clr-icon>

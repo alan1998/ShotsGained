@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms'
 import { switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 
@@ -18,6 +19,10 @@ export class CourseEditComponent implements OnInit {
   @ViewChild(MapComponent) mapView:MapComponent;
   h;
   selHole;
+  newHoleForm =  new FormGroup({
+    newHoleId: new FormControl('')  
+  });
+  
 
   constructor(
     private route : ActivatedRoute,
@@ -27,7 +32,7 @@ export class CourseEditComponent implements OnInit {
   ) { }
 
   /*
-    Next: ngFor to file table from hole array of course (cope with no data)  
+    Next:   
         Form for adding hole ( ignore center line for now)
 
     Design hole structure/db persistance
@@ -73,12 +78,15 @@ export class CourseEditComponent implements OnInit {
     // TODO enable/show form enable button for centre line etc
     this.selHole = -1;
     let h = new Hole();
-    h.id = "3a";
+    let x = this.newHoleForm;
+    h.id = x.get("newHoleId").value;
     h.par = 5;
     h.si = 2;
     h.sg_scr = 4.7;
     if(this.course.holes== null)
       this.course.holes =  new Array<Object>();
     this.course.holes.push(Object.assign({},h));
+    //Clear form
+    //this.newHoleId.setValue( "");
   }
 }
