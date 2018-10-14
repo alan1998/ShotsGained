@@ -54,10 +54,14 @@
             <clr-icon shape="plus" size="16"></clr-icon>
             <span class="clr-icon-title">Add hole</span>
           </button>
+          <button (click)="onDoCenterLine()" class ="btn">
+            CL
+            <!--<clr-icon shape="child-arrow" size="16"></clr-icon>-->
+          </button>
         </div>
       </div>
       <div class="clr-col-8">
-        <app-map id='mapView'></app-map>
+        <app-map id='mapView' (cl-event)="onCLEvent($event)"></app-map>
       </div>
     </div>
   </div>

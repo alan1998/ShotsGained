@@ -18,6 +18,7 @@ export class CourseEditComponent implements OnInit {
   selId : string;
   @ViewChild(MapComponent) mapView:MapComponent;
   h;
+  vectorSrcCL;
   selHole;
   newHoleForm =  new FormGroup({
     newHoleId: new FormControl('')  
@@ -88,5 +89,16 @@ export class CourseEditComponent implements OnInit {
     this.course.holes.push(Object.assign({},h));
     //Clear form
     //this.newHoleId.setValue( "");
+  }
+
+  onDoCenterLine(){
+    // New or edit ?
+    this.mapView.doCentreLine(true);
+  }
+
+  onCLEvent($event){
+    console.log("CL Event received");
+    console.log($event);
+    this.mapView.getCenterLine();
   }
 }

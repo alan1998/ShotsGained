@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 import olMap from "../../../node_modules/ol/Map"
 import olView from "../../../node_modules/ol/view"
@@ -6,6 +6,10 @@ import olBingSource from "../../../node_modules/ol/source/BingMaps"
 import olXYZ from '../../../node_modules/ol/source/XYZ';
 import olTileLayer from '../../../node_modules/ol/layer/Tile';
 import olControl from '../../../node_modules/ol/control/control';
+import olVector from '../../../node_modules/ol/source/vector';
+import olVecLayer from '../../../node_modules/ol/layer/vector';
+import {Draw, Modify} from '../../../node_modules/ol/interaction';
+
 import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
 
 import { environment } from '../../environments/environment';
@@ -27,14 +31,24 @@ export class MapComponent implements OnInit {
   layer: olTileLayer;
   view: olView;
   controls : olControl;
-  
+  vectorSrcCL : olVector;
+  vecLayer : olVecLayer;
+  drawAction : Draw;
+  modify : Modify;
+    
   constructor() {
-   
-   
-   }
+    
+  }
+
+  @Output("cl-event")
+  eventCL = new EventEmitter<string>();
+  
+
 
   ngOnInit() {
   }
+
+  
 
   initOnLocation(lon:number, lat:number){
     let firstPlace = fromLonLat([lon,lat]);
@@ -54,11 +68,26 @@ export class MapComponent implements OnInit {
         source: this.source
       });
       //this.controls = new  olControl();
-      
+      this.vectorSrcCL = new olVector({wrapX: false});
+      this.vecLayer = new olVecLayer({source:this.vectorSrcCL});
+
       this.map = new olMap({target: 'map',
-        layers: [this.layer],
+        layers: [this.layer, this.vecLayer],
         view: this.view,
         controls: []
+      });
+
+      // Don't need draw interaction yet but good place to construct it
+      this.drawAction = new Draw({
+        source : this.vectorSrcCL,
+        type : 'LineString'
+      });
+      
+      this.modify =  new Modify({
+        source : this.vectorSrcCL
+      });
+      this.modify.on('modifyend', (evt)=>{
+        this.eventCL.emit("LineModified");
       });
     }
     else{
@@ -71,5 +100,31 @@ export class MapComponent implements OnInit {
     loc = toLonLat(loc);
     console.log(loc);
     return loc;
+  }
+
+  doCentreLine(newLine:boolean){
+    if(newLine){
+      //Clear any existing and set mode
+      if( this.vectorSrcCL !=  null)
+        this.vectorSrcCL.clear({fast:true});
+      this.map.addInteraction(this.drawAction);
+      this.map.addInteraction(this.modify);
+      this.drawAction.on('drawend',(evt) => {
+        this.map.removeInteraction(this.drawAction);
+        this.eventCL.emit("LineAdded");
+        console.log("Draw end");
+      } );  
+    }
+    else{
+      //Doing an edit of existing line
+    }
+  }
+
+  getCenterLine(){
+    // Return array of points
+    if(this.vectorSrcCL.getFeatures() != null){
+      let pts = this.vectorSrcCL.getFeatures();
+      console.log(pts.length)  
+    }
   }
 }
