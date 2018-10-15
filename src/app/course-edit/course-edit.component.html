@@ -45,9 +45,16 @@
         </table>
         <div>
           <form [formGroup]="newHoleForm">
-            <input type="text" [formControl]="newHoleId" >  
+            <input class="newTxt"  type="text" [formControl]="newHoleId" >
+            <select    [formControl]="newHolePar" >
+              <option  ng-repeat="n in this.pars" >{{n}}</option>
+              <option   >4</option>
+              <option   >5</option>
+              <option   >6</option>
+            </select>
+            <input class="newTxt"  type="number"  min="1" max="18" step="1" [formControl]="newHoleSI" >
+            <span >{{this.newHoleSG}}</span>  
           </form>      
-          
         </div>
         <div class="btn-group btn-icon">
           <button (click)="onAddHole()"  class="btn">

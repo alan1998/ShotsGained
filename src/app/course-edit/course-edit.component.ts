@@ -6,7 +6,7 @@ import * as firebase from 'firebase/app';
 
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { MapComponent } from '../map/map.component'
-
+import { GeoCalcs } from '../util/calcs'
 
 @Component({
   selector: 'app-course-edit',
@@ -17,13 +17,16 @@ export class CourseEditComponent implements OnInit {
   course : ICourse;
   selId : string;
   @ViewChild(MapComponent) mapView:MapComponent;
+  pars=[3,4,5,6];
   h;
   vectorSrcCL;
   selHole;
   newHoleForm =  new FormGroup({
-    newHoleId: new FormControl('')  
+    newHoleId: new FormControl(''),
+    newHolePar: new FormControl(''),
+    newHoleSI: new FormControl('')
   });
-  
+  newHoleSG:number;
 
   constructor(
     private route : ActivatedRoute,
@@ -34,8 +37,13 @@ export class CourseEditComponent implements OnInit {
 
   /*
     Next:   
-        Form for adding hole ( ignore center line for now)
-
+        Form for adding hole 
+        Get center line back as lat,lon array
+        Store in firebase geocoord type array and add to the hole
+        Finish other bits of hole form
+        Store hole and add to list
+        When item in list selected - show CL on map?
+        Get button states etc correct so new,edit, delete work (and with database)
     Design hole structure/db persistance
     Add hole button and hard code to add a hole
     Make save of hole work
@@ -99,6 +107,13 @@ export class CourseEditComponent implements OnInit {
   onCLEvent($event){
     console.log("CL Event received");
     console.log($event);
-    this.mapView.getCenterLine();
+    if($event == "LineModified" || $event=="LineAdded"){
+      let pts = this.mapView.getCenterLine();
+      let dSum = 0;
+      for(let n =0; n < pts.length-1; n++ ){
+        dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
+      }
+      this.newHoleSG = GeoCalcs.m2yrd(dSum);
+    }
   }
 }

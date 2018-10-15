@@ -41,14 +41,10 @@ export class MapComponent implements OnInit {
   }
 
   @Output("cl-event")
-  eventCL = new EventEmitter<string>();
-  
-
-
+  eventCL = new EventEmitter<string>(true);
+ 
   ngOnInit() {
   }
-
-  
 
   initOnLocation(lon:number, lat:number){
     let firstPlace = fromLonLat([lon,lat]);
@@ -89,6 +85,7 @@ export class MapComponent implements OnInit {
       this.modify.on('modifyend', (evt)=>{
         this.eventCL.emit("LineModified");
       });
+      this.map.addInteraction(this.modify);
     }
     else{
       this.view.setCenter(firstPlace);
@@ -108,7 +105,7 @@ export class MapComponent implements OnInit {
       if( this.vectorSrcCL !=  null)
         this.vectorSrcCL.clear({fast:true});
       this.map.addInteraction(this.drawAction);
-      this.map.addInteraction(this.modify);
+      
       this.drawAction.on('drawend',(evt) => {
         this.map.removeInteraction(this.drawAction);
         this.eventCL.emit("LineAdded");
@@ -120,11 +117,22 @@ export class MapComponent implements OnInit {
     }
   }
 
-  getCenterLine(){
+  getCenterLine():Array<any>{
     // Return array of points
+    //How to get feature by id and set the id as 'cl' to begin with?
+    let newPts = new Array<any>();
     if(this.vectorSrcCL.getFeatures() != null){
-      let pts = this.vectorSrcCL.getFeatures();
-      console.log(pts.length)  
+      let fts = this.vectorSrcCL.getFeatures();
+      if(fts.length==1){
+        let geo = fts[0].getGeometry();
+        if(geo.getType()=='LineString'){
+          let pts = geo.getCoordinates(); 
+          pts.forEach(element => {
+            newPts.push(toLonLat(element));
+          });
+        }
+      }  
     }
+    return newPts;
   }
 }
