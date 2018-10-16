@@ -10,21 +10,7 @@
           <button type="submit">Save</button>
         </form>
         <button (click)="onClickUpdateLocation()">Set location</button>
-        <!--<clr-datagrid >
-          <clr-dg-column>Hole</clr-dg-column>
-          <clr-dg-column>Par</clr-dg-column>
-          <clr-dg-column>SI</clr-dg-column>
-          <clr-dg-column>SG (Scr)</clr-dg-column>
-          <clr-dg-row *clrDgItems="let hole of course.holes" [clrDgItem]="h">
-            <clr-dg-cell>{{hole["id"]}}</clr-dg-cell>
-            <clr-dg-cell>{{hole["par"]}}</clr-dg-cell>
-            <clr-dg-cell>{{hole["si"]}}</clr-dg-cell>
-            <clr-dg-cell>{{hole["sg_scr"]}}</clr-dg-cell>
-          </clr-dg-row>
-          <clr-dg-footer>{{course.holes.length}} holes</clr-dg-footer>
-        </clr-datagrid>-->
 
-      
         <table class="table">
           <thead>
               <tr>
@@ -46,13 +32,15 @@
         <div>
           <form [formGroup]="newHoleForm">
             <input class="newTxt"  type="text" [formControl]="newHoleId" >
-            <select    [formControl]="newHolePar" >
-              <option  ng-repeat="n in this.pars" >{{n}}</option>
-              <option   >4</option>
-              <option   >5</option>
+            <select  [formControl]="newHolePar" > 
+              <option  >3</option>
+              <option  selected="selected" >4</option>
+              <option  >5</option>
               <option   >6</option>
             </select>
-            <input class="newTxt"  type="number"  min="1" max="18" step="1" [formControl]="newHoleSI" >
+            <select [formControl]="newHoleSI">
+              <option *ngFor="let n of SIs" [value]="n">{{n}}</option>
+            </select>
             <span >{{this.newHoleSG}}</span>  
           </form>      
         </div>

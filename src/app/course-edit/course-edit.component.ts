@@ -17,7 +17,7 @@ export class CourseEditComponent implements OnInit {
   course : ICourse;
   selId : string;
   @ViewChild(MapComponent) mapView:MapComponent;
-  pars=[3,4,5,6];
+  SIs:Array<string>;
   h;
   vectorSrcCL;
   selHole;
@@ -33,7 +33,12 @@ export class CourseEditComponent implements OnInit {
     private router : Router,
     private srvDB : SGCouresService
     
-  ) { }
+  ) {
+    this.SIs = new Array<string>(18);
+    for(let i=1; i <19; i++){
+      this.SIs[i-1] = i.toString();
+    }
+   }
 
   /*
     Next:   
