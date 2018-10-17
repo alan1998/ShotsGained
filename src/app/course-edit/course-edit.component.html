@@ -14,9 +14,9 @@
         <table class="table">
           <thead>
               <tr>
-                  <th>Hole</th>
-                  <th>Par</th>
-                  <th>SI</th>
+                  <th class="holeIDCol">Hole</th>
+                  <th class="parCol">Par</th>
+                  <th class="SICol" >SI</th>
                   <th>SG (Scratch)</th>
               </tr>
           </thead>
@@ -31,17 +31,18 @@
         </table>
         <div>
           <form [formGroup]="newHoleForm">
-            <input class="newTxt"  type="text" [formControl]="newHoleId" >
-            <select  [formControl]="newHolePar" > 
+            <input class="newTxt holeIDCol"   type="text" [formControl]="newHoleId" >
+            <select class="parCol"  [formControl]="newHolePar" > 
               <option  >3</option>
               <option  selected="selected" >4</option>
               <option  >5</option>
               <option   >6</option>
             </select>
-            <select [formControl]="newHoleSI">
+            <select class="SICol" style='width:70px'  [formControl]="newHoleSI">
               <option *ngFor="let n of SIs" [value]="n">{{n}}</option>
             </select>
-            <span >{{this.newHoleSG}}</span>  
+            <!--<input type="number" value="{{this.newHoleSG | number:'1.1-1'}}"> -->
+            <span>{{this.newHoleSG | number:'1.1-1'}}</span>
           </form>      
         </div>
         <div class="btn-group btn-icon">
