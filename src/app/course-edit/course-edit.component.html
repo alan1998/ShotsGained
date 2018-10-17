@@ -21,7 +21,7 @@
               </tr>
           </thead>
           <tbody>
-                <tr *ngFor="let h of course.holes; let i=index" [ngClass] ="{'activeHole':this.selHole==i}" (click)="this.selHole =i">
+                <tr *ngFor="let h of course.holes; let i=index" [ngClass] ="{'activeHole':this.selHole==i}" (click)="this.onSelHole(i)">
                   <td>{{h["id"]}}</td>
                   <td>{{h["par"]}}</td>
                   <td>{{h["si"]}}</td>
@@ -30,7 +30,7 @@
           </tbody>
         </table>
         <div>
-          <form [formGroup]="newHoleForm">
+          <form [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
             <input class="newTxt holeIDCol"   type="text" [formControl]="newHoleId" >
             <select class="parCol"  [formControl]="newHolePar" > 
               <option  >3</option>
@@ -43,6 +43,7 @@
             </select>
             <!--<input type="number" value="{{this.newHoleSG | number:'1.1-1'}}"> -->
             <span>{{this.newHoleSG | number:'1.1-1'}}</span>
+            <button type="submit" >Add</button>
           </form>      
         </div>
         <div class="btn-group btn-icon">

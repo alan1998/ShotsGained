@@ -83,6 +83,17 @@ export class CourseEditComponent implements OnInit {
     this.srvDB.Update(this.selId,this.course);
   }
 
+  onSelHole(n:number){
+    this.selHole = n;
+    console.log(this.course.holes[n]["par"]);
+    this.newHoleForm.setValue({newHolePar: this.course.holes[n]["par"],
+        newHoleId: 'fred' /*this.course.holes[n]["id"]*/,
+        newHoleSI: this.course.holes[n]["si"]
+        });
+    
+    
+  }
+
   onClickUpdateLocation(){
     let loc = this.mapView.getCenterLoc();
     this.course.location = new firebase.firestore.GeoPoint(loc[1],loc[0]);
@@ -102,6 +113,11 @@ export class CourseEditComponent implements OnInit {
     this.course.holes.push(Object.assign({},h));
     //Clear form
     //this.newHoleId.setValue( "");
+  }
+
+  onNewHoleSubmit(){
+    console.log(this.newHoleForm.controls["newHolePar"].value);
+    console.log(this.newHoleForm.controls["newHolePar"].status);
   }
 
   onDoCenterLine(){
