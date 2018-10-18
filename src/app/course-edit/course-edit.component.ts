@@ -123,24 +123,26 @@ export class CourseEditComponent implements OnInit {
     if(this.state === PageState.view){
       this.state = PageState.addingHole;
     }
-    
-    // this.selHole = -1;
-    // let h = new Hole();
-    // let x = this.newHoleForm;
-    // h.id = x.get("newHoleId").value;
-    // h.par = 5;
-    // h.si = 2;
-    // h.sg_scr = 4.7;
-    // if(this.course.holes== null)
-    //   this.course.holes =  new Array<Object>();
-    // this.course.holes.push(Object.assign({},h));
-    //Clear form
-    //this.newHoleId.setValue( "");
   }
 
   onNewHoleSubmit(){
     console.log(this.newHoleForm.value);
     console.log(this.newHoleForm.value["newHoleId"]);
+    //Todo validate?
+    this.state = PageState.view;
+    // this.selHole = -1;
+    let h = new Hole();
+    // let x = this.newHoleForm;
+    h.id = this.newHoleForm.value["newHoleId"];
+    h.par = parseInt("4");//this.newHoleForm.value["par"]);
+    h.si = parseInt(this.newHoleForm.value["si"].toString());
+    h.sg_scr = this.newHoleSG;
+    if(this.course.holes== null)
+      this.course.holes =  new Array<Object>();
+    this.course.holes.push(Object.assign({},h));
+    //todo get the CL array added
+    //Clear form
+    //this.newHoleId.setValue( "");
   }
 
   onDoCenterLine(){

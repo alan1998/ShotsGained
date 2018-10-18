@@ -43,7 +43,6 @@
             </select>
             <!--<input type="number" value="{{this.newHoleSG | number:'1.1-1'}}">-->
             <span>{{this.newHoleSG | number:'1.1-1'}}</span>
-            <button type="submit" >Add</button>
           </form>      
         </div>
         <div class="btn-group btn-icon">
@@ -55,6 +54,10 @@
           <button (click)="onDoCenterLine()" class ="btn" [disabled]="state === PageState.view" >
             CL
             <!--<clr-icon shape="child-arrow" size="16"></clr-icon>-->
+          </button>
+          <button (click)="onNewHoleSubmit()" class ="btn" 
+            [disabled]="state === PageState.view">
+            <clr-icon shape="plus" size="16"  ></clr-icon>
           </button>
         </div>
       </div>
