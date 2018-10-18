@@ -38,6 +38,7 @@ export class CourseEditComponent implements OnInit {
     for(let i=1; i <19; i++){
       this.SIs[i-1] = i.toString();
     }
+    this.newHoleSG = 4;
    }
 
   /*
@@ -86,11 +87,11 @@ export class CourseEditComponent implements OnInit {
   onSelHole(n:number){
     this.selHole = n;
     console.log(this.course.holes[n]["par"]);
-    this.newHoleForm.setValue({newHolePar: this.course.holes[n]["par"],
-        newHoleId: 'fred' /*this.course.holes[n]["id"]*/,
-        newHoleSI: this.course.holes[n]["si"]
+    this.newHoleForm.setValue({'newHoleId' : this.course.holes[n]["id"],
+        'newHolePar': 5 /*this.course.holes[n]["id"]*/,
+        'newHoleSI': this.course.holes[n]["si"]
         });
-    
+    this.newHoleSG =  this.course.holes[n]["sg_scr"];
     
   }
 
@@ -116,8 +117,8 @@ export class CourseEditComponent implements OnInit {
   }
 
   onNewHoleSubmit(){
-    console.log(this.newHoleForm.controls["newHolePar"].value);
-    console.log(this.newHoleForm.controls["newHolePar"].status);
+    console.log(this.newHoleForm.value);
+    console.log(this.newHoleForm.value["newHoleId"]);
   }
 
   onDoCenterLine(){

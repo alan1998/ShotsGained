@@ -31,17 +31,17 @@
         </table>
         <div>
           <form [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
-            <input class="newTxt holeIDCol"   type="text" [formControl]="newHoleId" >
-            <select class="parCol"  [formControl]="newHolePar" > 
+            <input class="newTxt holeIDCol"   type="text" formControlName="newHoleId" >
+            <select class="parCol"  formControlName ="newHolePar" > 
               <option  >3</option>
               <option  selected="selected" >4</option>
               <option  >5</option>
               <option   >6</option>
             </select>
-            <select class="SICol" style='width:70px'  [formControl]="newHoleSI">
+            <select class="SICol" style='width:70px'  formControlName="newHoleSI">
               <option *ngFor="let n of SIs" [value]="n">{{n}}</option>
             </select>
-            <!--<input type="number" value="{{this.newHoleSG | number:'1.1-1'}}"> -->
+            <!--<input type="number" value="{{this.newHoleSG | number:'1.1-1'}}">-->
             <span>{{this.newHoleSG | number:'1.1-1'}}</span>
             <button type="submit" >Add</button>
           </form>      
