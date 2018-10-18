@@ -47,11 +47,12 @@
           </form>      
         </div>
         <div class="btn-group btn-icon">
-          <button (click)="onAddHole()"  class="btn">
+          <button (click)="onAddHole()"  class="btn" 
+              [disabled]="state === PageState.addingHole || state === PageState.editCL">
             <clr-icon shape="plus" size="16"></clr-icon>
             <span class="clr-icon-title">Add hole</span>
           </button>
-          <button (click)="onDoCenterLine()" class ="btn">
+          <button (click)="onDoCenterLine()" class ="btn" [disabled]="state === PageState.view" >
             CL
             <!--<clr-icon shape="child-arrow" size="16"></clr-icon>-->
           </button>

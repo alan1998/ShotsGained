@@ -8,6 +8,12 @@ import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { MapComponent } from '../map/map.component'
 import { GeoCalcs } from '../util/calcs'
 
+enum PageState{
+  view,
+  editCL,
+  addingHole
+};
+
 @Component({
   selector: 'app-course-edit',
   templateUrl: './course-edit.component.html',
@@ -28,6 +34,10 @@ export class CourseEditComponent implements OnInit {
   });
   newHoleSG:number;
 
+  static readonly PageState = PageState;
+  readonly PageState = CourseEditComponent.PageState;
+  state:PageState = PageState.view;
+ 
   constructor(
     private route : ActivatedRoute,
     private router : Router,
@@ -45,9 +55,13 @@ export class CourseEditComponent implements OnInit {
     Next:   
         Form for adding hole 
         Get center line back as lat,lon array
+		Function for enablement of buttons - i.e. state variable for page mode
+		->Add add button to button bar make function change state etc
+		Some validation of form and so enable DELETE hole button, add new hole etc
         Store in firebase geocoord type array and add to the hole
         Finish other bits of hole form
         Store hole and add to list
+		Persist to firebase
         When item in list selected - show CL on map?
         Get button states etc correct so new,edit, delete work (and with database)
     Design hole structure/db persistance
@@ -75,6 +89,10 @@ export class CourseEditComponent implements OnInit {
       );
   }
   
+  doButtonEnable(){
+    //Handle in CSS?
+  }
+
   onSave(){
     //Could this be new or update?
     // Test from this.course.selid?
@@ -102,16 +120,20 @@ export class CourseEditComponent implements OnInit {
 
   onAddHole(){
     // TODO enable/show form enable button for centre line etc
-    this.selHole = -1;
-    let h = new Hole();
-    let x = this.newHoleForm;
-    h.id = x.get("newHoleId").value;
-    h.par = 5;
-    h.si = 2;
-    h.sg_scr = 4.7;
-    if(this.course.holes== null)
-      this.course.holes =  new Array<Object>();
-    this.course.holes.push(Object.assign({},h));
+    if(this.state === PageState.view){
+      this.state = PageState.addingHole;
+    }
+    
+    // this.selHole = -1;
+    // let h = new Hole();
+    // let x = this.newHoleForm;
+    // h.id = x.get("newHoleId").value;
+    // h.par = 5;
+    // h.si = 2;
+    // h.sg_scr = 4.7;
+    // if(this.course.holes== null)
+    //   this.course.holes =  new Array<Object>();
+    // this.course.holes.push(Object.assign({},h));
     //Clear form
     //this.newHoleId.setValue( "");
   }
@@ -124,6 +146,12 @@ export class CourseEditComponent implements OnInit {
   onDoCenterLine(){
     // New or edit ?
     this.mapView.doCentreLine(true);
+    //Is possible this time?
+    if(this.state == PageState.view){
+      this.state = PageState.editCL;
+      this.doButtonEnable;
+      this.mapView.doCentreLine(true);
+    }
   }
 
   onCLEvent($event){
@@ -136,6 +164,7 @@ export class CourseEditComponent implements OnInit {
         dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
       }
       this.newHoleSG = GeoCalcs.m2yrd(dSum);
+      this.state = PageState.addingHole;
     }
   }
 }
