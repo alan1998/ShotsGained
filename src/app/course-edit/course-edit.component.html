@@ -29,8 +29,8 @@
               </tr>
           </tbody>
         </table>
-        <div>
-          <form [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
+        <div >
+          <form id="newHole" [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
             <input class="newTxt holeIDCol"   type="text" formControlName="newHoleId" >
             <select class="parCol"  formControlName ="newHolePar" > 
               <option  >3</option>
@@ -41,14 +41,18 @@
             <select class="SICol" style='width:70px'  formControlName="newHoleSI">
               <option *ngFor="let n of SIs" [value]="n">{{n}}</option>
             </select>
-            <!--<input type="number" value="{{this.newHoleSG | number:'1.1-1'}}">-->
-            <span>{{this.newHoleSG | number:'1.1-1'}}</span>
+            <span [style.visibility]="this.newHoleSG===-1 ? 'hidden' : 'visible' ">{{this.newHoleSG | number:'1.1-1'}}</span>
+            <div *ngIf="(newHoleId.invalid || newHolePar.invalid) && (newHoleForm.dirty || newHoleForm.touched)" class="alert alert-danger">
+              <!--<div *ngIf="newHoleId.errors.required"> Id or hole number required</div>
+              <div *ngIf="newHolePar.errors.required"> Par for required</div>-->
+              <div *ngIf="newHoleForm.errors.incomplete">Incomplete</div>
+            </div>
           </form>      
         </div>
-        <div class="btn-group btn-icon">
+        <div   class="btn-group btn-icon">
           <button (click)="onAddHole()"  class="btn" 
               [disabled]="state === PageState.addingHole || state === PageState.editCL">
-            <clr-icon shape="plus" size="16"></clr-icon>
+            <clr-icon shape="new" size="16"></clr-icon>
             <span class="clr-icon-title">Add hole</span>
           </button>
           <button (click)="onDoCenterLine()" class ="btn" [disabled]="state === PageState.view" >

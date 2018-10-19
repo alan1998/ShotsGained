@@ -99,7 +99,7 @@ export class MapComponent implements OnInit {
     return loc;
   }
 
-  doCentreLine(newLine:boolean){
+  doCenterLine(newLine:boolean){
     if(newLine){
       //Clear any existing and set mode
       if( this.vectorSrcCL !=  null)
@@ -114,6 +114,20 @@ export class MapComponent implements OnInit {
     }
     else{
       //Doing an edit of existing line
+    }
+  }
+
+  doClearCenterLine(){
+    if( this.vectorSrcCL !=  null)
+      this.vectorSrcCL.clear({fast:true});
+  }
+
+  showCenterLine(cl:Array<firebase.firestore.GeoPoint>){
+    this.doClearCenterLine();
+    if(cl != null){
+      cl.forEach((p)=>{
+        console.log(p);
+      });
     }
   }
 

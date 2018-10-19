@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild} from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { FormControl, FormGroup } from '@angular/forms'
+import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 
@@ -28,11 +28,16 @@ export class CourseEditComponent implements OnInit {
   vectorSrcCL;
   selHole;
   newHoleForm =  new FormGroup({
-    newHoleId: new FormControl(''),
-    newHolePar: new FormControl(''),
+    newHoleId: new FormControl('',Validators.required),
+    newHolePar: new FormControl('',Validators.required),
     newHoleSI: new FormControl('')
-  });
+  },{validators:this.valNewHole});
   newHoleSG:number;
+  newHoleCL:firebase.firestore.GeoPoint[];
+
+  get newHoleId() {return this.newHoleForm.get("newHoleId");}
+  get newHolePar() {return this.newHoleForm.get("newHolePar");}
+  get newHoleSI() {return this.newHoleForm.get("newHoleSI");}
 
   static readonly PageState = PageState;
   readonly PageState = CourseEditComponent.PageState;
@@ -48,16 +53,16 @@ export class CourseEditComponent implements OnInit {
     for(let i=1; i <19; i++){
       this.SIs[i-1] = i.toString();
     }
-    this.newHoleSG = 4;
+    this.newHoleSG = -1;
    }
 
   /*
     Next:   
         Form for adding hole 
         Get center line back as lat,lon array
+		Make button bar part of form so submit functions? Some validation of form and so enable DELETE hole button, add new hole etc
 		Function for enablement of buttons - i.e. state variable for page mode
 		->Add add button to button bar make function change state etc
-		Some validation of form and so enable DELETE hole button, add new hole etc
         Store in firebase geocoord type array and add to the hole
         Finish other bits of hole form
         Store hole and add to list
@@ -93,6 +98,13 @@ export class CourseEditComponent implements OnInit {
     //Handle in CSS?
   }
 
+  valNewHole(g: FormGroup){
+    //More specific message about centre line
+    //Style around fields 
+    console.log('validate new hole');
+    return {'incomplete' : true};
+  }
+
   onSave(){
     //Could this be new or update?
     // Test from this.course.selid?
@@ -104,12 +116,15 @@ export class CourseEditComponent implements OnInit {
 
   onSelHole(n:number){
     this.selHole = n;
-    console.log(this.course.holes[n]["par"]);
-    this.newHoleForm.setValue({'newHoleId' : this.course.holes[n]["id"],
-        'newHolePar': 5 /*this.course.holes[n]["id"]*/,
-        'newHoleSI': this.course.holes[n]["si"]
-        });
-    this.newHoleSG =  this.course.holes[n]["sg_scr"];
+    if(this.course.holes != null){
+      this.mapView.showCenterLine(this.course.holes[n]["cl"]);
+      console.log(this.course.holes[n]["par"]);
+      this.newHoleForm.setValue({'newHoleId' : this.course.holes[n]["id"],
+          'newHolePar': 5 /*this.course.holes[n]["id"]*/,
+          'newHoleSI': this.course.holes[n]["si"]
+          });
+      this.newHoleSG =  this.course.holes[n]["sg_scr"];
+    }
     
   }
 
@@ -121,38 +136,41 @@ export class CourseEditComponent implements OnInit {
   onAddHole(){
     // TODO enable/show form enable button for centre line etc
     if(this.state === PageState.view){
+      this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
+      //Todo also clear on map
       this.state = PageState.addingHole;
     }
   }
 
   onNewHoleSubmit(){
-    console.log(this.newHoleForm.value);
-    console.log(this.newHoleForm.value["newHoleId"]);
     //Todo validate?
     this.state = PageState.view;
-    // this.selHole = -1;
     let h = new Hole();
-    // let x = this.newHoleForm;
+    //Todo use the get accessors here
     h.id = this.newHoleForm.value["newHoleId"];
-    h.par = parseInt("4");//this.newHoleForm.value["par"]);
-    h.si = parseInt(this.newHoleForm.value["si"].toString());
+    h.par = this.newHoleForm.value["newHolePar"];
+    h.si = parseInt(this.newHoleForm.value["newHoleSI"].toString());
     h.sg_scr = this.newHoleSG;
+    h.cl = this.newHoleCL;
     if(this.course.holes== null)
       this.course.holes =  new Array<Object>();
     this.course.holes.push(Object.assign({},h));
     //todo get the CL array added
     //Clear form
-    //this.newHoleId.setValue( "");
+    this.newHoleForm.reset();
+    this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
+    this.mapView.doClearCenterLine();
+    this.newHoleSG = -1;
   }
 
   onDoCenterLine(){
     // New or edit ?
-    this.mapView.doCentreLine(true);
+    this.mapView.doCenterLine(true);
     //Is possible this time?
     if(this.state == PageState.view){
       this.state = PageState.editCL;
       this.doButtonEnable;
-      this.mapView.doCentreLine(true);
+      this.mapView.doCenterLine(true);
     }
   }
 
@@ -162,6 +180,10 @@ export class CourseEditComponent implements OnInit {
     if($event == "LineModified" || $event=="LineAdded"){
       let pts = this.mapView.getCenterLine();
       let dSum = 0;
+      this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
+      pts.forEach((p)=>{
+        this.newHoleCL.push(new firebase.firestore.GeoPoint(p[1],p[0]));
+      });
       for(let n =0; n < pts.length-1; n++ ){
         dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
       }

@@ -26,6 +26,7 @@ export class Hole {
   par:number;
   si:number;
   sg_scr:number;
+  cl: firebase.firestore.GeoPoint[];
 }
 
 export class Course implements ICourse {
