@@ -1,6 +1,8 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
-import olMap from "../../../node_modules/ol/Map"
+import Map from "../../../node_modules/ol/Map"
+import olFeature  from "../../../node_modules/ol/feature";
+
 import olView from "../../../node_modules/ol/view"
 import olBingSource from "../../../node_modules/ol/source/BingMaps"
 import olXYZ from '../../../node_modules/ol/source/XYZ';
@@ -8,9 +10,12 @@ import olTileLayer from '../../../node_modules/ol/layer/Tile';
 import olControl from '../../../node_modules/ol/control/control';
 import olVector from '../../../node_modules/ol/source/vector';
 import olVecLayer from '../../../node_modules/ol/layer/vector';
-import {Draw, Modify} from '../../../node_modules/ol/interaction';
 
+import {Draw, Modify} from '../../../node_modules/ol/interaction';
+import {LineString, Point as olPoint } from "../../../node_modules/ol/geom";
 import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
+//import { Coordinate } from "../../../node_modules/ol/coordinate";
+
 
 import { environment } from '../../environments/environment';
 //import {olConfig} from "../app.module";
@@ -25,7 +30,7 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-  map;
+  map : Map;
   sourceXYZ: olXYZ;
   source : olBingSource;
   layer: olTileLayer;
@@ -67,7 +72,7 @@ export class MapComponent implements OnInit {
       this.vectorSrcCL = new olVector({wrapX: false});
       this.vecLayer = new olVecLayer({source:this.vectorSrcCL});
 
-      this.map = new olMap({target: 'map',
+      this.map = new Map({target: 'map',
         layers: [this.layer, this.vecLayer],
         view: this.view,
         controls: []
@@ -125,9 +130,18 @@ export class MapComponent implements OnInit {
   showCenterLine(cl:Array<firebase.firestore.GeoPoint>){
     this.doClearCenterLine();
     if(cl != null){
+      let coords = new  Array<any>();
       cl.forEach((p)=>{
-        console.log(p);
+        console.log(p.longitude,p.latitude);
+        let pt = fromLonLat([p.longitude, p.latitude]);
+        coords.push(pt);
       });
+      let ls = new LineString(coords);
+      let f = new olFeature({
+        geometry : ls
+      });
+      
+      this.vectorSrcCL.addFeature(f);
     }
   }
 

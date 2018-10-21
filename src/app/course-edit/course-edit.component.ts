@@ -34,7 +34,7 @@ export class CourseEditComponent implements OnInit {
   },{validators:this.valNewHole});
   newHoleSG:number;
   newHoleCL:firebase.firestore.GeoPoint[];
-
+  
   get newHoleId() {return this.newHoleForm.get("newHoleId");}
   get newHolePar() {return this.newHoleForm.get("newHolePar");}
   get newHoleSI() {return this.newHoleForm.get("newHoleSI");}
@@ -58,8 +58,10 @@ export class CourseEditComponent implements OnInit {
 
   /*
     Next:   
-        Form for adding hole 
-        Get center line back as lat,lon array
+        Button delete hole
+        Button edit hole
+        Buttons to shift order up down 
+        Get enablement and verification right
 		Make button bar part of form so submit functions? Some validation of form and so enable DELETE hole button, add new hole etc
 		Function for enablement of buttons - i.e. state variable for page mode
 		->Add add button to button bar make function change state etc
@@ -67,11 +69,11 @@ export class CourseEditComponent implements OnInit {
         Finish other bits of hole form
         Store hole and add to list
 		Persist to firebase
-        When item in list selected - show CL on map?
+        
         Get button states etc correct so new,edit, delete work (and with database)
     Design hole structure/db persistance
-    Add hole button and hard code to add a hole
-    Make save of hole work
+    
+    Deal with missing SI better on screen
     
     Hole:
     id(number),SI,Par, SG_Scr
@@ -102,7 +104,20 @@ export class CourseEditComponent implements OnInit {
     //More specific message about centre line
     //Style around fields 
     console.log('validate new hole');
-    return {'incomplete' : true};
+    if(this.newHoleId != undefined){
+      if(this.newHoleId.value == ""){
+        return {'incomplete' : true};
+      }
+      if(this.newHolePar.value == null){
+        return {'incomplete' : true};
+      }
+      if(this.newHoleCL==null){
+        if(this.newHoleCL.length < 2){
+          return{'no_centerline': true};
+          }
+        }
+    }
+    return {'no_error':true};
   }
 
   onSave(){

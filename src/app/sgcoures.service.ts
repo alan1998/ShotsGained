@@ -82,6 +82,7 @@ export class SGCouresService {
         c.location = a["location"];
         c.boundary = a["boundary"];
         c.holes = a["holes"];
+        
         resolve(c)
         },
         ()=>{console.log("Subscribe error");

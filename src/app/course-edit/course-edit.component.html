@@ -7,7 +7,9 @@
           <input name="name" [(ngModel)]="course.name" 
                   required minlength="2" pattern="^[A-Za-z ]+$"/>
           <!--<input (keyup.enter)="course.name=$event.target.value" />-->
-          <button type="submit">Save</button>
+          <button  class="btn" type="submit">
+            <clr-icon shape="floppy" size="16"></clr-icon>
+            <span class="clr-icon-title">Save course</span>          </button>
         </form>
         <button (click)="onClickUpdateLocation()">Set location</button>
 
@@ -25,7 +27,7 @@
                   <td>{{h["id"]}}</td>
                   <td>{{h["par"]}}</td>
                   <td>{{h["si"]}}</td>
-                  <td>{{h["sg_scr"]}}</td>
+                  <td>{{h["sg_scr"] | number:'1.0-0'}}</td>
               </tr>
           </tbody>
         </table>
@@ -45,7 +47,8 @@
             <div *ngIf="(newHoleId.invalid || newHolePar.invalid) && (newHoleForm.dirty || newHoleForm.touched)" class="alert alert-danger">
               <!--<div *ngIf="newHoleId.errors.required"> Id or hole number required</div>
               <div *ngIf="newHolePar.errors.required"> Par for required</div>-->
-              <div *ngIf="newHoleForm.errors.incomplete">Incomplete</div>
+              <div *ngIf="newHoleForm.errors.no_centerline">Need a center line for the hole</div>
+              <div *ngIf="newHoleForm.errors.incomplete">Either hole id or par is missing</div>
             </div>
           </form>      
         </div>
