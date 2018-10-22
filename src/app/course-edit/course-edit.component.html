@@ -7,9 +7,10 @@
           <input name="name" [(ngModel)]="course.name" 
                   required minlength="2" pattern="^[A-Za-z ]+$"/>
           <!--<input (keyup.enter)="course.name=$event.target.value" />-->
-          <button  class="btn" type="submit">
-            <clr-icon shape="floppy" size="16"></clr-icon>
-            <span class="clr-icon-title">Save course</span>          </button>
+          <button  class="btn" type="submit" [disabled]="this.dirty===false">
+            <clr-icon shape="floppy" size="16" ></clr-icon>
+            <span class="clr-icon-title">Save course</span>
+           </button>
         </form>
         <button (click)="onClickUpdateLocation()">Set location</button>
 
@@ -31,6 +32,19 @@
               </tr>
           </tbody>
         </table>
+        <!-- Buttons for table row adjust / start edit etc -->
+        <div class="btn-group btn-icon">
+          <button (click)="onShiftUp()" class ="btn" [disabled]="this.selHole<=0">
+            <clr-icon shape="upload" size="16"></clr-icon>
+          </button>
+          <button (click)="onShiftDown()" class ="btn" [disabled]="(this.selHole<0) || (this.selHole == (course.holes.length-1))">
+            <clr-icon shape="download" size="16"></clr-icon>
+          </button>
+          <button (click)="onDeleteHole()" class ="btn" [disabled]="this.selHole<0">
+            <clr-icon shape="times" size="16"></clr-icon>
+          </button>
+        </div>
+        <!-- Form for new hole -->
         <div >
           <form id="newHole" [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
             <input class="newTxt holeIDCol"   type="text" formControlName="newHoleId" >
@@ -44,12 +58,12 @@
               <option *ngFor="let n of SIs" [value]="n">{{n}}</option>
             </select>
             <span [style.visibility]="this.newHoleSG===-1 ? 'hidden' : 'visible' ">{{this.newHoleSG | number:'1.1-1'}}</span>
-            <div *ngIf="(newHoleId.invalid || newHolePar.invalid) && (newHoleForm.dirty || newHoleForm.touched)" class="alert alert-danger">
-              <!--<div *ngIf="newHoleId.errors.required"> Id or hole number required</div>
-              <div *ngIf="newHolePar.errors.required"> Par for required</div>-->
+            <!--<div *ngIf="(newHoleId.invalid || newHolePar.invalid) && (newHoleForm.dirty || newHoleForm.touched)" class="alert alert-danger">
+              <div *ngIf="newHoleId.errors.required"> Id or hole number required</div>
+              <div *ngIf="newHolePar.errors.required"> Par for required</div>
               <div *ngIf="newHoleForm.errors.no_centerline">Need a center line for the hole</div>
               <div *ngIf="newHoleForm.errors.incomplete">Either hole id or par is missing</div>
-            </div>
+            </div>-->
           </form>      
         </div>
         <div   class="btn-group btn-icon">

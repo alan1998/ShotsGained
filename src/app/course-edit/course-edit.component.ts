@@ -26,7 +26,7 @@ export class CourseEditComponent implements OnInit {
   SIs:Array<string>;
   h;
   vectorSrcCL;
-  selHole;
+  selHole:number = -1;
   newHoleForm =  new FormGroup({
     newHoleId: new FormControl('',Validators.required),
     newHolePar: new FormControl('',Validators.required),
@@ -34,10 +34,11 @@ export class CourseEditComponent implements OnInit {
   },{validators:this.valNewHole});
   newHoleSG:number;
   newHoleCL:firebase.firestore.GeoPoint[];
+  dirty:boolean = false;
   
-  get newHoleId() {return this.newHoleForm.get("newHoleId");}
-  get newHolePar() {return this.newHoleForm.get("newHolePar");}
-  get newHoleSI() {return this.newHoleForm.get("newHoleSI");}
+  //get newHoleId() {return this.newHoleForm.get("newHoleId");}
+  //get newHolePar() {return this.newHoleForm.get("newHolePar");}
+  //get newHoleSI() {return this.newHoleForm.get("newHoleSI");}
 
   static readonly PageState = PageState;
   readonly PageState = CourseEditComponent.PageState;
@@ -58,7 +59,6 @@ export class CourseEditComponent implements OnInit {
 
   /*
     Next:   
-        Button delete hole
         Button edit hole
         Buttons to shift order up down 
         Get enablement and verification right
@@ -104,19 +104,19 @@ export class CourseEditComponent implements OnInit {
     //More specific message about centre line
     //Style around fields 
     console.log('validate new hole');
-    if(this.newHoleId != undefined){
-      if(this.newHoleId.value == ""){
-        return {'incomplete' : true};
-      }
-      if(this.newHolePar.value == null){
-        return {'incomplete' : true};
-      }
-      if(this.newHoleCL==null){
-        if(this.newHoleCL.length < 2){
-          return{'no_centerline': true};
-          }
-        }
-    }
+    // if(this.newHoleForm["newHoleId"] != undefined){
+    //   if(this.newHoleForm["newHoleId"].value == ""){
+    //     return {'incomplete' : true};
+    //   }
+    //   if(this.newHoleForm["newHolePar"].value == null){
+    //     return {'incomplete' : true};
+    //   }
+    //   if(this.newHoleCL==null){
+    //     if(this.newHoleCL.length < 2){
+    //       return{'no_centerline': true};
+    //       }
+    //     }
+    // }
     return {'no_error':true};
   }
 
@@ -141,6 +141,22 @@ export class CourseEditComponent implements OnInit {
       this.newHoleSG =  this.course.holes[n]["sg_scr"];
     }
     
+  }
+
+  onShiftUp(){
+    //Shift selected hole 
+  }
+
+  onShiftDown(){
+    //Shift selected hole down
+  }
+
+  onDeleteHole(){
+    if(this.selHole >= 0  && this.selHole < this.course.holes.length){
+      //Confirm dialog?
+      this.course.holes.splice(this.selHole,1);
+      this.dirty = true;
+    }
   }
 
   onClickUpdateLocation(){
