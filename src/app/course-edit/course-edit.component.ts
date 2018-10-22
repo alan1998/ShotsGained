@@ -145,10 +145,27 @@ export class CourseEditComponent implements OnInit {
 
   onShiftUp(){
     //Shift selected hole 
+    if(this.selHole >= 1  && this.selHole < this.course.holes.length){
+      let t = this.course.holes[this.selHole-1];
+      this.course.holes[this.selHole-1] = this.course.holes[this.selHole];
+      this.course.holes[this.selHole] = t;
+      this.selHole -= 1;
+      this.onSelHole(this.selHole);
+      this.dirty = true;
+    }
   }
 
   onShiftDown(){
     //Shift selected hole down
+    if(this.selHole >= 0  && this.selHole <= this.course.holes.length-2){
+      let t = this.course.holes[this.selHole+1];
+      this.course.holes[this.selHole+1] = this.course.holes[this.selHole];
+      this.course.holes[this.selHole] = t;
+      this.selHole += 1;
+      this.onSelHole(this.selHole);
+      this.dirty = true;
+    }
+
   }
 
   onDeleteHole(){
@@ -192,6 +209,7 @@ export class CourseEditComponent implements OnInit {
     this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
     this.mapView.doClearCenterLine();
     this.newHoleSG = -1;
+    this.dirty =true;
   }
 
   onDoCenterLine(){
