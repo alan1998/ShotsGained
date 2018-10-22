@@ -90,7 +90,7 @@ export class MapComponent implements OnInit {
       this.modify.on('modifyend', (evt)=>{
         this.eventCL.emit("LineModified");
       });
-      this.map.addInteraction(this.modify);
+      
     }
     else{
       this.view.setCenter(firstPlace);
@@ -102,6 +102,10 @@ export class MapComponent implements OnInit {
     loc = toLonLat(loc);
     console.log(loc);
     return loc;
+  }
+  enableInteraction(en:boolean){
+    if(en){this.map.addInteraction(this.modify);}
+    else{this.map.removeInteraction()}    
   }
 
   doCenterLine(newLine:boolean){

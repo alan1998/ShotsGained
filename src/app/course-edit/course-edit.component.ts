@@ -11,7 +11,8 @@ import { GeoCalcs } from '../util/calcs'
 enum PageState{
   view,
   editCL,
-  addingHole
+  addingHole,
+  editHole
 };
 
 @Component({
@@ -60,15 +61,15 @@ export class CourseEditComponent implements OnInit {
   /*
     Next:   
         Button edit hole
-        Buttons to shift order up down 
+         Tick and cross on form tool bar
         Get enablement and verification right
 		Make button bar part of form so submit functions? Some validation of form and so enable DELETE hole button, add new hole etc
 		Function for enablement of buttons - i.e. state variable for page mode
 		->Add add button to button bar make function change state etc
         Store in firebase geocoord type array and add to the hole
         Finish other bits of hole form
-        Store hole and add to list
-		Persist to firebase
+        
+		
         
         Get button states etc correct so new,edit, delete work (and with database)
     Design hole structure/db persistance
@@ -127,6 +128,7 @@ export class CourseEditComponent implements OnInit {
     console.log(this.course);
     console.log(this.selId);
     this.srvDB.Update(this.selId,this.course);
+    this.dirty = false;
   }
 
   onSelHole(n:number){
@@ -181,6 +183,13 @@ export class CourseEditComponent implements OnInit {
     this.course.location = new firebase.firestore.GeoPoint(loc[1],loc[0]);
   }
 
+  onEditHole(){
+    if(this.state === PageState.view && this.selHole >= 0){
+      this.state = PageState.editHole; 
+      this.mapView.enableInteraction(true); 
+    }
+  }
+
   onAddHole(){
     // TODO enable/show form enable button for centre line etc
     if(this.state === PageState.view){
@@ -188,6 +197,10 @@ export class CourseEditComponent implements OnInit {
       //Todo also clear on map
       this.state = PageState.addingHole;
     }
+  }
+  onNewHoleCancel(){
+    this.state = PageState.view;
+    this.mapView.enableInteraction(false);
   }
 
   onNewHoleSubmit(){
@@ -208,6 +221,7 @@ export class CourseEditComponent implements OnInit {
     this.newHoleForm.reset();
     this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
     this.mapView.doClearCenterLine();
+    this.mapView.enableInteraction(false);
     this.newHoleSG = -1;
     this.dirty =true;
   }

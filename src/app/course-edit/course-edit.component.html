@@ -2,16 +2,18 @@
   <div class="content-area">
     <div class="clr-row">
       <div class="clr-col-4">
-        <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
-          <label>Name: </label>
-          <input name="name" [(ngModel)]="course.name" 
-                  required minlength="2" pattern="^[A-Za-z ]+$"/>
-          <!--<input (keyup.enter)="course.name=$event.target.value" />-->
-          <button  class="btn" type="submit" [disabled]="this.dirty===false">
-            <clr-icon shape="floppy" size="16" ></clr-icon>
-            <span class="clr-icon-title">Save course</span>
-           </button>
-        </form>
+        <div class="btn-group btn-icon">
+          <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
+            <label>Name: </label>
+            <input name="name" [(ngModel)]="course.name" 
+                    required minlength="2" pattern="^[A-Za-z ]+$"/>
+            <!--<input (keyup.enter)="course.name=$event.target.value" />-->
+            <button  class="btn" type="submit" [disabled]="this.dirty===false">
+              <clr-icon shape="floppy" size="16" ></clr-icon>
+              <!--<span class="clr-icon-title">Save course</span>-->
+            </button>
+          </form>
+        </div>
         <button (click)="onClickUpdateLocation()">Set location</button>
 
         <table class="table">
@@ -27,8 +29,8 @@
                 <tr *ngFor="let h of course.holes; let i=index" [ngClass] ="{'activeHole':this.selHole==i}" (click)="this.onSelHole(i)">
                   <td>{{h["id"]}}</td>
                   <td>{{h["par"]}}</td>
-                  <td>{{h["si"]}}</td>
-                  <td>{{h["sg_scr"] | number:'1.0-0'}}</td>
+                  <td>{{h["si"] | number:'1.0-0'}}</td>
+                  <td>{{h["sg_scr"] | number:'1.0-1'}}</td>
               </tr>
           </tbody>
         </table>
@@ -39,6 +41,17 @@
           </button>
           <button (click)="onShiftDown()" class ="btn" [disabled]="(this.selHole<0) || (this.selHole == (course.holes.length-1))">
             <clr-icon shape="download" size="16"></clr-icon>
+          </button>
+          <button (click)="onAddHole()"  class="btn" 
+              [disabled]="state === PageState.addingHole || state === PageState.editCL">
+            <clr-icon shape="plus" size="16"></clr-icon>
+            <span class="clr-icon-title">Add hole</span>
+          </button>
+          <button (click)="onEditHole()"  class="btn" 
+              [disabled]="state === PageState.addingHole || state === PageState.editCL || 
+                    state === PageState.editHole || this.selHole<0">
+            <clr-icon shape="add-text" size="16"></clr-icon>
+            <span class="clr-icon-title">Add hole</span>
           </button>
           <button (click)="onDeleteHole()" class ="btn" [disabled]="this.selHole<0">
             <clr-icon shape="times" size="16"></clr-icon>
@@ -67,18 +80,17 @@
           </form>      
         </div>
         <div   class="btn-group btn-icon">
-          <button (click)="onAddHole()"  class="btn" 
-              [disabled]="state === PageState.addingHole || state === PageState.editCL">
-            <clr-icon shape="new" size="16"></clr-icon>
-            <span class="clr-icon-title">Add hole</span>
-          </button>
           <button (click)="onDoCenterLine()" class ="btn" [disabled]="state === PageState.view" >
             CL
             <!--<clr-icon shape="child-arrow" size="16"></clr-icon>-->
           </button>
           <button (click)="onNewHoleSubmit()" class ="btn" 
             [disabled]="state === PageState.view">
-            <clr-icon shape="plus" size="16"  ></clr-icon>
+            <clr-icon shape="check" size="16"  ></clr-icon>
+          </button>
+          <button (click)="onNewHoleCancel()" class ="btn" 
+            [disabled]="state === PageState.view">
+            <clr-icon shape="times" size="16"  ></clr-icon>
           </button>
         </div>
       </div>
