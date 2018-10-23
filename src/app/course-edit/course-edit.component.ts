@@ -60,8 +60,7 @@ export class CourseEditComponent implements OnInit {
 
   /*
     Next:   
-        Button edit hole
-         Tick and cross on form tool bar
+        
         Get enablement and verification right
 		Make button bar part of form so submit functions? Some validation of form and so enable DELETE hole button, add new hole etc
 		Function for enablement of buttons - i.e. state variable for page mode
@@ -73,12 +72,8 @@ export class CourseEditComponent implements OnInit {
         
         Get button states etc correct so new,edit, delete work (and with database)
     Design hole structure/db persistance
-    
-    Deal with missing SI better on screen
-    
-    Hole:
-    id(number),SI,Par, SG_Scr
-    Sequence from the array
+
+    Add SG (shell of methods ) tables and interpolation to util/ calcs and store not distance
   */
   ngOnInit() {
     this.selId = this.route.snapshot.paramMap.get('id');
@@ -205,7 +200,7 @@ export class CourseEditComponent implements OnInit {
 
   onNewHoleSubmit(){
     //Todo validate?
-    this.state = PageState.view;
+    
     let h = new Hole();
     //Todo use the get accessors here
     h.id = this.newHoleForm.value["newHoleId"];
@@ -213,10 +208,16 @@ export class CourseEditComponent implements OnInit {
     h.si = parseInt(this.newHoleForm.value["newHoleSI"].toString());
     h.sg_scr = this.newHoleSG;
     h.cl = this.newHoleCL;
-    if(this.course.holes== null)
+    if(this.course.holes== null){
       this.course.holes =  new Array<Object>();
-    this.course.holes.push(Object.assign({},h));
-    //todo get the CL array added
+    }
+    if(this.state == PageState.addingHole){
+      this.course.holes.push(Object.assign({},h));
+    }
+    else{
+      //Editing existing
+      this.course.holes[this.selHole] = h;
+    }  
     //Clear form
     this.newHoleForm.reset();
     this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
@@ -224,6 +225,8 @@ export class CourseEditComponent implements OnInit {
     this.mapView.enableInteraction(false);
     this.newHoleSG = -1;
     this.dirty =true;
+    this.state = PageState.view;
+    this.selHole = -1;
   }
 
   onDoCenterLine(){
@@ -251,7 +254,7 @@ export class CourseEditComponent implements OnInit {
         dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
       }
       this.newHoleSG = GeoCalcs.m2yrd(dSum);
-      this.state = PageState.addingHole;
+      //this.state = PageState.addingHole;
     }
   }
 }

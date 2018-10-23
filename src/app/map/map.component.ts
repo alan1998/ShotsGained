@@ -104,19 +104,29 @@ export class MapComponent implements OnInit {
     return loc;
   }
   enableInteraction(en:boolean){
-    if(en){this.map.addInteraction(this.modify);}
-    else{this.map.removeInteraction()}    
+    if(en){
+      this.map.addInteraction(this.modify);
+    }
+    else{
+      let r = this.map.removeInteraction(this.modify);
+      if(r==undefined){
+        console.log("Remove not found");
+      }
+    }    
   }
 
   doCenterLine(newLine:boolean){
     if(newLine){
       //Clear any existing and set mode
-      if( this.vectorSrcCL !=  null)
-        this.vectorSrcCL.clear({fast:true});
+      if( this.vectorSrcCL !=  null){
+        this.vectorSrcCL.clear({fast:true});}
       this.map.addInteraction(this.drawAction);
-      
+    
       this.drawAction.on('drawend',(evt) => {
-        this.map.removeInteraction(this.drawAction);
+        let r = this.map.removeInteraction(this.drawAction);
+        if(r==undefined){
+          console.log("Remove not found in doCenterLine");
+        }
         this.eventCL.emit("LineAdded");
         console.log("Draw end");
       } );  
