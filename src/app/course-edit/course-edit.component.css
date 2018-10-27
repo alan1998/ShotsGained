@@ -5,7 +5,7 @@
         }
 .activeHole {background-color: rgb(137, 137, 151); }
 
-.holeIDCol {width:20%; border: 1px solid black;}
-.parCol {width:35%;border: 1px solid black;}
-.SICol {width:35%;border: 1px solid black;}
+.holeIDCol {width:20%; }
+.parCol {width:35%;}
+.SICol {width:35%;}
 .SGOut {border:1px solid black;margin:5px}

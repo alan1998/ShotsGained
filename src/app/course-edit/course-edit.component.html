@@ -26,7 +26,9 @@
               </tr>
           </thead>
           <tbody>
-                <tr *ngFor="let h of course.holes; let i=index" [ngClass] ="{'activeHole':this.selHole==i}" (click)="this.onSelHole(i)">
+                <tr *ngFor="let h of course.holes; let i=index" 
+                    [ngClass] ="{'activeHole':this.selHole==i}" 
+                    (click)="this.onSelHole(i)">
                   <td>{{h["id"]}}</td>
                   <td>{{h["par"]}}</td>
                   <td>{{h["si"] | number:'1.0-0'}}</td>
@@ -36,24 +38,23 @@
         </table>
         <!-- Buttons for table row adjust / start edit etc -->
         <div class="btn-group btn-icon">
-          <button (click)="onShiftUp()" class ="btn" [disabled]="this.selHole<=0">
+          <button (click)="onShiftUp()" class ="btn" [disabled]="this.selHole<=0 || (state != PageState.view)">
             <clr-icon shape="upload" size="16"></clr-icon>
           </button>
-          <button (click)="onShiftDown()" class ="btn" [disabled]="(this.selHole<0) || (this.selHole == (course.holes.length-1))">
+          <button (click)="onShiftDown()" class ="btn" [disabled]="((selHole<0) || (selHole == (course.holes.length-1))) || state != PageState.view">
             <clr-icon shape="download" size="16"></clr-icon>
           </button>
           <button (click)="onAddHole()"  class="btn" 
-              [disabled]="state === PageState.addingHole || state === PageState.editCL">
+              [disabled]="state != PageState.view">
             <clr-icon shape="plus" size="16"></clr-icon>
             <span class="clr-icon-title">Add hole</span>
           </button>
           <button (click)="onEditHole()"  class="btn" 
-              [disabled]="state === PageState.addingHole || state === PageState.editCL || 
-                    state === PageState.editHole || this.selHole<0">
+              [disabled]="state != PageState.view || this.selHole<0">
             <clr-icon shape="add-text" size="16"></clr-icon>
             <span class="clr-icon-title">Add hole</span>
           </button>
-          <button (click)="onDeleteHole()" class ="btn" [disabled]="this.selHole<0">
+          <button (click)="isDeleteConfirmVisible=true" class ="btn" [disabled]="this.selHole<0 || state != PageState.view ">
             <clr-icon shape="times" size="16"></clr-icon>
           </button>
         </div>
@@ -94,6 +95,28 @@
           </button>
         </div>
       </div>
+      <clr-modal [(clrModalOpen)]="isDeleteConfirmVisible" [clrModalClosable]="false" [clrModalSize]="'sm'">
+        <h3 class="modal-title">Delete hole</h3>
+        <div class="modal-body">
+            <p>Certain ?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" (click)="isDeleteConfirmVisible = false">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="onDeleteHole()">
+                Delete
+            </button>
+        </div>
+      </clr-modal>
+      <clr-modal [(clrModalOpen)]="showNewHoleNotValid" [clrModalClosable]="true" [clrModalSize]="'sm'">
+          <h3 class="modal-title">New/Edit hole</h3>
+          <div class="modal-body">
+              <p>New a hole id, par and center line for every hole</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn" (click)="showNewHoleNotValid = false">Ok</button>
+          </div>
+        </clr-modal>
+  
       <div class="clr-col-8">
         <app-map id='mapView' (cl-event)="onCLEvent($event)"></app-map>
       </div>

@@ -146,7 +146,6 @@ export class MapComponent implements OnInit {
     if(cl != null){
       let coords = new  Array<any>();
       cl.forEach((p)=>{
-        console.log(p.longitude,p.latitude);
         let pt = fromLonLat([p.longitude, p.latitude]);
         coords.push(pt);
       });
@@ -154,9 +153,13 @@ export class MapComponent implements OnInit {
       let f = new olFeature({
         geometry : ls
       });
-      
       this.vectorSrcCL.addFeature(f);
     }
+  }
+
+  setCenter(p:firebase.firestore.GeoPoint){
+    let pt = fromLonLat([p.longitude, p.latitude]);
+    this.view.setCenter(pt);
   }
 
   getCenterLine():Array<any>{

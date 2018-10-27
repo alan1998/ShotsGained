@@ -10,7 +10,6 @@ import { GeoCalcs } from '../util/calcs'
 
 enum PageState{
   view,
-  editCL,
   addingHole,
   editHole
 };
@@ -32,10 +31,12 @@ export class CourseEditComponent implements OnInit {
     newHoleId: new FormControl('',Validators.required),
     newHolePar: new FormControl('',Validators.required),
     newHoleSI: new FormControl('')
-  },{validators:this.valNewHole});
+  });
   newHoleSG:number;
   newHoleCL:firebase.firestore.GeoPoint[];
   dirty:boolean = false;
+  isDeleteConfirmVisible = false;
+  showNewHoleNotValid = false;
   
   //get newHoleId() {return this.newHoleForm.get("newHoleId");}
   //get newHolePar() {return this.newHoleForm.get("newHolePar");}
@@ -60,18 +61,13 @@ export class CourseEditComponent implements OnInit {
 
   /*
     Next:   
-        
-        Get enablement and verification right
-		Make button bar part of form so submit functions? Some validation of form and so enable DELETE hole button, add new hole etc
-		Function for enablement of buttons - i.e. state variable for page mode
-		->Add add button to button bar make function change state etc
-        Store in firebase geocoord type array and add to the hole
-        Finish other bits of hole form
-        
-		
-        
-        Get button states etc correct so new,edit, delete work (and with database)
-    Design hole structure/db persistance
+    
+    Make Name field and location a form so can detect edit and dirty so save enabled
+    Do form new hole layout with labels
+    Get enablement and verification right
+		Get showCenterLine to show segment yards
+    Prevent navigate off form if dirty without prompt
+    Get map size better
 
     Add SG (shell of methods ) tables and interpolation to util/ calcs and store not distance
   */
@@ -91,30 +87,30 @@ export class CourseEditComponent implements OnInit {
         console.log("err selecting course to edit")}
       );
   }
-  
-  doButtonEnable(){
-    //Handle in CSS?
-  }
+ 
+  // valNewHole(g: FormGroup){
+  //   //More specific message about centre line
+  //   //Style around fields 
+  //   console.log('validate new hole');
+  //   if(this.state != PageState.view){
+  //   //   if(this.newHoleForm["newHoleId"] != undefined){
+  //   //     if(this.newHoleForm["newHoleId"].value == ""){
+  //   //       return {'incomplete' : true};
+  //   //     }
+  //   //     if(this.newHoleForm["newHolePar"].value == null){
+  //   //       return {'incomplete' : true};
+  //   //     }
+  //   //     if(this.newHoleCL==null){
+  //   //       if(this.newHoleCL.length < 2){
+  //   //         return{'no_centerline': true};
+  //   //         }
+  //   //       }
+  //   //   }
+  //   }
+    
 
-  valNewHole(g: FormGroup){
-    //More specific message about centre line
-    //Style around fields 
-    console.log('validate new hole');
-    // if(this.newHoleForm["newHoleId"] != undefined){
-    //   if(this.newHoleForm["newHoleId"].value == ""){
-    //     return {'incomplete' : true};
-    //   }
-    //   if(this.newHoleForm["newHolePar"].value == null){
-    //     return {'incomplete' : true};
-    //   }
-    //   if(this.newHoleCL==null){
-    //     if(this.newHoleCL.length < 2){
-    //       return{'no_centerline': true};
-    //       }
-    //     }
-    // }
-    return {'no_error':true};
-  }
+  //   return {'no_error':true};
+  // }
 
   onSave(){
     //Could this be new or update?
@@ -127,17 +123,21 @@ export class CourseEditComponent implements OnInit {
   }
 
   onSelHole(n:number){
-    this.selHole = n;
-    if(this.course.holes != null){
-      this.mapView.showCenterLine(this.course.holes[n]["cl"]);
-      console.log(this.course.holes[n]["par"]);
-      this.newHoleForm.setValue({'newHoleId' : this.course.holes[n]["id"],
-          'newHolePar': 5 /*this.course.holes[n]["id"]*/,
-          'newHoleSI': this.course.holes[n]["si"]
-          });
-      this.newHoleSG =  this.course.holes[n]["sg_scr"];
+    if(this.state === PageState.view){
+      this.selHole = n;
+      if(this.course.holes != null){
+        let p = GeoCalcs.centerPt(this.course.holes[n]["cl"]);
+        this.
+        mapView.setCenter(p);
+        console.log(p);
+        this.mapView.showCenterLine(this.course.holes[n]["cl"]);
+        // this.newHoleForm.setValue({'newHoleId' : this.course.holes[n]["id"],
+        //     'newHolePar': 5 /*this.course.holes[n]["id"]*/,
+        //     'newHoleSI': this.course.holes[n]["si"]
+        //     });
+        // this.newHoleSG =  this.course.holes[n]["sg_scr"];
+      }
     }
-    
   }
 
   onShiftUp(){
@@ -167,21 +167,30 @@ export class CourseEditComponent implements OnInit {
 
   onDeleteHole(){
     if(this.selHole >= 0  && this.selHole < this.course.holes.length){
-      //Confirm dialog?
+      //Confirm dialog - has happened
       this.course.holes.splice(this.selHole,1);
       this.dirty = true;
+      this.isDeleteConfirmVisible = false;
+      this.mapView.showCenterLine(null);
     }
   }
 
   onClickUpdateLocation(){
     let loc = this.mapView.getCenterLoc();
     this.course.location = new firebase.firestore.GeoPoint(loc[1],loc[0]);
+    this.dirty = true;
   }
 
   onEditHole(){
     if(this.state === PageState.view && this.selHole >= 0){
       this.state = PageState.editHole; 
-      this.mapView.enableInteraction(true); 
+      this.mapView.enableInteraction(true);
+      this.newHoleForm.setValue({'newHoleId' : this.course.holes[this.selHole]["id"],
+          'newHolePar': this.course.holes[this.selHole]["par"],
+          'newHoleSI': this.course.holes[this.selHole]["si"]
+      });
+      this.newHoleSG =  this.course.holes[this.selHole]["sg_scr"];
+      this.newHoleCL = this.course.holes[this.selHole]["cl"];
     }
   }
 
@@ -196,46 +205,65 @@ export class CourseEditComponent implements OnInit {
   onNewHoleCancel(){
     this.state = PageState.view;
     this.mapView.enableInteraction(false);
+    this.onSelHole(this.selHole);
+    this.newHoleForm.reset();
+    this.newHoleSG = null;
   }
 
   onNewHoleSubmit(){
     //Todo validate?
-    
+    let bOk:boolean = true;
     let h = new Hole();
-    //Todo use the get accessors here
     h.id = this.newHoleForm.value["newHoleId"];
+    h.id = h.id.replace(/\s*$/,"");
+    h.id = h.id.replace(/^\s*/,"");
     h.par = this.newHoleForm.value["newHolePar"];
-    h.si = parseInt(this.newHoleForm.value["newHoleSI"].toString());
+    let si = this.newHoleForm.value["newHoleSI"];
+    h.si = parseInt(si==null? si.toString():null);
     h.sg_scr = this.newHoleSG;
     h.cl = this.newHoleCL;
-    if(this.course.holes== null){
-      this.course.holes =  new Array<Object>();
+
+    if((h.id==null || h.id=="") ||
+      (h.par==null) ||
+      (h.cl==null || h.cl.length < 2)){
+      bOk = false;
     }
-    if(this.state == PageState.addingHole){
-      this.course.holes.push(Object.assign({},h));
+    if(bOk){
+      
+      //Todo use the get accessors here
+      if(this.course.holes== null){
+        this.course.holes =  new Array<Object>();
+      }
+      if(this.state == PageState.addingHole){
+        this.course.holes.push(Object.assign({},h));
+      }
+      else{
+        //Editing existing
+        this.course.holes[this.selHole] = h;
+      }  
+      //Clear form
+      this.newHoleForm.reset();
+      this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
+      this.mapView.doClearCenterLine();
+      this.mapView.enableInteraction(false);
+      this.newHoleSG = -1;
+      this.dirty =true;
+      this.state = PageState.view;
+      this.selHole = -1;
     }
     else{
-      //Editing existing
-      this.course.holes[this.selHole] = h;
-    }  
-    //Clear form
-    this.newHoleForm.reset();
-    this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
-    this.mapView.doClearCenterLine();
-    this.mapView.enableInteraction(false);
-    this.newHoleSG = -1;
-    this.dirty =true;
-    this.state = PageState.view;
-    this.selHole = -1;
+      console.log("Show hole not valid");
+      this.showNewHoleNotValid = true;
+    }
   }
 
   onDoCenterLine(){
     // New or edit ?
-    this.mapView.doCenterLine(true);
+    
     //Is possible this time?
-    if(this.state == PageState.view){
-      this.state = PageState.editCL;
-      this.doButtonEnable;
+    if(this.state != PageState.view){
+      
+      
       this.mapView.doCenterLine(true);
     }
   }

@@ -1,3 +1,5 @@
+import * as firebase from 'firebase/app';
+
 export class GeoCalcs {
     //DIstance between points in lat long as meters
     static dist(lon1:number,lat1:number,lon2:number,lat2:number):number{
@@ -19,4 +21,39 @@ export class GeoCalcs {
     static m2yrd(D_in_M:number):number{
         return D_in_M * 1.09361;
     }
+    static centerPt(pts:Array<firebase.firestore.GeoPoint>):firebase.firestore.GeoPoint{
+        let ret = new firebase.firestore.GeoPoint(51.5,-1);
+        let lat =0;
+        let lon =0;
+        pts.forEach((p) => {
+            lat += p.latitude;
+            lon += p.longitude;
+        });
+        if(pts.length > 0){
+            lat /= pts.length;
+            lon /= pts.length;
+            ret = new firebase.firestore.GeoPoint(lat,lon);
+        } 
+        return ret;
+    }
+}
+
+export class ShotsGained{
+   static readonly  tee : number = 0;
+   static readonly  fairway : number = 1;
+   static readonly  rough : number = 2;
+   static readonly  hazard : number = 3;
+   static readonly  green : number = 4;
+
+   strokesHoleOut(dist:number, lie:number ):number {
+    let ret:number = 2;
+    switch(lie){
+        case ShotsGained.tee:
+        break;
+        default:
+            console.log("Impossible lie");
+            break;
+    }   
+    return ret;
+   }
 }
