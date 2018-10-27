@@ -6,7 +6,8 @@ import * as firebase from 'firebase/app';
 
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { MapComponent } from '../map/map.component'
-import { GeoCalcs } from '../util/calcs'
+import { GeoCalcs, ShotsGained } from '../util/calcs'
+
 
 enum PageState{
   view,
@@ -282,6 +283,7 @@ export class CourseEditComponent implements OnInit {
         dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
       }
       this.newHoleSG = GeoCalcs.m2yrd(dSum);
+      let sg = ShotsGained.strokesHoleOut(this.newHoleSG,ShotsGained.tee);
       //this.state = PageState.addingHole;
     }
   }

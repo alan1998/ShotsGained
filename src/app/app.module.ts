@@ -19,6 +19,7 @@ import { CourseListComponent } from './course-list/course-list.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import { CourseEditComponent } from './course-edit/course-edit.component';
 import { AppRoutingModule } from './/app-routing.module'
+import { HoleoutSgService } from 'src/app/holeout-sg.service';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,7 @@ import { AppRoutingModule } from './/app-routing.module'
     AppRoutingModule,
     ReactiveFormsModule
   ],
-  providers: [SGCouresService],
+  providers: [SGCouresService, HoleoutSgService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

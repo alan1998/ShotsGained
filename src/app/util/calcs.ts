@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import { HoleoutSgService } from 'src/app/holeout-sg.service';
 
 export class GeoCalcs {
     //DIstance between points in lat long as meters
@@ -44,16 +45,25 @@ export class ShotsGained{
    static readonly  rough : number = 2;
    static readonly  hazard : number = 3;
    static readonly  green : number = 4;
+   static srvSG:HoleoutSgService;
+   
+   constructor(private srv : HoleoutSgService){
+    //want this as a sttic
+    if(ShotsGained.srvSG == null){
+        ShotsGained.srvSG = srv;
+    }
+   }
 
-   strokesHoleOut(dist:number, lie:number ):number {
-    let ret:number = 2;
-    switch(lie){
-        case ShotsGained.tee:
-        break;
-        default:
-            console.log("Impossible lie");
+   static strokesHoleOut(dist:number, lie:number ):number {
+        let ret:number = 2;
+        switch(lie){
+            case ShotsGained.tee:
+                let a = ShotsGained.srvSG.getStrokesTee(true);
             break;
-    }   
-    return ret;
+            default:
+                console.log("Impossible lie");
+                break;
+        }   
+        return ret;
    }
 }
