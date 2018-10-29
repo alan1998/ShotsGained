@@ -294,8 +294,12 @@ export class CourseEditComponent implements OnInit {
       }
       this.newHoleSG = GeoCalcs.m2yrd(dSum);
       
-      let sg = this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee);
-      //this.state = PageState.addingHole;
+      this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee)
+        .then(v =>{ console.log(v);
+          this.newHoleSG = v;
+        });
+      this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee).then(v => console.log(v));
+
     }
   }
 }

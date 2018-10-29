@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app';
-import { HoleoutSgService } from 'src/app/holeout-sg.service';
+import { HoleoutSgService, DistSG } from 'src/app/holeout-sg.service';
 
 export class GeoCalcs {
     //DIstance between points in lat long as meters
@@ -46,6 +46,7 @@ export class ShotsGained{
    static readonly  hazard : number = 3;
    static readonly  green : number = 4;
    static srvSG:HoleoutSgService;
+   static scrTee : Array<DistSG>;
    
    constructor(private srv : HoleoutSgService){
     if(ShotsGained.srvSG==null){
@@ -53,16 +54,32 @@ export class ShotsGained{
     }    
    }
 
-   strokesHoleOut(dist:number, lie:number ):number {
-    let ret:number = 2;
-    switch(lie){
-        case ShotsGained.tee:
-            let a = ShotsGained.srvSG.getStrokesTee(true);
-        break;
-        default:
-            console.log("Impossible lie");
-            break;
-        }   
-        return ret;
+   strokesHoleOut(dist:number, lie:number ):Promise<number> {
+    return new Promise((resolve,reject)=>{
+        let ret:number = 1;
+        switch(lie){
+            case ShotsGained.tee:
+                if(ShotsGained.scrTee == null){
+                    ShotsGained.srvSG.getStrokesTee(true).then(r =>{
+                        ShotsGained.scrTee = r;
+                        ret = ShotsGained.scrTee[0].s;
+                        resolve(ret);   
+                    });
+                    
+                }
+                else{
+                    ret = ShotsGained.scrTee[2].s;
+                    resolve(ret);
+                }
+                break;
+            default:
+                console.log("Impossible lie");
+                break;
+        };
+        resolve (ret),
+        ()=>{console.log("Subscribe error");
+        reject("Reject error")};
+        
+        });
    }
 }
