@@ -16,8 +16,10 @@ import { map } from 'rxjs/operators';
 })
 export class HoleoutSgService {
   coll_endpoint : string  ='SGTables';
+  dataColl: AngularFirestoreCollection<object>;
+
   constructor(private db: AngularFirestore) {
-    //this.coursesColl = db.collection<ICourse>(this.coll_endpoint);  
+    this.dataColl = db.collection<object>(this.coll_endpoint);  
   }
 
   getStrokesTee(bScratch:boolean):Promise<any[]>{

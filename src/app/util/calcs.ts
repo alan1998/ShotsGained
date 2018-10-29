@@ -48,21 +48,20 @@ export class ShotsGained{
    static srvSG:HoleoutSgService;
    
    constructor(private srv : HoleoutSgService){
-    //want this as a sttic
-    if(ShotsGained.srvSG == null){
+    if(ShotsGained.srvSG==null){
         ShotsGained.srvSG = srv;
-    }
+    }    
    }
 
-   static strokesHoleOut(dist:number, lie:number ):number {
-        let ret:number = 2;
-        switch(lie){
-            case ShotsGained.tee:
-                let a = ShotsGained.srvSG.getStrokesTee(true);
+   strokesHoleOut(dist:number, lie:number ):number {
+    let ret:number = 2;
+    switch(lie){
+        case ShotsGained.tee:
+            let a = ShotsGained.srvSG.getStrokesTee(true);
+        break;
+        default:
+            console.log("Impossible lie");
             break;
-            default:
-                console.log("Impossible lie");
-                break;
         }   
         return ret;
    }
