@@ -68,6 +68,11 @@ export class CourseEditComponent implements OnInit {
   /*
     Next:   
     
+	Stokes table :
+	each table is a document with dist as field name and strokes as value
+	valuechanges method should be appripriate to get doc in form can be changed to the needed array of number pairs 
+	may need an intervace to get the field:values  cf interface export Item in documentation
+	
     Make Name field and location a form so can detect edit and dirty so save enabled
     Do form new hole layout with labels
     Get enablement and verification right
