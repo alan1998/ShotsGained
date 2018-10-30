@@ -33,27 +33,31 @@ export class HoleoutSgService {
   }
 
   //Need an observable rather than static array? and promises
-  getStrokesTee(bScratch:boolean):Promise<DistSG[]>{
+  getStrokesTee(bScratch:boolean):Observable<any>{
     let sTable:string;
     if(bScratch){ sTable= "ScrT";}
     else { sTable = "ProT";}
 
-    return new Promise((resolve,reject)=>{
-      let t = new Array<DistSG>();
-      let itemDoc: AngularFirestoreDocument<any[]>;
-      itemDoc = this.db.doc<any[]>(this.coll_endpoint + "/" + sTable);
-      const data = itemDoc.valueChanges();
-      data.subscribe((a)=>{
-        for(var d in a){
-          //console.log(d,a[d]);
-          t.push(new DistSG(parseFloat(d),a[d]));
-        }
-        resolve(t)
-        },
-        ()=>{console.log("Subscribe error");
-        reject("Reject error")})
-      }
-    )
+    let itemDoc: AngularFirestoreDocument<any[]>;
+    itemDoc = this.db.doc<any[]>(this.coll_endpoint + "/" + sTable);
+    return itemDoc.valueChanges();
+       
+    // return new Promise((resolve,reject)=>{
+    //   let t = new Array<DistSG>();
+    //   let itemDoc: AngularFirestoreDocument<any[]>;
+    //   itemDoc = this.db.doc<any[]>(this.coll_endpoint + "/" + sTable);
+    //   const data = itemDoc.valueChanges();
+    //   data.subscribe((a)=>{
+    //     for(var d in a){
+    //       //console.log(d,a[d]);
+    //       t.push(new DistSG(parseFloat(d),a[d]));
+    //     }
+    //     resolve(t)
+    //     },
+    //     ()=>{console.log("Subscribe error");
+    //     reject("Reject error")})
+    //   }
+    // )
     
   }
 }

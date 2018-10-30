@@ -1,6 +1,8 @@
 import * as firebase from 'firebase/app';
 import { HoleoutSgService, DistSG } from 'src/app/holeout-sg.service';
 
+declare function require(url:string);
+
 export class GeoCalcs {
     //DIstance between points in lat long as meters
     static dist(lon1:number,lat1:number,lon2:number,lat2:number):number{
@@ -54,17 +56,29 @@ export class ShotsGained{
     }    
    }
 
+   fillTable(a:any):Array<DistSG>{
+    console.log("Fill");
+    console.log(a);
+    let ret = new Array<DistSG>();
+    ret.push(new DistSG(100,2.3));
+    return ret;
+   }
+
    strokesHoleOut(dist:number, lie:number ):Promise<number> {
     return new Promise((resolve,reject)=>{
         let ret:number = 1;
         switch(lie){
             case ShotsGained.tee:
                 if(ShotsGained.scrTee == null){
-                    ShotsGained.srvSG.getStrokesTee(true).then(r =>{
-                        ShotsGained.scrTee = r;
-                        ret = ShotsGained.scrTee[0].s;
-                        resolve(ret);   
-                    });
+                    let v = require('../../assets/csvjson.json');
+                    console.log(v);
+                    this.fillTable(v);
+                    //this.fillTable(ShotsGained.srvSG.getStrokesTee(true).subscribe());
+                    // ShotsGained.srvSG.getStrokesTee(true).then(r =>{
+                    //     ShotsGained.scrTee = r;
+                    //     ret = ShotsGained.scrTee[0].s;
+                    //     resolve(ret);   
+                    // });
                     
                 }
                 else{
