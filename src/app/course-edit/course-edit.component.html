@@ -32,7 +32,7 @@
                   <td>{{h["id"]}}</td>
                   <td>{{h["par"]}}</td>
                   <td>{{h["si"] | number:'1.0-0'}}</td>
-                  <td>{{h["sg_scr"] | number:'1.0-1'}}</td>
+                  <td>{{h["sg_scr"] | number:'1.0-2'}}</td>
               </tr>
           </tbody>
         </table>
@@ -71,7 +71,7 @@
             <select class="SICol" style='width:70px'  formControlName="newHoleSI">
               <option *ngFor="let n of SIs" [value]="n">{{n}}</option>
             </select>
-            <span [style.visibility]="this.newHoleSG===-1 ? 'hidden' : 'visible' ">{{this.newHoleSG | number:'1.1-1'}}</span>
+            <span [style.visibility]="this.newHoleSG===-1 ? 'hidden' : 'visible' ">{{this.newHoleSG | number:'1.1-2'}}</span>
             <!--<div *ngIf="(newHoleId.invalid || newHolePar.invalid) && (newHoleForm.dirty || newHoleForm.touched)" class="alert alert-danger">
               <div *ngIf="newHoleId.errors.required"> Id or hole number required</div>
               <div *ngIf="newHolePar.errors.required"> Par for required</div>

@@ -56,11 +56,16 @@ export class ShotsGained{
     }    
    }
 
-   fillTable(a:any):Array<DistSG>{
+   fillTable(a:Array<object>):Array<DistSG>{
     console.log("Fill");
     console.log(a);
     let ret = new Array<DistSG>();
-    ret.push(new DistSG(100,2.3));
+    if(a.length > 0){
+        for(const [dist,val] of Object.entries(a[0])){
+            console.log(dist,val);
+            ret.push(new DistSG(parseFloat(dist),val));
+        }
+    }
     return ret;
    }
 
@@ -72,7 +77,8 @@ export class ShotsGained{
                 if(ShotsGained.scrTee == null){
                     let v = require('../../assets/csvjson.json');
                     console.log(v);
-                    this.fillTable(v);
+                    ShotsGained.scrTee = this.fillTable(v);
+                    ret = ShotsGained.scrTee[1].s;
                     //this.fillTable(ShotsGained.srvSG.getStrokesTee(true).subscribe());
                     // ShotsGained.srvSG.getStrokesTee(true).then(r =>{
                     //     ShotsGained.scrTee = r;
