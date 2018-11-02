@@ -5,7 +5,6 @@ import { switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
-import {HoleoutSgService} from '../holeout-sg.service';
 import { MapComponent } from '../map/map.component'
 import { GeoCalcs, ShotsGained } from '../util/calcs'
 
@@ -52,9 +51,7 @@ export class CourseEditComponent implements OnInit {
   constructor(
     private route : ActivatedRoute,
     private router : Router,
-    private srvDB : SGCouresService,
-    private srvSGDB : HoleoutSgService
-    
+    private srvDB : SGCouresService
   ) {
     this.SIs = new Array<string>(18);
     for(let i=1; i <19; i++){
@@ -62,13 +59,13 @@ export class CourseEditComponent implements OnInit {
     }
     this.newHoleSG = -1;
 
-    this.sgCalcs = new ShotsGained(srvSGDB);
+    this.sgCalcs = new ShotsGained();
    }
 
   /*
     Next:   
-    Remove service and all trace of it
-	Stokes table : put in extra values - lower yards? Combine all into single json file?
+    
+	Stokes table : put in extra values - lower yards? Combine all into single json file? Fill all arrays from single call
   Add interpolation method
   Add Scr/Pro alway through call stack
 	
@@ -293,11 +290,11 @@ export class CourseEditComponent implements OnInit {
       }
       this.newHoleSG = GeoCalcs.m2yrd(dSum);
       
-      this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee)
-        .then(v =>{ console.log(v);
-          this.newHoleSG = v;
-        });
-      this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee).then(v => console.log(v));
+      let v = this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee)
+
+      this.newHoleSG = v;
+
+      console.log(this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee));
 
     }
   }

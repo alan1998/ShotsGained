@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 
 import { SGCouresService, Course } from './sgcoures.service';
-import { HoleoutSgService } from './holeout-sg.service';
 import * as firebase from 'firebase/app'
 import {MapComponent} from './map/map.component';
 
@@ -26,12 +25,11 @@ import {MapComponent} from './map/map.component';
 export class AppComponent {
   title = 'app';
   srvRef: SGCouresService;
-  srvHoleOutSG : HoleoutSgService;
   
 
-  constructor( srvCourses : SGCouresService, srvHoleOutSG : HoleoutSgService){
+  constructor( srvCourses : SGCouresService){
     this.srvRef = srvCourses;
-    this.srvHoleOutSG = srvHoleOutSG;  
+      
   }
   ngOnInit(){ 
   } 

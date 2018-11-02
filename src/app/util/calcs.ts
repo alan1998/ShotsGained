@@ -1,8 +1,17 @@
 import * as firebase from 'firebase/app';
-import { HoleoutSgService, DistSG } from 'src/app/holeout-sg.service';
 
 declare function require(url:string);
 
+export class DistSG{
+    d:number;
+    s:number;
+  
+    constructor(dist:number,sg:number){
+      this.d = dist;
+      this.s = sg; 
+    }
+  }
+  
 export class GeoCalcs {
     //DIstance between points in lat long as meters
     static dist(lon1:number,lat1:number,lon2:number,lat2:number):number{
@@ -47,13 +56,9 @@ export class ShotsGained{
    static readonly  rough : number = 2;
    static readonly  hazard : number = 3;
    static readonly  green : number = 4;
-   static srvSG:HoleoutSgService;
-   static scrTee : Array<DistSG>;
+    static scrTee : Array<DistSG>;
    
-   constructor(private srv : HoleoutSgService){
-    if(ShotsGained.srvSG==null){
-        ShotsGained.srvSG = srv;
-    }    
+   constructor(){   
    }
 
    fillTable(a:Array<object>):Array<DistSG>{
@@ -69,8 +74,7 @@ export class ShotsGained{
     return ret;
    }
 
-   strokesHoleOut(dist:number, lie:number ):Promise<number> {
-    return new Promise((resolve,reject)=>{
+    strokesHoleOut(dist:number, lie:number ):number {
         let ret:number = 1;
         switch(lie){
             case ShotsGained.tee:
@@ -89,17 +93,48 @@ export class ShotsGained{
                 }
                 else{
                     ret = ShotsGained.scrTee[2].s;
-                    resolve(ret);
+                    return(ret);
                 }
                 break;
             default:
                 console.log("Impossible lie");
                 break;
         };
-        resolve (ret),
-        ()=>{console.log("Subscribe error");
-        reject("Reject error")};
+        return (ret);
+    }
+
+
+//    strokesHoleOut(dist:number, lie:number ):Promise<number> {
+//     return new Promise((resolve,reject)=>{
+//         let ret:number = 1;
+//         switch(lie){
+//             case ShotsGained.tee:
+//                 if(ShotsGained.scrTee == null){
+//                     let v = require('../../assets/csvjson.json');
+//                     console.log(v);
+//                     ShotsGained.scrTee = this.fillTable(v);
+//                     ret = ShotsGained.scrTee[1].s;
+//                     //this.fillTable(ShotsGained.srvSG.getStrokesTee(true).subscribe());
+//                     // ShotsGained.srvSG.getStrokesTee(true).then(r =>{
+//                     //     ShotsGained.scrTee = r;
+//                     //     ret = ShotsGained.scrTee[0].s;
+//                     //     resolve(ret);   
+//                     // });
+                    
+//                 }
+//                 else{
+//                     ret = ShotsGained.scrTee[2].s;
+//                     resolve(ret);
+//                 }
+//                 break;
+//             default:
+//                 console.log("Impossible lie");
+//                 break;
+//         };
+//         resolve (ret),
+//         ()=>{console.log("Subscribe error");
+//         reject("Reject error")};
         
-        });
-   }
+//         });
+    //}
 }
