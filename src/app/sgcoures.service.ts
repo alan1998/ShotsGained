@@ -96,6 +96,7 @@ export class SGCouresService {
     //itemDoc = this.db.doc<ICourse>(this.coll_endpoint + "/" + id);
     crs.id = id;
     let dbObj = Object.assign({},crs)
+    console.log(dbObj);
     this.coursesColl.doc(id).update(dbObj);
   }
 

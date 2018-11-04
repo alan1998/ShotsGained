@@ -8,4 +8,6 @@
 .holeIDCol {width:20%; }
 .parCol {width:35%;}
 .SICol {width:35%;}
-.SGOut {border:1px solid black;margin:5px}
+.SGOut {border:1px solid rgb(221, 121, 121);margin:5px}
+.editHoleMap {margin:5px; border:1px solid rgb(230, 13, 13);height:100%}
+.divShow {border:1px solid rgb(230, 13, 13); height:100%}

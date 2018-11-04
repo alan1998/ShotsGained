@@ -64,11 +64,9 @@ export class CourseEditComponent implements OnInit {
 
   /*
     Next:   
-    
-	Stokes table : put in extra values - lower yards? Combine all into single json file? Fill all arrays from single call
-  Add interpolation method
-  Add Scr/Pro alway through call stack
-	
+
+      
+      Show totals for card & normalised to 18
     Make Name field and location a form so can detect edit and dirty so save enabled
     Do form new hole layout with labels
     Get enablement and verification right
@@ -95,30 +93,6 @@ export class CourseEditComponent implements OnInit {
       );
   }
  
-  // valNewHole(g: FormGroup){
-  //   //More specific message about centre line
-  //   //Style around fields 
-  //   console.log('validate new hole');
-  //   if(this.state != PageState.view){
-  //   //   if(this.newHoleForm["newHoleId"] != undefined){
-  //   //     if(this.newHoleForm["newHoleId"].value == ""){
-  //   //       return {'incomplete' : true};
-  //   //     }
-  //   //     if(this.newHoleForm["newHolePar"].value == null){
-  //   //       return {'incomplete' : true};
-  //   //     }
-  //   //     if(this.newHoleCL==null){
-  //   //       if(this.newHoleCL.length < 2){
-  //   //         return{'no_centerline': true};
-  //   //         }
-  //   //       }
-  //   //   }
-  //   }
-    
-
-  //   return {'no_error':true};
-  // }
-
   onSave(){
     //Could this be new or update?
     // Test from this.course.selid?
@@ -246,7 +220,7 @@ export class CourseEditComponent implements OnInit {
       }
       else{
         //Editing existing
-        this.course.holes[this.selHole] = h;
+        this.course.holes[this.selHole] = Object.assign({},h);
       }  
       //Clear form
       this.newHoleForm.reset();
@@ -288,13 +262,10 @@ export class CourseEditComponent implements OnInit {
       for(let n =0; n < pts.length-1; n++ ){
         dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
       }
-      this.newHoleSG = GeoCalcs.m2yrd(dSum);
+      let d = GeoCalcs.m2yrd(dSum);
       
-      let v = this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee)
-
-      this.newHoleSG = v;
-
-      console.log(this.sgCalcs.strokesHoleOut(this.newHoleSG,ShotsGained.tee));
+      this.newHoleSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+      console.log(d,this.newHoleSG);
 
     }
   }

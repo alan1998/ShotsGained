@@ -51,50 +51,51 @@ export class GeoCalcs {
 }
 
 export class ShotsGained{
-   static readonly  tee : number = 0;
-   static readonly  fairway : number = 1;
-   static readonly  rough : number = 2;
-   static readonly  hazard : number = 3;
-   static readonly  green : number = 4;
+    static readonly  tee : number = 0;
+    static readonly  fairway : number = 1;
+    static readonly  rough : number = 2;
+    static readonly  hazard : number = 3;
+    static readonly  green : number = 4;
     static scrTee : Array<DistSG>;
-   
-   constructor(){   
-   }
+    static proTee : Array<DistSG>;
+    constructor(){   
+    }
 
-   fillTable(a:Array<object>):Array<DistSG>{
+    fillTables(a:Array<object>){
     console.log("Fill");
     console.log(a);
-    let ret = new Array<DistSG>();
-    if(a.length > 0){
-        for(const [dist,val] of Object.entries(a[0])){
-            console.log(dist,val);
-            ret.push(new DistSG(parseFloat(dist),val));
+    
+    if(a.length >= 10){
+        if(a[0] != null){
+            ShotsGained.proTee = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[0])){
+                console.log(dist,val);
+                ShotsGained.proTee.push(new DistSG(parseFloat(dist),val));
+            }
+        }
+        if(a[1] != null){
+            ShotsGained.scrTee = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[1])){
+                console.log(dist,val);
+                ShotsGained.scrTee.push(new DistSG(parseFloat(dist),val));
+            }  
         }
     }
-    return ret;
    }
 
-    strokesHoleOut(dist:number, lie:number ):number {
+    strokesHoleOut(dist:number, lie:number, bPro :boolean ):number {
         let ret:number = 1;
+        if(ShotsGained.scrTee == null){
+            let v = require('../../assets/csvjson.json');
+            console.log(v);
+            this.fillTables(v);
+        }
         switch(lie){
             case ShotsGained.tee:
-                if(ShotsGained.scrTee == null){
-                    let v = require('../../assets/csvjson.json');
-                    console.log(v);
-                    ShotsGained.scrTee = this.fillTable(v);
-                    ret = ShotsGained.scrTee[1].s;
-                    //this.fillTable(ShotsGained.srvSG.getStrokesTee(true).subscribe());
-                    // ShotsGained.srvSG.getStrokesTee(true).then(r =>{
-                    //     ShotsGained.scrTee = r;
-                    //     ret = ShotsGained.scrTee[0].s;
-                    //     resolve(ret);   
-                    // });
-                    
-                }
-                else{
-                    ret = ShotsGained.scrTee[2].s;
-                    return(ret);
-                }
+            if( bPro)
+                ret = this.interpolateDistStokes(dist,ShotsGained.proTee);
+            else
+                ret = this.interpolateDistStokes(dist,ShotsGained.scrTee);              
                 break;
             default:
                 console.log("Impossible lie");
@@ -103,38 +104,21 @@ export class ShotsGained{
         return (ret);
     }
 
+    interpolateDistStokes(dist:number, table:Array<DistSG>):number{
+        //Linear interpolation in strokes gained table
+        let ret = 1;
+        if(table != null){
+            ret = table[table.length-1].s;
+            for(let n=0; n < table.length-1; n++){
+                if(table[n].d <= dist && table[n+1].d>dist){
+                    let fd = (dist-table[n].d)/(table[n+1].d-table[n].d);
+                    let dy = table[n+1].s - table[n].s;
+                    ret = table[n].s + fd*dy;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
 
-//    strokesHoleOut(dist:number, lie:number ):Promise<number> {
-//     return new Promise((resolve,reject)=>{
-//         let ret:number = 1;
-//         switch(lie){
-//             case ShotsGained.tee:
-//                 if(ShotsGained.scrTee == null){
-//                     let v = require('../../assets/csvjson.json');
-//                     console.log(v);
-//                     ShotsGained.scrTee = this.fillTable(v);
-//                     ret = ShotsGained.scrTee[1].s;
-//                     //this.fillTable(ShotsGained.srvSG.getStrokesTee(true).subscribe());
-//                     // ShotsGained.srvSG.getStrokesTee(true).then(r =>{
-//                     //     ShotsGained.scrTee = r;
-//                     //     ret = ShotsGained.scrTee[0].s;
-//                     //     resolve(ret);   
-//                     // });
-                    
-//                 }
-//                 else{
-//                     ret = ShotsGained.scrTee[2].s;
-//                     resolve(ret);
-//                 }
-//                 break;
-//             default:
-//                 console.log("Impossible lie");
-//                 break;
-//         };
-//         resolve (ret),
-//         ()=>{console.log("Subscribe error");
-//         reject("Reject error")};
-        
-//         });
-    //}
 }
