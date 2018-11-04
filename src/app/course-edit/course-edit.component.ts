@@ -66,7 +66,7 @@ export class CourseEditComponent implements OnInit {
     Next:   
 
       
-      Show totals for card & normalised to 18
+    Show totals for card & normalised to 18
     Make Name field and location a form so can detect edit and dirty so save enabled
     Do form new hole layout with labels
     Get enablement and verification right
@@ -85,7 +85,7 @@ export class CourseEditComponent implements OnInit {
       console.log("Course selected for edit");
       console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
       
-      this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude);
+      this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude,true);
       if(this.course.holes== null)
         this.course.holes =  new Array<Object>();
       }).catch(()=>{

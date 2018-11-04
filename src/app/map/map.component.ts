@@ -51,7 +51,7 @@ export class MapComponent implements OnInit {
   ngOnInit() {
   }
 
-  initOnLocation(lon:number, lat:number){
+  initOnLocation(lon:number, lat:number, bPhoto:boolean){
     let firstPlace = fromLonLat([lon,lat]);
     if(this.map==null){
       this.view = new olView({ center: firstPlace, zoom: 15 });
@@ -65,9 +65,17 @@ export class MapComponent implements OnInit {
         // "no photos at this zoom level" tiles
         maxZoom: 19 
       });
-      this.layer = new olTileLayer({
-        source: this.source
-      });
+      if(bPhoto){
+        this.layer = new olTileLayer({
+          source: this.source
+        });
+      }
+      else{
+        this.layer = new olTileLayer({
+          source: this.sourceXYZ
+        });
+      }
+      
       //this.controls = new  olControl();
       this.vectorSrcCL = new olVector({wrapX: false});
       this.vecLayer = new olVecLayer({source:this.vectorSrcCL});

@@ -29,7 +29,8 @@ export class CourseListComponent implements OnInit {
       this.selName = c.name;
       console.log("Course selected ");
       //console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
-      this.mapView.initOnLocation(cc.location.longitude,cc.location.latitude);
+      this.mapView.initOnLocation(cc.location.longitude,cc.location.latitude, false);
+      
       console.log(c);
       }).catch(()=>{
         console.log("err selecting course")}
