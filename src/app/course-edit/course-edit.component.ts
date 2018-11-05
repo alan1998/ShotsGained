@@ -65,14 +65,16 @@ export class CourseEditComponent implements OnInit {
   /*
     Next:   
 
-      
+    -Map component - center line with yards  
+    Get map size better
+    Repeat of courses on main list
     Show totals for card & normalised to 18
     Make Name field and location a form so can detect edit and dirty so save enabled
     Do form new hole layout with labels
     Get enablement and verification right
 		Get showCenterLine to show segment yards
     Prevent navigate off form if dirty without prompt
-    Get map size better
+    
 
     Add SG (shell of methods ) tables and interpolation to util/ calcs and store not distance
   */
@@ -250,8 +252,6 @@ export class CourseEditComponent implements OnInit {
   }
 
   onCLEvent($event){
-    console.log("CL Event received");
-    console.log($event);
     if($event == "LineModified" || $event=="LineAdded"){
       let pts = this.mapView.getCenterLine();
       let dSum = 0;
@@ -259,14 +259,8 @@ export class CourseEditComponent implements OnInit {
       pts.forEach((p)=>{
         this.newHoleCL.push(new firebase.firestore.GeoPoint(p[1],p[0]));
       });
-      for(let n =0; n < pts.length-1; n++ ){
-        dSum += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
-      }
-      let d = GeoCalcs.m2yrd(dSum);
-      
+      let d = GeoCalcs.m2yrd(GeoCalcs.lineLength(pts));
       this.newHoleSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
-      console.log(d,this.newHoleSG);
-
     }
   }
 }

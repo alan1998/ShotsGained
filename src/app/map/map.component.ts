@@ -2,7 +2,6 @@ import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 
 import Map from "../../../node_modules/ol/Map"
 import olFeature  from "../../../node_modules/ol/feature";
-
 import olView from "../../../node_modules/ol/view"
 import olBingSource from "../../../node_modules/ol/source/BingMaps"
 import olXYZ from '../../../node_modules/ol/source/XYZ';
@@ -10,12 +9,17 @@ import olTileLayer from '../../../node_modules/ol/layer/Tile';
 import olControl from '../../../node_modules/ol/control/control';
 import olVector from '../../../node_modules/ol/source/vector';
 import olVecLayer from '../../../node_modules/ol/layer/vector';
+import olStyle from '../../../node_modules/ol/style/style';
+import olTextStyle from '../../../node_modules/ol/style/text';
+import olFillStyle from '../../../node_modules/ol/style/fill';
+import olStrokeStyle from '../../../node_modules/ol/style/stroke';
+import olImageStyle from '../../../node_modules/ol/style/image';
 
 import {Draw, Modify} from '../../../node_modules/ol/interaction';
 import {LineString, Point as olPoint } from "../../../node_modules/ol/geom";
 import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
 //import { Coordinate } from "../../../node_modules/ol/coordinate";
-
+import { GeoCalcs } from '../util/calcs'
 
 import { environment } from '../../environments/environment';
 //import {olConfig} from "../app.module";
@@ -40,6 +44,7 @@ export class MapComponent implements OnInit {
   vecLayer : olVecLayer;
   drawAction : Draw;
   modify : Modify;
+  distStyle : olTextStyle;
     
   constructor() {
     
@@ -75,7 +80,16 @@ export class MapComponent implements OnInit {
           source: this.sourceXYZ
         });
       }
-      
+      //Create a text style for distances`
+      this.distStyle = new olTextStyle({
+        text:"help",
+        textAlign:'left',
+        textBaseline: 'bottom',
+        fill: new olFillStyle({color: 'Black'}),
+        stroke: new olStrokeStyle({color: 'rgba(255, 255, 255, 0.5)', width: 2}),
+        font:'normal 14px Arial '
+      });
+
       //this.controls = new  olControl();
       this.vectorSrcCL = new olVector({wrapX: false});
       this.vecLayer = new olVecLayer({source:this.vectorSrcCL});
@@ -162,6 +176,29 @@ export class MapComponent implements OnInit {
         geometry : ls
       });
       this.vectorSrcCL.addFeature(f);
+
+      // Show length of line
+      let d = GeoCalcs.m2yrd(GeoCalcs.lineLength(coords)); 
+      let olP = new olPoint(fromLonLat([cl[cl.length-1].longitude, cl[cl.length-1].latitude]));
+      let fdist = new olFeature({
+        geometry: olP,
+        labelPoint: olP,
+        name: "dist"
+      });
+      
+      fdist.setId(cl.length);
+      let s = new olStyle(this.distStyle);
+      let s2 = new olImageStyle({circle :{radius:6,
+          fill: {color: 'rgba(0, 255, 0, 0.5)'},
+          stroke: {color: 'Green', width: 1}}
+          }
+      );
+      let ss = new Array<olStyle>();
+      ss.push(this.distStyle);
+      ss.push(s2);
+      //fdist.setStyle(ss);
+      let o = fdist.getStyle();
+      this.vectorSrcCL.addFeature(fdist);
     }
   }
 

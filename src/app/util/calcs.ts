@@ -27,6 +27,17 @@ export class GeoCalcs {
         var d = R * c; // Distance in km
         return d*1000; 
     }
+
+    // Calculate line length
+    // Should type the array - it is expected to be 2d lat, lon
+    static lineLength(pts:Array<any>):number{
+        let distRet = 0;
+        for(let n =0; n < pts.length-1; n++ ){
+            distRet += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
+        }
+        return distRet;
+    }
+
     static deg2rad(deg:number):number {
         return deg * (Math.PI/180)
     }
