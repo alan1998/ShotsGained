@@ -14,7 +14,7 @@ import olTextStyle from '../../../node_modules/ol/style/text';
 import olFillStyle from '../../../node_modules/ol/style/fill';
 import olStrokeStyle from '../../../node_modules/ol/style/stroke';
 import olImageStyle from '../../../node_modules/ol/style/image';
-
+import olStyleCircle from '../../../node_modules/ol/style/Circle';
 import {Draw, Modify} from '../../../node_modules/ol/interaction';
 import {LineString, Point as olPoint } from "../../../node_modules/ol/geom";
 import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
@@ -172,34 +172,56 @@ export class MapComponent implements OnInit {
         coords.push(pt);
       });
       let ls = new LineString(coords);
-      let f = new olFeature({
+      let featCL = new olFeature({
         geometry : ls
       });
-      this.vectorSrcCL.addFeature(f);
+      
+      //Style line
+      let s = new olStyle();
+      s.setStroke( new olStrokeStyle({
+        color: 'blue',
+        width: 2
+        })
+      );
+      let styles = new Array<olStyle>();
+      styles.push(s);
+      featCL.setStyle(styles);
+      this.vectorSrcCL.addFeature(featCL);
 
       // Show length of line
-      let d = GeoCalcs.m2yrd(GeoCalcs.lineLength(coords)); 
-      let olP = new olPoint(fromLonLat([cl[cl.length-1].longitude, cl[cl.length-1].latitude]));
-      let fdist = new olFeature({
-        geometry: olP,
-        labelPoint: olP,
-        name: "dist"
-      });
-      
-      fdist.setId(cl.length);
-      let s = new olStyle(this.distStyle);
-      let s2 = new olImageStyle({circle :{radius:6,
-          fill: {color: 'rgba(0, 255, 0, 0.5)'},
-          stroke: {color: 'Green', width: 1}}
-          }
-      );
-      let ss = new Array<olStyle>();
-      ss.push(this.distStyle);
-      ss.push(s2);
-      //fdist.setStyle(ss);
-      let o = fdist.getStyle();
+      let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl)); 
+      let fdist = this.createTextFeature(cl[cl.length-1],d.toFixed(0),"dist");
       this.vectorSrcCL.addFeature(fdist);
+      // Show tee
+      let fTee = this.createTextFeature(cl[0],'T',"tee");
+      this.vectorSrcCL.addFeature(fTee);
     }
+  }
+
+  createTextFeature(p:firebase.firestore.GeoPoint, txt:string, name:string):olFeature{
+    let pt = new olPoint(fromLonLat([p.longitude, p.latitude]));
+    //Feature
+    let feat = new olFeature({
+      geometry: pt,
+      labelPoint: pt,
+      name: name
+    });
+    feat.setId(name);
+    //Style to go with it
+    let textStyle = new olTextStyle({
+      text:txt,
+      textAlign:'left',
+      textBaseline: 'bottom',
+      fill: new olFillStyle({color: 'Black'}),
+      stroke: new olStrokeStyle({color: 'rgba(255, 255, 255, 0.5)', width: 2}),
+      font:'normal 14px Arial '
+    });
+    let style = new olStyle();
+    style.setText(textStyle);// Set the text style on the style not the text!
+    let styles = new Array<olStyle>();
+    styles.push(style);
+    feat.setStyle(styles);
+    return feat;
   }
 
   setCenter(p:firebase.firestore.GeoPoint){

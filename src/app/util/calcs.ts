@@ -37,6 +37,13 @@ export class GeoCalcs {
         }
         return distRet;
     }
+    static lineLengthGeo(pts:Array<firebase.firestore.GeoPoint>):number{
+        let distRet = 0;
+        for(let n =0; n < pts.length-1; n++ ){
+            distRet += GeoCalcs.dist(pts[n].longitude,pts[n].latitude,pts[n+1].longitude,pts[n+1].latitude);
+        }
+        return distRet;
+    }
 
     static deg2rad(deg:number):number {
         return deg * (Math.PI/180)

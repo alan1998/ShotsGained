@@ -65,7 +65,9 @@ export class CourseEditComponent implements OnInit {
   /*
     Next:   
 
-    -Map component - center line with yards  
+    -Map component - center line with yards  - general function to creat text with geometry feature
+      use for total dist and segments
+      give dist features ids so can update as line moved or segments added
     Get map size better
     Repeat of courses on main list
     Show totals for card & normalised to 18
