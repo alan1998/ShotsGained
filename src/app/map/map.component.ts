@@ -110,6 +110,36 @@ export class MapComponent implements OnInit {
         source : this.vectorSrcCL
       });
       this.modify.on('modifyend', (evt)=>{
+        // Update the center line distances
+        let fs = this.vectorSrcCL.getFeatures();
+        let end = null;
+        let dist = 0;
+        for(let n=0; n < fs.length; n++){
+          if(fs[n].id_ == "dist"){
+            end = fs[n];
+            continue;
+          }
+          if(fs[n].id_ == "centerLine"){
+            let pts = fs[n].getGeometry().getCoordinates();
+             
+            for(let np=0; np < pts.length-1; np++){
+              let p1LL = toLonLat(pts[np]);
+              let p2LL = toLonLat(pts[np+1]);
+              dist += GeoCalcs.dist(p1LL[0],p1LL[1],p2LL[0],p2LL[1]);
+            }
+            //
+            //let p2 = fs[n].getGeometry().getCoordinates();
+            //let p2LL = toLonLat(p2);
+            //
+          }
+        }
+        if(end != null){
+          dist = GeoCalcs.m2yrd(dist);
+          let styleText = end.style_[0];
+          styleText.text_ = dist.toFixed(0);
+          console.log(dist);
+        }
+        
         this.eventCL.emit("LineModified");
       });
       
@@ -173,9 +203,10 @@ export class MapComponent implements OnInit {
       });
       let ls = new LineString(coords);
       let featCL = new olFeature({
-        geometry : ls
+        geometry : ls,
+        name : 'centerLine'
       });
-      
+      featCL.setId('centerLine');
       //Style line
       let s = new olStyle();
       s.setStroke( new olStrokeStyle({
