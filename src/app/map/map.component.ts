@@ -20,12 +20,14 @@ import {LineString, Point as olPoint } from "../../../node_modules/ol/geom";
 import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
 //import { Coordinate } from "../../../node_modules/ol/coordinate";
 import { GeoCalcs } from '../util/calcs'
-
+import * as firebase from 'firebase/app';
 import { environment } from '../../environments/environment';
+import { createText } from '@angular/core/src/view/text';
 //import {olConfig} from "../app.module";
 
 /* Next todo
-  Switch sources from a control?
+  Generalise take a poly line feature and show distances segments and final distance
+  Use from showCenterLine and 
 */
 
 @Component({
@@ -110,36 +112,7 @@ export class MapComponent implements OnInit {
         source : this.vectorSrcCL
       });
       this.modify.on('modifyend', (evt)=>{
-        // Update the center line distances
-        let fs = this.vectorSrcCL.getFeatures();
-        let end = null;
-        let dist = 0;
-        for(let n=0; n < fs.length; n++){
-          if(fs[n].id_ == "dist"){
-            end = fs[n];
-            continue;
-          }
-          if(fs[n].id_ == "centerLine"){
-            let pts = fs[n].getGeometry().getCoordinates();
-             
-            for(let np=0; np < pts.length-1; np++){
-              let p1LL = toLonLat(pts[np]);
-              let p2LL = toLonLat(pts[np+1]);
-              dist += GeoCalcs.dist(p1LL[0],p1LL[1],p2LL[0],p2LL[1]);
-            }
-            //
-            //let p2 = fs[n].getGeometry().getCoordinates();
-            //let p2LL = toLonLat(p2);
-            //
-          }
-        }
-        if(end != null){
-          dist = GeoCalcs.m2yrd(dist);
-          let styleText = end.style_[0];
-          styleText.text_ = dist.toFixed(0);
-          console.log(dist);
-        }
-        
+        this.showLineLengths();
         this.eventCL.emit("LineModified");
       });
       
@@ -218,14 +191,82 @@ export class MapComponent implements OnInit {
       styles.push(s);
       featCL.setStyle(styles);
       this.vectorSrcCL.addFeature(featCL);
-
-      // Show length of line
-      let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl)); 
-      let fdist = this.createTextFeature(cl[cl.length-1],d.toFixed(0),"dist");
-      this.vectorSrcCL.addFeature(fdist);
+      this.showLineLengths();
       // Show tee
       let fTee = this.createTextFeature(cl[0],'T',"tee");
       this.vectorSrcCL.addFeature(fTee);
+    }
+  }
+
+  showLineLengths(){
+    //Check have center line geometry/vector and then
+    // calculate overall length and label up points
+    if(this.vectorSrcCL != null){
+      let fs = this.vectorSrcCL.getFeatures();
+      let dist = 0;
+      let segs:Array<number>=new Array<number>();
+      //First pass through features to get center line and calculate lengths
+      let pts = null;
+      fs.forEach(f => {
+        if( f.id_ == "centerLine"){
+          pts = f.getGeometry().getCoordinates();
+           
+          for(let np=0; np < pts.length-1; np++){
+            let p1LL = toLonLat(pts[np]);
+            let p2LL = toLonLat(pts[np+1]);
+            let t = GeoCalcs.dist(p1LL[0],p1LL[1],p2LL[0],p2LL[1]);
+            t = GeoCalcs.m2yrd(t);
+            segs.push(t);
+            dist += t;
+          }
+        }
+      });
+      // 2nd pass to get end and segment text features
+      if(pts != null){
+        let bFoundDist:boolean = false;
+        let segLabels:number = 0;
+        for(let n=0; n< fs.length; n++) {
+          if( fs[n].id_ == "dist"){
+            bFoundDist = true;
+            let textStyle = this.createTextStyle(dist.toFixed(0));
+            let style = new olStyle();
+            style.setText(textStyle);
+            let styles = new Array<olStyle>();
+            styles.push(style);
+            fs[n].setStyle(styles);            
+          }
+          else if( Number(fs[n].id_) > 0){
+            let segN = Number(fs[n].id_);
+            let textStyle = this.createTextStyle(segs[segN-1].toFixed(0));
+            let style = new olStyle();
+            style.setText(textStyle);
+            let styles = new Array<olStyle>();
+            styles.push(style);
+            fs[n].setStyle(styles);
+            let LL1 = pts[segN-1];
+            let LL2 = pts[segN];
+            let pGeom =  new olPoint([(LL1[0]+LL2[0])/2, (LL2[1]+LL1[1])/2]);
+            fs[n].setGeometry(pGeom);
+            segLabels++;            
+          }
+        };
+        if(!bFoundDist){
+          let LL = toLonLat(pts[pts.length-1]);
+          let fb:firebase.firestore.GeoPoint = new firebase.firestore.GeoPoint(LL[1], LL[0]);
+          let nf = this.createTextFeature(fb,dist.toFixed(0),"dist");
+          this.vectorSrcCL.addFeature(nf);
+        }
+        if(segLabels != segs.length){
+          for(let n=segLabels; n < segs.length; n++){
+            let LL1 = toLonLat(pts[n]);
+            let LL2 = toLonLat(pts[n+1]);
+            let fb:firebase.firestore.GeoPoint = new firebase.firestore.GeoPoint((LL1[1]+LL2[1])/2, (LL2[0]+LL1[0])/2);
+            let nf = this.createTextFeature(fb,segs[n].toFixed(0),(n+1).toFixed(0));
+            this.vectorSrcCL.addFeature(nf);
+            console.log(n,segs[n]);
+          }
+        }  
+      }
     }
   }
 
@@ -239,20 +280,24 @@ export class MapComponent implements OnInit {
     });
     feat.setId(name);
     //Style to go with it
-    let textStyle = new olTextStyle({
-      text:txt,
-      textAlign:'left',
-      textBaseline: 'bottom',
-      fill: new olFillStyle({color: 'Black'}),
-      stroke: new olStrokeStyle({color: 'rgba(255, 255, 255, 0.5)', width: 2}),
-      font:'normal 14px Arial '
-    });
+    let textStyle = this.createTextStyle(txt);
     let style = new olStyle();
     style.setText(textStyle);// Set the text style on the style not the text!
     let styles = new Array<olStyle>();
     styles.push(style);
     feat.setStyle(styles);
     return feat;
+  }
+
+  createTextStyle(txt:string):olTextStyle{
+    return( new olTextStyle({
+      text:txt,
+      textAlign:'left',
+      textBaseline: 'bottom',
+      fill: new olFillStyle({color: 'Black'}),
+      stroke: new olStrokeStyle({color: 'rgba(255, 255, 255, 0.5)', width: 2}),
+      font:'normal 14px Arial '
+    }));
   }
 
   setCenter(p:firebase.firestore.GeoPoint){
