@@ -65,15 +65,14 @@ export class CourseEditComponent implements OnInit {
   /*
     Next:   
 
-    -Map component - center line with yards  - general function to creat text with geometry feature
-      use for total dist and segments
-      give dist features ids so can update as line moved or segments added
+    -Map component - 
+    Get enablement and verification right -update hole and SG values after line shuffle
     Get map size better
     Repeat of courses on main list
     Show totals for card & normalised to 18
     Make Name field and location a form so can detect edit and dirty so save enabled
     Do form new hole layout with labels
-    Get enablement and verification right
+    
 		Get showCenterLine to show segment yards
     Prevent navigate off form if dirty without prompt
     
@@ -204,7 +203,7 @@ export class CourseEditComponent implements OnInit {
     h.id = h.id.replace(/^\s*/,"");
     h.par = this.newHoleForm.value["newHolePar"];
     let si = this.newHoleForm.value["newHoleSI"];
-    h.si = parseInt(si==null? si.toString():null);
+    h.si = parseInt(si==null? null:si.toString());
     h.sg_scr = this.newHoleSG;
     h.cl = this.newHoleCL;
 
