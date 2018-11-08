@@ -311,13 +311,15 @@ export class MapComponent implements OnInit {
     let newPts = new Array<any>();
     if(this.vectorSrcCL.getFeatures() != null){
       let fts = this.vectorSrcCL.getFeatures();
-      if(fts.length==1){
-        let geo = fts[0].getGeometry();
-        if(geo.getType()=='LineString'){
-          let pts = geo.getCoordinates(); 
-          pts.forEach(element => {
-            newPts.push(toLonLat(element));
-          });
+      if(fts.length>=1){
+        for(let n=0; n < fts.length; n++){
+          let geo = fts[n].getGeometry();
+          if(geo.getType()=='LineString'){
+            let pts = geo.getCoordinates(); 
+            pts.forEach(element => {
+              newPts.push(toLonLat(element));
+            });
+          }
         }
       }  
     }

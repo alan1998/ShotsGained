@@ -204,7 +204,7 @@ export class CourseEditComponent implements OnInit {
     h.id = h.id.replace(/^\s*/,"");
     h.par = this.newHoleForm.value["newHolePar"];
     let si = this.newHoleForm.value["newHoleSI"];
-    h.si = parseInt(si==null? si.toString():null);
+    h.si = parseInt(si==null? null:si.toString());
     h.sg_scr = this.newHoleSG;
     h.cl = this.newHoleCL;
 
