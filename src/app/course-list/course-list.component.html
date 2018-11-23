@@ -1,22 +1,19 @@
-<div class="content-container">
-  <span>
-    <button [disabled]="nonSelected()" [routerLink]="['/edit',selId]">Edit</button>
-    <!--<button routerLink="/edit/{{selId}}">Edit</button>-->
-  </span>
-  <div class="sidenav">
-    <section class="sidenav-content">
-      <section class="nav-group">
-        <h3>Courses:</h3>
-        <ul class="nav-list" >
-          <li *ngFor="let Cor of srvRef.Courses$ | async" (click)="courseSel($event)" id="{{Cor.id}}">
-            <a class="nav-link">{{ Cor.name }}</a>
-          </li>
-        </ul>
-      </section>
+
+<div id="m" class="mid-menu">
+  <section class="sidenav-content">
+    <section class="nav-group">
+      <h3>Courses:</h3>
+      <ul class="nav-list" >
+        <li *ngFor="let Cor of srvRef.Courses$ | async" (click)="courseSel($event)" id="{{Cor.id}}">
+          <a class="nav-link">{{ Cor.name }}</a>
+        </li>
+      </ul>
     </section>
-  </div>
-  <div class="content-area">
-    <h4>{{selName}}</h4>
-      <app-map id='mapView'></app-map>   
-  </div>
+    <button [disabled]="nonSelected()" [routerLink]="['/edit',selId]">Edit</button>
+  </section>
 </div>
+<div class="mid-content">
+  <!--<h4>{{selName}}</h4>-->
+    <app-map id='mapView'></app-map>   
+</div>
+

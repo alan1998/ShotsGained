@@ -5,7 +5,8 @@ import { SGCouresService, Course } from '../sgcoures.service';
 @Component({
   selector: 'app-course-list',
   templateUrl: './course-list.component.html',
-  styleUrls: ['./course-list.component.css']
+  styleUrls: ['./course-list.component.css'],
+  host: {class: 'mid-container'}
 })
 export class CourseListComponent implements OnInit {
   @ViewChild(MapComponent) mapView:MapComponent;

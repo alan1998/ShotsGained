@@ -33,7 +33,8 @@ import { createText } from '@angular/core/src/view/text';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  styleUrls: ['./map.component.css'],
+  host : {class: 'comp'}
 })
 export class MapComponent implements OnInit {
   map : Map;

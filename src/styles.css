@@ -1,1 +1,72 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+    box-sizing: border-box;
+    background-color: #20262e;
+    height: 100%;
+    padding: 10px;
+    margin: 0px;
+}
+
+.my-container > div {
+    display: flex;
+    align-items: center;
+  }
+  
+.my-container {
+    height:100%;
+    display: grid;
+    grid-template-columns: repeat(12,1fr);
+    grid-template-rows: 40px auto 20px;
+    grid-gap: 3px;
+}
+
+.my-content {
+    grid-column: 1 / -1;
+    border:1px solid rgb(13, 179, 230);
+}
+
+.my-header {
+    grid-column: 1 / -1;
+    
+}
+
+.my-footer {
+    grid-column: 1 / -1;
+    text-align: center;
+    border:1px solid rgb(230, 13, 13);
+    justify-content: center;
+}
+
+.mid-container > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mid-container{
+    height:100%;
+    width:100%;
+    display: grid ;
+    grid-template-columns: repeat(7,1fr);
+    grid-template-rows:  auto ;
+    grid-gap: 3px;
+    border:2px solid rgb(23, 245, 89);
+}
+
+.mid-menu {
+	grid-column: 1 / 3;	
+}
+
+.mid-content {
+    grid-column: 3 / -1;
+    color: #fff;
+    border:1px solid rgb(230, 13, 13);
+    text-align: center;
+}
+
+.comp {
+    width:100%;
+    height:100%;
+    box-sizing:border-box;
+    border:1px solid rgb(214, 49, 247);
+}
