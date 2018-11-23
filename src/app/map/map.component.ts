@@ -26,8 +26,7 @@ import { createText } from '@angular/core/src/view/text';
 //import {olConfig} from "../app.module";
 
 /* Next todo
-  Generalise take a poly line feature and show distances segments and final distance
-  Use from showCenterLine and 
+
 */
 
 @Component({
@@ -149,10 +148,16 @@ export class MapComponent implements OnInit {
       this.map.addInteraction(this.drawAction);
     
       this.drawAction.on('drawend',(evt) => {
+        let fts = this.vectorSrcCL.getFeatures();
+        if(fts.length == 1){
+          fts[0].id_ = "centerLine";
+        }
         let r = this.map.removeInteraction(this.drawAction);
         if(r==undefined){
           console.log("Remove not found in doCenterLine");
         }
+        // Should be a single feature at this point
+        
         this.eventCL.emit("LineAdded");
         console.log("Draw end");
       } );  
@@ -312,6 +317,7 @@ export class MapComponent implements OnInit {
     let newPts = new Array<any>();
     if(this.vectorSrcCL.getFeatures() != null){
       let fts = this.vectorSrcCL.getFeatures();
+
       if(fts.length>=1){
         for(let n=0; n < fts.length; n++){
           let geo = fts[n].getGeometry();
@@ -322,7 +328,7 @@ export class MapComponent implements OnInit {
             });
           }
         }
-      }  
+      } 
     }
     return newPts;
   }
