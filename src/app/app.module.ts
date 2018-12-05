@@ -18,7 +18,11 @@ import { SGCouresService } from './sgcoures.service';
 import { CourseListComponent } from './course-list/course-list.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import { CourseEditComponent } from './course-edit/course-edit.component';
-import { AppRoutingModule } from './/app-routing.module'
+import { AppRoutingModule } from './/app-routing.module';
+import { GolfGmapComponent } from './golf-gmap/golf-gmap.component'
+
+
+import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 
 
 @NgModule({
@@ -27,7 +31,8 @@ import { AppRoutingModule } from './/app-routing.module'
     MapComponent,
     CourseListComponent,
     PageNotFoundComponent,
-    CourseEditComponent
+    CourseEditComponent,
+    GolfGmapComponent
   ],
   imports: [
     BrowserModule,
@@ -39,9 +44,14 @@ import { AppRoutingModule } from './/app-routing.module'
     ClrIconModule, 
     FormsModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AgmCoreModule.forRoot({
+      apiKey: olConfig.apikeyG
+    })
   ],
-  providers: [SGCouresService],
+  providers: [SGCouresService,
+    GoogleMapsAPIWrapper
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

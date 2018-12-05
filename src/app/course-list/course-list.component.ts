@@ -1,5 +1,6 @@
 import { Component, OnInit ,  ViewChild} from '@angular/core';
 import {MapComponent} from '../map/map.component'
+import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { SGCouresService, Course } from '../sgcoures.service';
 
 @Component({
@@ -9,7 +10,8 @@ import { SGCouresService, Course } from '../sgcoures.service';
   host: {class: 'mid-container'}
 })
 export class CourseListComponent implements OnInit {
-  @ViewChild(MapComponent) mapView:MapComponent;
+  //@ViewChild(MapComponent) mapView:MapComponent;
+  @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent
   srvRef: SGCouresService;
   selId: string;
   selName: string;
