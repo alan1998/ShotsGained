@@ -11,3 +11,17 @@
 .SGOut {border:1px solid rgb(221, 121, 121);margin:5px}
 .editHoleMap {margin:5px; border:1px solid rgb(230, 13, 13);height:100%}
 .divShow {border:1px solid rgb(230, 13, 13); height:100%}
+
+.hole-edit > div {
+        display: flex;
+        align-items: center;
+      }
+      
+.hole-edit {
+height:100%;
+display: grid;
+grid-template-columns: auto;
+grid-template-rows: repeat(12,fr);
+grid-gap: 3px;
+}
+    

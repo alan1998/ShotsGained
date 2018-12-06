@@ -18,7 +18,8 @@ enum PageState{
 @Component({
   selector: 'app-course-edit',
   templateUrl: './course-edit.component.html',
-  styleUrls: ['./course-edit.component.css']
+  styleUrls: ['./course-edit.component.css'],
+  host: {class: 'mid-container'}
 })
 export class CourseEditComponent implements OnInit {
   course : ICourse;

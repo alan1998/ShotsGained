@@ -1,21 +1,20 @@
-<div class="content-container">
-  <div class="content-area">
-    <div class="clr-row">
-      <div class="clr-col-4">
-        <div class="btn-group btn-icon">
-          <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
-            <label>Name: </label>
-            <input name="name" [(ngModel)]="course.name" 
-                    required minlength="2" pattern="^[A-Za-z ]+$"/>
-            <!--<input (keyup.enter)="course.name=$event.target.value" />-->
-            <button  class="btn" type="submit" [disabled]="this.dirty===false">
-              <clr-icon shape="floppy" size="16" ></clr-icon>
-              <!--<span class="clr-icon-title">Save course</span>-->
-            </button>
-          </form>
-        </div>
+<div class='mid-menu'>
+  <div class='hole-edit'>
+      <div class="btn-group btn-icon" style='grid-row:1/3'>
+        <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
+          <label>Name: </label>
+          <input name="name" [(ngModel)]="course.name" 
+                  required minlength="2" pattern="^[A-Za-z ]+$"/>
+          <!--<input (keyup.enter)="course.name=$event.target.value" />-->
+          <button  class="btn" type="submit" [disabled]="this.dirty===false">
+            <clr-icon shape="floppy" size="16" ></clr-icon>
+            <!--<span class="clr-icon-title">Save course</span>-->
+          </button>
+        </form>
+      
         <button (click)="onClickUpdateLocation()">Set location</button>
-
+      </div>
+      <div style='grid-row:3/8'>
         <table class="table">
           <thead>
               <tr>
@@ -35,9 +34,11 @@
                   <td>{{h["sg_scr"] | number:'1.0-2'}}</td>
               </tr>
           </tbody>
-        </table>
+        </table>      
+      </div>
+
         <!-- Buttons for table row adjust / start edit etc -->
-        <div class="btn-group btn-icon">
+        <div class="btn-group btn-icon" style='grid-row:8/9'>
           <button (click)="onShiftUp()" class ="btn" [disabled]="this.selHole<=0 || (state != PageState.view)">
             <clr-icon shape="upload" size="16"></clr-icon>
           </button>
@@ -59,7 +60,7 @@
           </button>
         </div>
         <!-- Form for new hole -->
-        <div >
+        <div style='grid-row:9/10' >
           <form id="newHole" [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
             <input class="newTxt holeIDCol"   type="text" formControlName="newHoleId" >
             <select class="parCol"  formControlName ="newHolePar" > 
@@ -80,7 +81,7 @@
             </div>-->
           </form>      
         </div>
-        <div   class="btn-group btn-icon">
+        <div   class="btn-group btn-icon" style='grid-row:10/11'>
           <button (click)="onDoCenterLine()" class ="btn" [disabled]="state === PageState.view" >
             CL
             <!--<clr-icon shape="child-arrow" size="16"></clr-icon>-->
@@ -95,31 +96,30 @@
           </button>
         </div>
       </div>
-      <clr-modal [(clrModalOpen)]="isDeleteConfirmVisible" [clrModalClosable]="false" [clrModalSize]="'sm'">
-        <h3 class="modal-title">Delete hole</h3>
-        <div class="modal-body">
-            <p>Certain ?</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn" (click)="isDeleteConfirmVisible = false">Cancel</button>
-            <button type="button" class="btn btn-primary" (click)="onDeleteHole()">
-                Delete
-            </button>
-        </div>
-      </clr-modal>
-      <clr-modal [(clrModalOpen)]="showNewHoleNotValid" [clrModalClosable]="true" [clrModalSize]="'sm'">
-          <h3 class="modal-title">New/Edit hole</h3>
-          <div class="modal-body">
-              <p>New a hole id, par and center line for every hole</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn" (click)="showNewHoleNotValid = false">Ok</button>
-          </div>
-        </clr-modal>
-  
-      <div class="clr-col-8 divShow">
-        <app-map class="editHoleMap"  id='mapView' (cl-event)="onCLEvent($event)"></app-map>
-      </div>
-    </div>
   </div>
+
+<clr-modal [(clrModalOpen)]="isDeleteConfirmVisible" [clrModalClosable]="false" [clrModalSize]="'sm'">
+  <h3 class="modal-title">Delete hole</h3>
+  <div class="modal-body">
+      <p>Certain ?</p>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn" (click)="isDeleteConfirmVisible = false">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="onDeleteHole()">
+          Delete
+      </button>
+  </div>
+</clr-modal>
+<clr-modal [(clrModalOpen)]="showNewHoleNotValid" [clrModalClosable]="true" [clrModalSize]="'sm'">
+  <h3 class="modal-title">New/Edit hole</h3>
+  <div class="modal-body">
+    <p>New a hole id, par and center line for every hole</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn" (click)="showNewHoleNotValid = false">Ok</button>
+  </div>
+</clr-modal>
+
+<div class="mid-content">
+  <app-map class="editHoleMap"  id='mapView' (cl-event)="onCLEvent($event)"></app-map>
 </div>
