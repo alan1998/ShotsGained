@@ -10,7 +10,7 @@
 .SICol {width:35%;}
 .SGOut {border:1px solid rgb(221, 121, 121);margin:5px}
 .editHoleMap {margin:5px; border:1px solid rgb(230, 13, 13);height:100%}
-.divShow {border:1px solid rgb(230, 13, 13); height:100%}
+.divShow {border:1px solid rgb(230, 13, 13); }
 
 .hole-edit > div {
         display: flex;
@@ -21,7 +21,7 @@
 height:100%;
 display: grid;
 grid-template-columns: auto;
-grid-template-rows: repeat(12,fr);
+grid-template-rows: 10%,60%,15%,10%,5%;
 grid-gap: 3px;
 }
     
