@@ -1,6 +1,6 @@
 <div class='mid-menu' >
   <div class='hole-edit' >
-    <div class="btn-group btn-icon divShow" style='grid-row:1'>
+    <div class="btn-group btn-icon divShow" >
       <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
         <label>Name: </label>
         <input name="name" [(ngModel)]="course.name" 
@@ -14,7 +14,7 @@
     
       <button (click)="onClickUpdateLocation()">Set location</button>
     </div>
-    <div class="divShow" style='grid-row:2; overflow-y:scroll;max-height: 50vh ; align-items: flex-start'>
+    <div class="divShow" style='overflow-y:auto;max-height: 60vh ; align-items: flex-start'>
       <table class="table">
         <thead>
             <tr>
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Buttons for table row adjust / start edit etc -->
-    <div class="btn-group btn-icon divShow" style='grid-row:3'>
+    <div class="btn-group btn-icon divShow" style="justify-content: center">
       <button (click)="onShiftUp()" class ="btn" [disabled]="this.selHole<=0 || (state != PageState.view)">
         <clr-icon shape="upload" size="16"></clr-icon>
       </button>
@@ -60,7 +60,7 @@
       </button>
     </div>
     <!-- Form for new hole -->
-    <div class="divShow" style='grid-row:4' >
+    <div class="divShow"  >
       <form id="newHole" [formGroup]="newHoleForm" (ngSubmit)="onNewHoleSubmit()">
         <input class="newTxt holeIDCol"   type="text" formControlName="newHoleId" >
         <select class="parCol"  formControlName ="newHolePar" > 
@@ -81,7 +81,7 @@
         </div>-->
       </form>      
     </div>
-    <div   class="btn-group btn-icon divShow" style='grid-row:5'>
+    <div   class="btn-group btn-icon divShow" style="justify-content: center">
       <button (click)="onDoCenterLine()" class ="btn" [disabled]="state === PageState.view" >
         CL
         <!--<clr-icon shape="child-arrow" size="16"></clr-icon>-->

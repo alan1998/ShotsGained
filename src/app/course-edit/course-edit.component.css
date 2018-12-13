@@ -19,9 +19,9 @@
       
 .hole-edit {
 height:100%;
-display: grid;
+/*display: grid;
 grid-template-columns: auto;
 grid-template-rows: 10%,60%,15%,10%,5%;
-grid-gap: 3px;
+grid-gap: 3px;*/
 }
     
