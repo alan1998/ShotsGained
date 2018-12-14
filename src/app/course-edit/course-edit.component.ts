@@ -6,6 +6,7 @@ import * as firebase from 'firebase/app';
 
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { MapComponent } from '../map/map.component'
+import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { GeoCalcs, ShotsGained } from '../util/calcs'
 
 
@@ -24,7 +25,8 @@ enum PageState{
 export class CourseEditComponent implements OnInit {
   course : ICourse;
   selId : string;
-  @ViewChild(MapComponent) mapView:MapComponent;
+  //@ViewChild(MapComponent) mapView:MapComponent;
+  @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent;
   SIs:Array<string>;
   h;
   vectorSrcCL;
@@ -95,6 +97,7 @@ export class CourseEditComponent implements OnInit {
       }).catch(()=>{
         console.log("err selecting course to edit")}
       );
+      this.mapView.setZoom(16);
   }
  
   onSave(){
@@ -112,15 +115,9 @@ export class CourseEditComponent implements OnInit {
       this.selHole = n;
       if(this.course.holes != null){
         let p = GeoCalcs.centerPt(this.course.holes[n]["cl"]);
-        this.
-        mapView.setCenter(p);
+        this.mapView.setCenter(p);
         console.log(p);
-        this.mapView.showCenterLine(this.course.holes[n]["cl"]);
-        // this.newHoleForm.setValue({'newHoleId' : this.course.holes[n]["id"],
-        //     'newHolePar': 5 /*this.course.holes[n]["id"]*/,
-        //     'newHoleSI': this.course.holes[n]["si"]
-        //     });
-        // this.newHoleSG =  this.course.holes[n]["sg_scr"];
+//        this.mapView.showCenterLine(this.course.holes[n]["cl"]);
       }
     }
   }
@@ -156,20 +153,21 @@ export class CourseEditComponent implements OnInit {
       this.course.holes.splice(this.selHole,1);
       this.dirty = true;
       this.isDeleteConfirmVisible = false;
-      this.mapView.showCenterLine(null);
+//      this.mapView.showCenterLine(null);
     }
   }
 
   onClickUpdateLocation(){
-    let loc = this.mapView.getCenterLoc();
-    this.course.location = new firebase.firestore.GeoPoint(loc[1],loc[0]);
-    this.dirty = true;
+    this.mapView.getCenter().then(p=> {
+      this.course.location = p;
+      this.dirty = true;
+    });
   }
 
   onEditHole(){
     if(this.state === PageState.view && this.selHole >= 0){
       this.state = PageState.editHole; 
-      this.mapView.enableInteraction(true);
+//      this.mapView.enableInteraction(true);
       this.newHoleForm.setValue({'newHoleId' : this.course.holes[this.selHole]["id"],
           'newHolePar': this.course.holes[this.selHole]["par"],
           'newHoleSI': this.course.holes[this.selHole]["si"]
@@ -189,7 +187,7 @@ export class CourseEditComponent implements OnInit {
   }
   onNewHoleCancel(){
     this.state = PageState.view;
-    this.mapView.enableInteraction(false);
+//    this.mapView.enableInteraction(false);
     this.onSelHole(this.selHole);
     this.newHoleForm.reset();
     this.newHoleSG = null;
@@ -229,8 +227,8 @@ export class CourseEditComponent implements OnInit {
       //Clear form
       this.newHoleForm.reset();
       this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
-      this.mapView.doClearCenterLine();
-      this.mapView.enableInteraction(false);
+//      this.mapView.doClearCenterLine();
+//      this.mapView.enableInteraction(false);
       this.newHoleSG = -1;
       this.dirty =true;
       this.state = PageState.view;
@@ -249,20 +247,20 @@ export class CourseEditComponent implements OnInit {
     if(this.state != PageState.view){
       
       
-      this.mapView.doCenterLine(true);
+//      this.mapView.doCenterLine(true);
     }
   }
 
   onCLEvent($event){
     if($event == "LineModified" || $event=="LineAdded"){
-      let pts = this.mapView.getCenterLine();
+//      let pts = this.mapView.getCenterLine();
       let dSum = 0;
       this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
-      pts.forEach((p)=>{
-        this.newHoleCL.push(new firebase.firestore.GeoPoint(p[1],p[0]));
-      });
-      let d = GeoCalcs.m2yrd(GeoCalcs.lineLength(pts));
-      this.newHoleSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+      // pts.forEach((p)=>{
+      //   this.newHoleCL.push(new firebase.firestore.GeoPoint(p[1],p[0]));
+      // });
+      // let d = GeoCalcs.m2yrd(GeoCalcs.lineLength(pts));
+      //this.newHoleSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
     }
   }
 }

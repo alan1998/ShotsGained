@@ -1,7 +1,7 @@
 import { Component, OnInit,AfterViewInit, ViewChild, NgZone } from '@angular/core';
 import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader,  } from '@agm/core';
 import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral} from "@agm/core/services/google-maps-types";
-
+import * as firebase from 'firebase/app';
 import { LatLng } from '@agm/core/services/google-maps-types';
 
 @Component({
@@ -72,7 +72,25 @@ export class GolfGmapComponent implements OnInit {
         zoom: 14
       });
       this.bMapInit=true;
+      
     }
+  }
+
+  setZoom(zoom:number){
+    this.wrap.setZoom(zoom);
+  }
+
+  setCenter(p:firebase.firestore.GeoPoint){
+    this.wrap.setCenter({lat:p.latitude,lng:p.longitude});
+  }
+
+  getCenter():Promise<firebase.firestore.GeoPoint>{
+    return new Promise((resolve)=> {
+      this.wrap.getCenter().then(p =>{
+        let ret = new firebase.firestore.GeoPoint(p.lat(),p.lng());
+        resolve(ret);
+      })
+    });
   }
 
   getHeading():number{
