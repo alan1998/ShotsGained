@@ -3,6 +3,7 @@ import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader,  } from '@a
 import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral} from "@agm/core/services/google-maps-types";
 import * as firebase from 'firebase/app';
 import { LatLng } from '@agm/core/services/google-maps-types';
+import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
 
 @Component({
   selector: 'app-golf-gmap',
@@ -17,6 +18,7 @@ export class GolfGmapComponent implements OnInit {
   //@ViewChild(AgmMap) mapView:any;
   @ViewChild("map") mapView:any;
   public wrap:GoogleMapsAPIWrapper;
+  centLine:Polyline = null;
   
 
   constructor(public mapsApiLoader: MapsAPILoader,
@@ -93,28 +95,33 @@ export class GolfGmapComponent implements OnInit {
     });
   }
 
-  getHeading():number{
-    
-    //This works eg. of wrapper
-    // this.wrap.getCenter().then((c)=>{
-    //   console.log(c.lat(),c.lng());
-    //   let lat = c.lat() + 0.05;
-    //   this.wrap.setCenter({lat:lat,lng:c.lng()});
-    // })
+  /*
+  Add show center line method
+  How does api hold polylines?
+  */
+  doClearCenterLine(){
+    //Clear old center line
+    if(this.centLine != null){
+      //Do whatever
+      this.centLine.setMap(null);
+      this.centLine = null;
+    }
+  }
 
-
-    this.wrap.getNativeMap().then(
-       (m)=>{
-         console.log("got it");
-         console.log(m.getCenter());
-       },
-       function(r){
-         console.log(r);
-       }
-    ).catch((r)=>{console.log(r)});
-    
-
-    return 5;
+  showCenterLine(cl:Array<firebase.firestore.GeoPoint>){
+    this.doClearCenterLine();
+    let pts = new Array<LatLngLiteral>();
+    cl.forEach((p)=>{
+      let pt = {lat:p.latitude,lng:p.longitude} ;//fromLonLat([p.longitude, p.latitude]);
+      pts.push(pt);
+    });
+    this.centLine.setPath(pts);
+    this.centLine.setOptions({
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+    this.centLine.setMap(this.mapView.nativeElement);
   }
 }
 

@@ -117,7 +117,7 @@ export class CourseEditComponent implements OnInit {
         let p = GeoCalcs.centerPt(this.course.holes[n]["cl"]);
         this.mapView.setCenter(p);
         console.log(p);
-//        this.mapView.showCenterLine(this.course.holes[n]["cl"]);
+        this.mapView.showCenterLine(this.course.holes[n]["cl"]);
       }
     }
   }
