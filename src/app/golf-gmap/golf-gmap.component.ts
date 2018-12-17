@@ -1,6 +1,6 @@
 import { Component, OnInit,AfterViewInit, ViewChild, NgZone } from '@angular/core';
-import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader,  } from '@agm/core';
-import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral} from "@agm/core/services/google-maps-types";
+import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader, AgmPolyline,  } from '@agm/core';
+import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral, google} from "@agm/core/services/google-maps-types";
 import * as firebase from 'firebase/app';
 import { LatLng } from '@agm/core/services/google-maps-types';
 import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
@@ -18,13 +18,15 @@ export class GolfGmapComponent implements OnInit {
   //@ViewChild(AgmMap) mapView:any;
   @ViewChild("map") mapView:any;
   public wrap:GoogleMapsAPIWrapper;
-  centLine:Polyline = null;
+  polyLineMgr:PolylineManager;
+  centLine;
   
 
   constructor(public mapsApiLoader: MapsAPILoader,
       private zone: NgZone,
       /*private wrap: GoogleMapsAPIWrapper*/) {
     this.wrap = new GoogleMapsAPIWrapper(this.mapsApiLoader,this.zone);
+    this.polyLineMgr = new PolylineManager(this.wrap,this.zone);
    }
 
   ngOnInit() {
@@ -95,14 +97,10 @@ export class GolfGmapComponent implements OnInit {
     });
   }
 
-  /*
-  Add show center line method
-  How does api hold polylines?
-  */
   doClearCenterLine(){
     //Clear old center line
     if(this.centLine != null){
-      //Do whatever
+
       this.centLine.setMap(null);
       this.centLine = null;
     }
@@ -115,13 +113,28 @@ export class GolfGmapComponent implements OnInit {
       let pt = {lat:p.latitude,lng:p.longitude} ;//fromLonLat([p.longitude, p.latitude]);
       pts.push(pt);
     });
-    this.centLine.setPath(pts);
-    this.centLine.setOptions({
-      strokeColor: '#FF0000',
+    let opts = {
+      path : pts,
+      strokeColor: 'blue',
       strokeOpacity: 1.0,
       strokeWeight: 2
+    }
+    this.wrap.createPolyline(opts).then(l => {
+      this.centLine = l;
     });
-    this.centLine.setMap(this.mapView.nativeElement);
+    //Next add Tee 
+    let tMarkLabel = {
+      text:"T"
+    };
+    let tMarkerOpts = {
+      label:"T",
+      clickable:false,
+      position: pts[0]
+    };
+    this.wrap.createMarker(tMarkerOpts).then(m => {
+
+    })
+    //Add distances
   }
 }
 
