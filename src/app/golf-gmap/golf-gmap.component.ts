@@ -1,9 +1,12 @@
 import { Component, OnInit,AfterViewInit, ViewChild, NgZone } from '@angular/core';
-import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader, AgmPolyline,  } from '@agm/core';
-import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral, google} from "@agm/core/services/google-maps-types";
+import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader, AgmPolyline,   } from '@agm/core';
+import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral, } from "@agm/core/services/google-maps-types";
+
 import * as firebase from 'firebase/app';
 import { LatLng } from '@agm/core/services/google-maps-types';
 import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
+
+declare var google: any;
 
 @Component({
   selector: 'app-golf-gmap',
@@ -122,18 +125,31 @@ export class GolfGmapComponent implements OnInit {
     this.wrap.createPolyline(opts).then(l => {
       this.centLine = l;
     });
-    //Next add Tee 
-    let tMarkLabel = {
-      text:"T"
-    };
-    let tMarkerOpts = {
-      label:"T",
-      clickable:false,
-      position: pts[0]
-    };
-    this.wrap.createMarker(tMarkerOpts).then(m => {
-
+    //Next add Tee
+    //Next build up marker options, marker label. Position of text etc
+    this.wrap.getNativeMap().then( m => {
+      let mk = new google.maps.Marker({
+        position: pts[0],
+        title: 'hi',
+        map : m,
+        icon : {url:"../../assets/junk.ico", labelOrigin:{x:1,y:1}},
+      });
     })
+
+    
+    // let tMarkLabel = {
+    //   text:"T"
+    // };
+    // let ico = {url:"../../assets/junk.ico", labelOrigin:{x:1,y:1}};
+    // let tMarkerOpts = {
+    //   label:"T",
+    //   clickable:false,
+    //   position: pts[0],
+    //   icon: ico
+    // };
+    // this.wrap.createMarker(tMarkerOpts).then(m => {
+
+    // })
     //Add distances
   }
 }
