@@ -5,6 +5,7 @@ import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, Lat
 import * as firebase from 'firebase/app';
 import { LatLng } from '@agm/core/services/google-maps-types';
 import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
+import { T } from '@angular/core/src/render3';
 
 declare var google: any;
 
@@ -23,6 +24,7 @@ export class GolfGmapComponent implements OnInit {
   public wrap:GoogleMapsAPIWrapper;
   polyLineMgr:PolylineManager;
   centLine;
+  centMarkers:Array<any>;
   
 
   constructor(public mapsApiLoader: MapsAPILoader,
@@ -30,6 +32,7 @@ export class GolfGmapComponent implements OnInit {
       /*private wrap: GoogleMapsAPIWrapper*/) {
     this.wrap = new GoogleMapsAPIWrapper(this.mapsApiLoader,this.zone);
     this.polyLineMgr = new PolylineManager(this.wrap,this.zone);
+    this.centMarkers = new Array<any>();
    }
 
   ngOnInit() {
@@ -103,9 +106,13 @@ export class GolfGmapComponent implements OnInit {
   doClearCenterLine(){
     //Clear old center line
     if(this.centLine != null){
-
       this.centLine.setMap(null);
       this.centLine = null;
+      this.centMarkers.forEach(mk => {
+        mk.setMap(null);
+        mk = null;
+      });
+      this.centMarkers = new Array<any>();
     }
   }
 
@@ -125,32 +132,20 @@ export class GolfGmapComponent implements OnInit {
     this.wrap.createPolyline(opts).then(l => {
       this.centLine = l;
     });
-    //Next add Tee
-    //Next build up marker options, marker label. Position of text etc
+    //Add markers for Tee and distances
     this.wrap.getNativeMap().then( m => {
       let mk = new google.maps.Marker({
         position: pts[0],
         title: 'hi',
         map : m,
-        icon : {url:"../../assets/junk.ico", labelOrigin:{x:1,y:1}},
+        label: {text:"T", color:'white' },
+        icon : {url:"../../assets/junk.ico",anchor:{x:15,y:15} ,labelOrigin:{x:15,y:15},},
       });
+      this.centMarkers.push(mk);
+      //Continue to add distances of segments
     })
 
-    
-    // let tMarkLabel = {
-    //   text:"T"
-    // };
-    // let ico = {url:"../../assets/junk.ico", labelOrigin:{x:1,y:1}};
-    // let tMarkerOpts = {
-    //   label:"T",
-    //   clickable:false,
-    //   position: pts[0],
-    //   icon: ico
-    // };
-    // this.wrap.createMarker(tMarkerOpts).then(m => {
 
-    // })
-    //Add distances
   }
 }
 
