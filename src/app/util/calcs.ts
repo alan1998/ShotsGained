@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import { LatLngLiteral } from "@agm/core/services/google-maps-types";
 
 declare function require(url:string);
 
@@ -33,10 +34,19 @@ export class GeoCalcs {
     static lineLength(pts:Array<any>):number{
         let distRet = 0;
         for(let n =0; n < pts.length-1; n++ ){
-            distRet += GeoCalcs.dist(pts[n][0],pts[n][1],pts[n+1][0],pts[n+1][1]);
+            distRet += GeoCalcs.dist(pts[n].lng(),pts[n].lat(),pts[n+1].lng(),pts[n+1].lat());
         }
         return distRet;
     }
+
+    static lineLengthGoogle(pts:Array<LatLngLiteral>){
+        let distRet = 0;
+        for(let n =0; n < pts.length-1; n++ ){
+            distRet += GeoCalcs.dist(pts[n].lng,pts[n].lat,pts[n+1].lng,pts[n+1].lat);
+        }
+        return distRet;
+    }
+
     static lineLengthGeo(pts:Array<firebase.firestore.GeoPoint>):number{
         let distRet = 0;
         for(let n =0; n < pts.length-1; n++ ){

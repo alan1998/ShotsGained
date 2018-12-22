@@ -52,8 +52,8 @@ export class MapComponent implements OnInit {
     
   }
 
-  @Output("cl-event")
-  eventCL = new EventEmitter<string>(true);
+  // @Output("cl-event")
+  // eventCL = new EventEmitter<string>(true);
  
   ngOnInit() {
   }
@@ -113,7 +113,7 @@ export class MapComponent implements OnInit {
       });
       this.modify.on('modifyend', (evt)=>{
         this.showLineLengths();
-        this.eventCL.emit("LineModified");
+        //this.eventCL.emit("LineModified");
       });
       
     }
@@ -124,8 +124,7 @@ export class MapComponent implements OnInit {
 
   getCenterLoc(){
     let loc = this.view.getCenter();
-    loc = toLonLat(loc);
-    console.log(loc);
+    loc = toLonLat(loc);;
     return loc;
   }
   enableInteraction(en:boolean){
@@ -158,7 +157,7 @@ export class MapComponent implements OnInit {
         }
         // Should be a single feature at this point
         
-        this.eventCL.emit("LineAdded");
+        //this.eventCL.emit("LineAdded");
         console.log("Draw end");
       } );  
     }

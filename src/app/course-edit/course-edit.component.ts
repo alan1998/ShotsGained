@@ -116,7 +116,6 @@ export class CourseEditComponent implements OnInit {
       if(this.course.holes != null){
         let p = GeoCalcs.centerPt(this.course.holes[n]["cl"]);
         this.mapView.setCenter(p);
-        console.log(p);
         this.mapView.showCenterLine(this.course.holes[n]["cl"]);
       }
     }
@@ -153,7 +152,7 @@ export class CourseEditComponent implements OnInit {
       this.course.holes.splice(this.selHole,1);
       this.dirty = true;
       this.isDeleteConfirmVisible = false;
-//      this.mapView.showCenterLine(null);
+      this.mapView.showCenterLine(null);
     }
   }
 
@@ -167,7 +166,7 @@ export class CourseEditComponent implements OnInit {
   onEditHole(){
     if(this.state === PageState.view && this.selHole >= 0){
       this.state = PageState.editHole; 
-//      this.mapView.enableInteraction(true);
+      this.mapView.enableInteraction(true);
       this.newHoleForm.setValue({'newHoleId' : this.course.holes[this.selHole]["id"],
           'newHolePar': this.course.holes[this.selHole]["par"],
           'newHoleSI': this.course.holes[this.selHole]["si"]
@@ -187,7 +186,7 @@ export class CourseEditComponent implements OnInit {
   }
   onNewHoleCancel(){
     this.state = PageState.view;
-//    this.mapView.enableInteraction(false);
+    this.mapView.enableInteraction(false);
     this.onSelHole(this.selHole);
     this.newHoleForm.reset();
     this.newHoleSG = null;
@@ -227,8 +226,8 @@ export class CourseEditComponent implements OnInit {
       //Clear form
       this.newHoleForm.reset();
       this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
-//      this.mapView.doClearCenterLine();
-//      this.mapView.enableInteraction(false);
+      this.mapView.doClearCenterLine();
+      this.mapView.enableInteraction(false);
       this.newHoleSG = -1;
       this.dirty =true;
       this.state = PageState.view;
@@ -244,23 +243,22 @@ export class CourseEditComponent implements OnInit {
     // New or edit ?
     
     //Is possible this time?
-    if(this.state != PageState.view){
-      
-      
-//      this.mapView.doCenterLine(true);
+    if(this.state != PageState.view){      
+      this.mapView.doCenterLine(true);
     }
   }
 
   onCLEvent($event){
     if($event == "LineModified" || $event=="LineAdded"){
-//      let pts = this.mapView.getCenterLine();
+      let pts = this.mapView.getCenterLine();
       let dSum = 0;
       this.newHoleCL = new Array<firebase.firestore.GeoPoint>();
-      // pts.forEach((p)=>{
-      //   this.newHoleCL.push(new firebase.firestore.GeoPoint(p[1],p[0]));
-      // });
-      // let d = GeoCalcs.m2yrd(GeoCalcs.lineLength(pts));
-      //this.newHoleSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+      pts.forEach((p)=>{
+        this.newHoleCL.push(new firebase.firestore.GeoPoint(p.lat,p.lng));
+      });
+      let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGoogle(pts));
+      this.newHoleSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+      this.mapView.showLineLengths(pts);
     }
   }
 }

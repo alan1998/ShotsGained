@@ -1,13 +1,23 @@
-import { Component, OnInit,AfterViewInit, ViewChild, NgZone } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, AfterViewInit, ViewChild, NgZone } from '@angular/core';
 import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader, AgmPolyline,   } from '@agm/core';
-import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral, } from "@agm/core/services/google-maps-types";
+import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral, LatLng , MVCObject } from "@agm/core/services/google-maps-types";
 
 import * as firebase from 'firebase/app';
-import { LatLng } from '@agm/core/services/google-maps-types';
+
 import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
 import { T } from '@angular/core/src/render3';
+import { GeoCalcs } from '../util/calcs'
+import { Observable } from 'openlayers';
 
 declare var google: any;
+
+enum DrawMode{
+  None,
+  Tee,
+  Flag,
+};
+
+
 
 @Component({
   selector: 'app-golf-gmap',
@@ -18,15 +28,21 @@ declare var google: any;
 export class GolfGmapComponent implements OnInit {
   lat: number = 51.678418;
   lng: number = -1.3;
+  static readonly DrawMode = DrawMode;
+  readonly DrawMode = GolfGmapComponent.DrawMode;
+  state:DrawMode = DrawMode.None;
   bMapInit:boolean = false;
   //@ViewChild(AgmMap) mapView:any;
   @ViewChild("map") mapView:any;
   public wrap:GoogleMapsAPIWrapper;
   polyLineMgr:PolylineManager;
-  centLine;
+  centLine:Polyline;
   centMarkers:Array<any>;
+  centLineListener;
+  bDrawingCL:boolean = false;
+  @Output("cl-event")
+  eventCL = new EventEmitter<string>(true);
   
-
   constructor(public mapsApiLoader: MapsAPILoader,
       private zone: NgZone,
       /*private wrap: GoogleMapsAPIWrapper*/) {
@@ -35,26 +51,13 @@ export class GolfGmapComponent implements OnInit {
     this.centMarkers = new Array<any>();
    }
 
+
   ngOnInit() {
     
   }
 
   ngAfterViewInit(){
-    // this.wrap.createMap(this.mapViewThe.nativeElement,<MapOptions>{
-    //   streetViewControl: false,
-    //   zoomControl: true,
-    //   mapTypeControl: true,
-    //   mapTypeId: 'roadmap',
-    //   mapTypeControlOptions: {
-    //     mapTypeIds: ['hybrid', 'roadmap', 'satellite'],
-    //     position: 1
-    //   },
-    //   center: {
-    //     lat: this.lat,
-    //     lng: this.lng
-    //   },
-    //   zoom: 12
-    // });
+
   }
 
   initOnLocation(lng:number, lat:number, bPhoto:boolean){
@@ -80,9 +83,19 @@ export class GolfGmapComponent implements OnInit {
           lng: this.lng
         },
         zoom: 14
-      });
-      this.bMapInit=true;
-      
+      }).then(m=> {
+        this.bMapInit=true;
+        this.wrap.getNativeMap().then(m =>{
+          m.addListener("click",(evt)=>{
+            if(this.state == DrawMode.Tee){
+              let teeMk = this.makeTeeMarker({lat:evt.latLng.lat(),lng:evt.latLng.lng()});
+              teeMk.setMap(m);
+              console.log("Tee ",evt.latLng.lat());
+              this.state = DrawMode.None;
+            }
+          })
+        });
+        });
     }
   }
 
@@ -103,11 +116,64 @@ export class GolfGmapComponent implements OnInit {
     });
   }
 
+  enableInteraction(en:boolean){
+    if(en){
+      //this.map.addInteraction(this.modify);
+      if(this.centLine != null){
+        this.centLine.setEditable(true);
+      }
+    }
+    else{
+      if(this.centLine != null){
+        this.centLine.setEditable(false);
+      }
+    }    
+  }
+
+  doCenterLine(newLine:boolean){
+    if(newLine){
+      //Clear any existing and set mode
+      if( this.centLine !=  null){
+        this.doClearCenterLine();
+      }
+      this.state = DrawMode.Tee;
+        //this.wrap.subscribeToMapEvent()
+        //Set cursor to Tee? and add click listner to add 
+          
+      // this.map.addInteraction(this.drawAction);
+    
+      // this.drawAction.on('drawend',(evt) => {
+      //   let fts = this.vectorSrcCL.getFeatures();
+      //   if(fts.length == 1){
+      //     fts[0].id_ = "centerLine";
+      //   }
+      //   let r = this.map.removeInteraction(this.drawAction);
+      //   if(r==undefined){
+      //     console.log("Remove not found in doCenterLine");
+      //   }
+      //   // Should be a single feature at this point
+        
+      //   this.eventCL.emit("LineAdded");
+      //   console.log("Draw end");
+      // } );  
+    }
+    else{
+      //Doing an edit of existing line
+    }
+  }
+
   doClearCenterLine(){
     //Clear old center line
     if(this.centLine != null){
+      google.maps.event.removeListener(this.centLineListener);
       this.centLine.setMap(null);
       this.centLine = null;
+      this.doClearCenterMarkers();
+    }
+  }
+
+  doClearCenterMarkers(){
+    if(this.centMarkers != null){
       this.centMarkers.forEach(mk => {
         mk.setMap(null);
         mk = null;
@@ -119,33 +185,103 @@ export class GolfGmapComponent implements OnInit {
   showCenterLine(cl:Array<firebase.firestore.GeoPoint>){
     this.doClearCenterLine();
     let pts = new Array<LatLngLiteral>();
-    cl.forEach((p)=>{
-      let pt = {lat:p.latitude,lng:p.longitude} ;//fromLonLat([p.longitude, p.latitude]);
-      pts.push(pt);
-    });
-    let opts = {
-      path : pts,
-      strokeColor: 'blue',
-      strokeOpacity: 1.0,
-      strokeWeight: 2
+    if(cl != null){
+      cl.forEach((p)=>{
+        let pt = {lat:p.latitude,lng:p.longitude} ;
+        pts.push(pt);
+      });
+      //Add markers for Tee and distances
+      this.showLineLengths(pts);
+      let opts = {
+        path : pts,
+        strokeColor: 'blue',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      }
+      this.wrap.createPolyline(opts).then(l => {
+        this.centLine = l;
+        this.centLineListener = this.centLine.addListener("mouseup",evt =>{
+          this.eventCL.emit("LineModified");
+        });        
+      });
+      
     }
-    this.wrap.createPolyline(opts).then(l => {
-      this.centLine = l;
+  }
+
+  makeTeeMarker(pt:LatLngLiteral){
+    var mk = new google.maps.Marker({
+      position: pt,
+      title: 'Tee',
+      opacity:0.6,
+      //label: {text:"T", color:'white' },
+      icon : {
+        url:"../../assets/Tee.ico",
+        anchor:{x:12,y:12} ,
+        labelOrigin:{x:15,y:15},
+        scaledSize:{width:24,height:24}
+      },
     });
-    //Add markers for Tee and distances
+    return mk;
+  }
+
+  showLineLengths(pts:Array<LatLngLiteral>){
+    this.doClearCenterMarkers();
     this.wrap.getNativeMap().then( m => {
       let mk = new google.maps.Marker({
         position: pts[0],
-        title: 'hi',
+        title: 'Tee',
         map : m,
-        label: {text:"T", color:'white' },
-        icon : {url:"../../assets/junk.ico",anchor:{x:15,y:15} ,labelOrigin:{x:15,y:15},},
+        opacity:0.6,
+        //label: {text:"T", color:'white' },
+        icon : {
+          url:"../../assets/Tee.ico",
+          anchor:{x:12,y:12} ,
+          labelOrigin:{x:15,y:15},
+          scaledSize:{width:24,height:24}
+        },
       });
       this.centMarkers.push(mk);
       //Continue to add distances of segments
+      let length:number = 0;
+      for(let n=0; n < pts.length-1; n++){
+        let t = GeoCalcs.dist(pts[n].lng,pts[n].lat ,pts[n+1].lng,pts[n+1].lat);
+        t = GeoCalcs.m2yrd(t);
+        length = length + t;
+        let distLab = this.MakeTextLabel(t,(pts[n].lng+pts[n+1].lng)/2,(pts[n].lat+pts[n+1].lat)/2); 
+        distLab.setMap(m);
+        this.centMarkers.push(distLab);
+      }
+      let endLabel = this.MakeTextLabel(length,(pts[pts.length-1].lng),(pts[pts.length-1].lat));
+      endLabel.setMap(m);
+      this.centMarkers.push(endLabel);
     })
+  }
 
+  MakeTextLabel(dist:number,lng:number,lat:number){
+    let mk = new google.maps.Marker({
+      position: {lat:lat,lng:lng},
+      title: 'Dist',
+      opacity:0.6,
+      label: {text:dist.toFixed(0), color:'white' },
+      icon : {
+        url:"../../assets/NoneExistant.ico",       
+      },
+    });
+    return mk;  
+  }
 
+  getCenterLine():Array<LatLngLiteral>{
+    let newPts = new Array<LatLngLiteral>();
+    if(this.centLine != null){
+      let path:Array<LatLng> = this.centLine.getPath();
+      if(path.length>=1){
+        path.forEach(p => {
+          let pt = {lat:p.lat(),lng:p.lng()} ;
+          newPts.push(pt);
+        })
+      } 
+    }
+    return newPts;
   }
 }
 
