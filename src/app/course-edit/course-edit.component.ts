@@ -116,7 +116,7 @@ export class CourseEditComponent implements OnInit {
       if(this.course.holes != null){
         let p = GeoCalcs.centerPt(this.course.holes[n]["cl"]);
         this.mapView.setCenter(p);
-        this.mapView.showCenterLine(this.course.holes[n]["cl"]);
+        this.mapView.showCenterLine(this.course.holes[n]["cl"],false);
       }
     }
   }
@@ -152,7 +152,7 @@ export class CourseEditComponent implements OnInit {
       this.course.holes.splice(this.selHole,1);
       this.dirty = true;
       this.isDeleteConfirmVisible = false;
-      this.mapView.showCenterLine(null);
+      this.mapView.showCenterLine(null,false);
     }
   }
 

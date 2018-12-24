@@ -84,18 +84,30 @@ export class GolfGmapComponent implements OnInit {
         },
         zoom: 14
       }).then(m=> {
+        let teePos:any;
+        let teeMk:any;
         this.bMapInit=true;
         this.wrap.getNativeMap().then(m =>{
           m.addListener("click",(evt)=>{
             if(this.state == DrawMode.Tee){
-              let teeMk = this.makeTeeMarker({lat:evt.latLng.lat(),lng:evt.latLng.lng()});
+              teePos = evt.latLng;
+              teeMk = this.makeTeeMarker({lat:teePos.lat(),lng:teePos.lng()});
               teeMk.setMap(m);
-              console.log("Tee ",evt.latLng.lat());
+              this.state = DrawMode.Flag;
+            }
+            else if(this.state == DrawMode.Flag){
+              teeMk.setMap(null);
+              teeMk = null;
               this.state = DrawMode.None;
+              //Turn 2 points into poly line of center and show as edit
+              let newCl = new Array<firebase.firestore.GeoPoint>();
+              newCl.push(new firebase.firestore.GeoPoint(teePos.lat(),teePos.lng()));
+              newCl.push(new firebase.firestore.GeoPoint(evt.latLng.lat(),evt.latLng.lng()));
+              this.showCenterLine(newCl,true);
             }
           })
         });
-        });
+      });
     }
   }
 
@@ -182,7 +194,7 @@ export class GolfGmapComponent implements OnInit {
     }
   }
 
-  showCenterLine(cl:Array<firebase.firestore.GeoPoint>){
+  showCenterLine(cl:Array<firebase.firestore.GeoPoint>,bEditable:boolean){
     this.doClearCenterLine();
     let pts = new Array<LatLngLiteral>();
     if(cl != null){
@@ -196,10 +208,12 @@ export class GolfGmapComponent implements OnInit {
         path : pts,
         strokeColor: 'blue',
         strokeOpacity: 1.0,
-        strokeWeight: 2
+        strokeWeight: 2,
+        zIndex : 2,
       }
       this.wrap.createPolyline(opts).then(l => {
         this.centLine = l;
+        this.centLine.setEditable(bEditable);
         this.centLineListener = this.centLine.addListener("mouseup",evt =>{
           this.eventCL.emit("LineModified");
         });        
@@ -213,11 +227,12 @@ export class GolfGmapComponent implements OnInit {
       position: pt,
       title: 'Tee',
       opacity:0.6,
+      zIndex:1,
       //label: {text:"T", color:'white' },
       icon : {
         url:"../../assets/Tee.ico",
         anchor:{x:12,y:12} ,
-        labelOrigin:{x:15,y:15},
+        labelOrigin:{x:15,y:24},
         scaledSize:{width:24,height:24}
       },
     });
@@ -228,7 +243,7 @@ export class GolfGmapComponent implements OnInit {
     this.doClearCenterMarkers();
     this.wrap.getNativeMap().then( m => {
       let mk = new google.maps.Marker({
-        position: pts[0],
+        position: {lat:pts[0].lat+0.00003,lng:pts[0].lng+0.00003},
         title: 'Tee',
         map : m,
         opacity:0.6,
