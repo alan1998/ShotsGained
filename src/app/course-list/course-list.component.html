@@ -1,4 +1,13 @@
 
+<div >
+  <nav class="subnav">
+    <ul class="nav">
+      <li class="nav-item">
+        <button class="nav-link active" [disabled]="nonSelected()" [routerLink]="['/edit',selId]">Edit</button>
+      </li>
+    </ul>
+  </nav>  
+</div>
 <div id="m" class="mid-menu">
   <section class="sidenav-content">
     <section class="nav-group">
@@ -9,7 +18,6 @@
         </li>
       </ul>
     </section>
-    <button [disabled]="nonSelected()" [routerLink]="['/edit',selId]">Edit</button>
   </section>
 </div>
 <div class="mid-content">

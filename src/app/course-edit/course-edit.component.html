@@ -1,18 +1,20 @@
+<div class="top-edit divShow" >
+  <form novalidate (ngSubmit)="onSave()" >
+  <label style="padding-right: 1em">Name: </label>
+  <input style="padding-right: 1em" name="name" [(ngModel)]="course.name" 
+          required minlength="2" pattern="^[A-Za-z ]+$"/>
+  <!--<input (keyup.enter)="course.name=$event.target.value" />-->
+  <button  class="btn" type="submit" [disabled]="this.dirty===false">
+    <clr-icon shape="floppy" size="16" ></clr-icon>
+    <!--<span class="clr-icon-title">Save course</span>-->
+  </button>
+  </form>
+  
+</div>
 <div class='mid-menu' >
   <div class='hole-edit' >
-    <div class="btn-group btn-icon divShow" >
-      <form novalidate (ngSubmit)="onSave()" clrForm clrLayout="horizontal">
-        <label>Name: </label>
-        <input name="name" [(ngModel)]="course.name" 
-                required minlength="2" pattern="^[A-Za-z ]+$"/>
-        <!--<input (keyup.enter)="course.name=$event.target.value" />-->
-        <button  class="btn" type="submit" [disabled]="this.dirty===false">
-          <clr-icon shape="floppy" size="16" ></clr-icon>
-          <!--<span class="clr-icon-title">Save course</span>-->
-        </button>
-      </form>
-    
-      <button (click)="onClickUpdateLocation()">Set location</button>
+    <div  >
+     <button (click)="onClickUpdateLocation()">Set location</button> 
     </div>
     <div class="divShow" style='overflow-y:auto;max-height: 60vh ; align-items: flex-start'>
       <table class="table">
@@ -120,7 +122,7 @@
   </div>
 </clr-modal>
 
-<div class="mid-content">
+<div class="mid-content" style="margin:2px">
   <!--<app-map class="editHoleMap"  id='mapView' (cl-event)="onCLEvent($event)"></app-map>-->
   <app-golf-gmap class="editHoleMap"  id='mapView' (cl-event)="onCLEvent($event)"></app-golf-gmap>
 

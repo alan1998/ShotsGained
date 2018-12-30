@@ -87,6 +87,7 @@ export class GolfGmapComponent implements OnInit {
         let teePos:any;
         let teeMk:any;
         this.bMapInit=true;
+        let e = this.wrap.subscribeToMapEvent("click");
         this.wrap.getNativeMap().then(m =>{
           m.addListener("click",(evt)=>{
             if(this.state == DrawMode.Tee){
@@ -148,26 +149,7 @@ export class GolfGmapComponent implements OnInit {
       if( this.centLine !=  null){
         this.doClearCenterLine();
       }
-      this.state = DrawMode.Tee;
-        //this.wrap.subscribeToMapEvent()
-        //Set cursor to Tee? and add click listner to add 
-          
-      // this.map.addInteraction(this.drawAction);
-    
-      // this.drawAction.on('drawend',(evt) => {
-      //   let fts = this.vectorSrcCL.getFeatures();
-      //   if(fts.length == 1){
-      //     fts[0].id_ = "centerLine";
-      //   }
-      //   let r = this.map.removeInteraction(this.drawAction);
-      //   if(r==undefined){
-      //     console.log("Remove not found in doCenterLine");
-      //   }
-      //   // Should be a single feature at this point
-        
-      //   this.eventCL.emit("LineAdded");
-      //   console.log("Draw end");
-      // } );  
+      this.state = DrawMode.Tee; 
     }
     else{
       //Doing an edit of existing line

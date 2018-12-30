@@ -3,6 +3,13 @@ import {MapComponent} from '../map/map.component'
 import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { SGCouresService, Course } from '../sgcoures.service';
 
+/* 
+  TODO
+  Add route to new page/component for round entry
+  Basic layout of holes on left map at right
+  Get menu items on top menu for edit course and round entry rather than button on component 
+*/
+
 @Component({
   selector: 'app-course-list',
   templateUrl: './course-list.component.html',
@@ -10,7 +17,6 @@ import { SGCouresService, Course } from '../sgcoures.service';
   host: {class: 'mid-container'}
 })
 export class CourseListComponent implements OnInit {
-  //@ViewChild(MapComponent) mapView:MapComponent;
   @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent
   srvRef: SGCouresService;
   selId: string;
@@ -30,14 +36,11 @@ export class CourseListComponent implements OnInit {
     this.srvRef.GetCourse(v).then((c) => {
       cc = c;
       this.selName = c.name;
-      console.log("Course selected ");
-      //console.log("Name = " + cc.name + " Location " + cc.location.latitude + " : " + cc.location.longitude);
       this.mapView.initOnLocation(cc.location.longitude,cc.location.latitude, false);
       
-      console.log(c);
       }).catch(()=>{
         console.log("err selecting course")}
-      );
+    );
   }
 
   nonSelected() : boolean {

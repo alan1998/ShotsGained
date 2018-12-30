@@ -22,6 +22,7 @@ html, body {
 
 .my-content {
     grid-column: 1 / -1;
+    grid-template-rows:30px auto;
     border:1px solid rgb(13, 179, 230);
 }
 
@@ -48,7 +49,7 @@ html, body {
     width:100%;
     display: grid ;
     grid-template-columns: repeat(7,1fr);
-    grid-template-rows:  auto ;
+    grid-template-rows:  40px auto ;
     grid-gap: 3px;
     border:2px solid rgb(23, 245, 89);
 }
