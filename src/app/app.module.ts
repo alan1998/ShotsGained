@@ -23,6 +23,7 @@ import { GolfGmapComponent } from './golf-gmap/golf-gmap.component'
 
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
+import { ManRndComponent } from './man-rnd/man-rnd.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
     CourseListComponent,
     PageNotFoundComponent,
     CourseEditComponent,
-    GolfGmapComponent
+    GolfGmapComponent,
+    ManRndComponent
   ],
   imports: [
     BrowserModule,

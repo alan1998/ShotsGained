@@ -1,0 +1,7 @@
+.map-rnd {
+    grid-column: 6 / -1;
+    grid-row: 1/9;
+    color: #fff;
+    border:1px solid rgb(230, 13, 13);
+    text-align: center;
+}

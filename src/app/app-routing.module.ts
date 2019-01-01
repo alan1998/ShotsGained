@@ -5,10 +5,12 @@ import { RouterModule, Routes} from '@angular/router'
 import { CourseListComponent } from './course-list/course-list.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { CourseEditComponent } from './course-edit/course-edit.component';
+import { ManRndComponent } from 'src/app/man-rnd/man-rnd.component';
 
 
 const routes:Routes = [
   {path: "edit/:id", component : CourseEditComponent},
+  {path: "man-rnd/:id", component :ManRndComponent},
   {path: "", component : CourseListComponent},
   {path:'**',component: PageNotFoundComponent}
 ];
