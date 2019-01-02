@@ -28,7 +28,7 @@ export class CourseEditComponent implements OnInit {
   //@ViewChild(MapComponent) mapView:MapComponent;
   @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent;
   SIs:Array<string>;
-  h;
+  h:Hole;
   vectorSrcCL;
   selHole:number = -1;
   newHoleForm =  new FormGroup({

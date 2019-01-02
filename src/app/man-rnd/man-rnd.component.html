@@ -1,5 +1,11 @@
-<div>
-  man-rnd works!
+<div class="hole-rnd">
+  <select [(ngModel)]="selHole" >
+    <option selected="" value=""></option>
+    <option [ngValue]="h.id" *ngFor="let h of holeList">{{h.id}}</option>
+  </select>
+  <button (click)="onAddHole()" class ="btn">
+    <clr-icon shape="plus" size="16"></clr-icon>
+  </button>
 </div>
 <div class="map-rnd">
   <app-golf-gmap></app-golf-gmap>
