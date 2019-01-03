@@ -1,5 +1,5 @@
 import * as firebase from 'firebase/app';
-import { LatLngLiteral } from "@agm/core/services/google-maps-types";
+import { LatLngLiteral, LatLngBoundsLiteral } from "@agm/core/services/google-maps-types";
 
 declare function require(url:string);
 
@@ -75,6 +75,26 @@ export class GeoCalcs {
             ret = new firebase.firestore.GeoPoint(lat,lon);
         } 
         return ret;
+    }
+    static getBounds(pts:Array<firebase.firestore.GeoPoint>):LatLngBoundsLiteral{
+        // Get most SW NE for an array (center line) of points
+        // Return format needed for maps g maps API
+        let latNE:number = -100;
+        let lngNE:number = -500;
+        let latSW:number = 100;
+        let lngSW:number = 0;
+        pts.forEach((p)=>{
+            if(p.latitude > latNE)
+                latNE = p.latitude;
+            if(p.latitude < latSW)
+                latSW = p.latitude;
+            if(p.longitude > lngNE)
+                lngNE = p.longitude;
+            if(p.longitude < lngSW)
+                lngSW = p.longitude;
+        });
+        let r:LatLngBoundsLiteral = {east:lngNE,west:lngSW,north:latNE,south:latSW}; 
+        return r;
     }
 }
 

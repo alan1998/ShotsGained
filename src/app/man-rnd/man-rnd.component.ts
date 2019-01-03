@@ -4,7 +4,8 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 
-/*Style the hole select a bit better
+/*Style the hole select a bit better - pipe to get the id, par, sg, length neat?
+Need selection event, also good to get array index from control
 When selected find bounds of center line and fit view to it
 */
 @Component({
@@ -37,8 +38,11 @@ export class ManRndComponent implements OnInit {
       this.mapView.setZoom(16);
       
   }
+  onHoleChanged(event):void{
+    this.selHole = event.target.selectedIndex-1;
+  }
 
   onAddHole():void{
-    console.log(this.selHole);
+    this.mapView.showCenterLine(this.course.holes[this.selHole]["cl"],false);
   }
 }

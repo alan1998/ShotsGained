@@ -1,7 +1,7 @@
 <div class="hole-rnd">
-  <select [(ngModel)]="selHole" >
+  <select [(ngModel)]="selHole" (change)="onHoleChanged($event)">
     <option selected="" value=""></option>
-    <option [ngValue]="h.id" *ngFor="let h of holeList">{{h.id}}</option>
+    <option [ngValue]="h" *ngFor="let h of holeList">{{h.id}}</option>
   </select>
   <button (click)="onAddHole()" class ="btn">
     <clr-icon shape="plus" size="16"></clr-icon>
