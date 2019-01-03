@@ -1,8 +1,18 @@
 import * as firebase from 'firebase/app';
 import { LatLngLiteral, LatLngBoundsLiteral } from "@agm/core/services/google-maps-types";
+import {Pipe,PipeTransform } from '@angular/core';
 
+import { Hole } from '../sgcoures.service';
 declare function require(url:string);
 
+@Pipe({name : 'holeSum'})
+export class HoleSummary1 implements PipeTransform{
+    transform(h:Hole){
+        let l = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(h.cl));
+        return `${(h.id+":......").substring(0,4)} ${l.toFixed(0)} ${h.par}  ${h.sg_scr.toFixed(2)}` ;
+    }
+}
+ 
 export class DistSG{
     d:number;
     s:number;
@@ -12,7 +22,8 @@ export class DistSG{
       this.s = sg; 
     }
   }
-  
+
+ 
 export class GeoCalcs {
     //DIstance between points in lat long as meters
     static dist(lon1:number,lat1:number,lon2:number,lat2:number):number{

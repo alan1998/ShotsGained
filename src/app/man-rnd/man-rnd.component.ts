@@ -1,13 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Pipe, PipeTransform } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
+import { GeoCalcs, ShotsGained } from '../util/calcs'
 
 /*Style the hole select a bit better - pipe to get the id, par, sg, length neat?
-Need selection event, also good to get array index from control
-When selected find bounds of center line and fit view to it
+
 */
+
 @Component({
   selector: 'app-man-rnd',
   templateUrl: './man-rnd.component.html',
@@ -39,7 +40,10 @@ export class ManRndComponent implements OnInit {
       
   }
   onHoleChanged(event):void{
-    this.selHole = event.target.selectedIndex-1;
+    this.selHole = event.target.selectedIndex;
+    let cl = this.course.holes[this.selHole]["cl"];
+    this.mapView.showCenterLine(cl, false);
+    this.mapView.setBounds(GeoCalcs.getBounds(cl));
   }
 
   onAddHole():void{

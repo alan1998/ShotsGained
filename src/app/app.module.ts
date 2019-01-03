@@ -24,7 +24,7 @@ import { GolfGmapComponent } from './golf-gmap/golf-gmap.component'
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { ManRndComponent } from './man-rnd/man-rnd.component';
-
+import { HoleSummary1 } from './util/calcs'
 
 @NgModule({
   declarations: [
@@ -34,7 +34,8 @@ import { ManRndComponent } from './man-rnd/man-rnd.component';
     PageNotFoundComponent,
     CourseEditComponent,
     GolfGmapComponent,
-    ManRndComponent
+    ManRndComponent,
+    HoleSummary1
   ],
   imports: [
     BrowserModule,

@@ -1,6 +1,8 @@
 import { Component, OnInit, EventEmitter, Output, AfterViewInit, ViewChild, NgZone } from '@angular/core';
 import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader, AgmPolyline,   } from '@agm/core';
-import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, LatLngLiteral, LatLng , MVCObject } from "@agm/core/services/google-maps-types";
+import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, 
+                  LatLngLiteral, LatLng , LatLngBoundsLiteral, MVCObject } from "@agm/core/services/google-maps-types";
+
 
 import * as firebase from 'firebase/app';
 
@@ -118,6 +120,10 @@ export class GolfGmapComponent implements OnInit {
 
   setCenter(p:firebase.firestore.GeoPoint){
     this.wrap.setCenter({lat:p.latitude,lng:p.longitude});
+  }
+
+  setBounds(bnds:LatLngBoundsLiteral):void{
+    this.wrap.fitBounds(bnds);
   }
 
   getCenter():Promise<firebase.firestore.GeoPoint>{

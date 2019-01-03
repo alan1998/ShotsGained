@@ -1,7 +1,6 @@
 <div class="hole-rnd">
-  <select [(ngModel)]="selHole" (change)="onHoleChanged($event)">
-    <option selected="" value=""></option>
-    <option [ngValue]="h" *ngFor="let h of holeList">{{h.id}}</option>
+  <select   (change)="onHoleChanged($event)">
+    <option [ngValue]="h" *ngFor="let h of holeList">{{h | holeSum}}</option>
   </select>
   <button (click)="onAddHole()" class ="btn">
     <clr-icon shape="plus" size="16"></clr-icon>
