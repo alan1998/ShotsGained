@@ -1,4 +1,4 @@
-<div class="hole-rnd">
+<div class="hole-rnd" >
   <select   (change)="onHoleChanged($event)">
     <option [ngValue]="h" *ngFor="let h of holeList">{{h | holeSum}}</option>
   </select>
@@ -6,6 +6,40 @@
     <clr-icon shape="plus" size="16"></clr-icon>
   </button>
 </div>
-<div class="map-rnd">
+<div class="card-rnd">
+  <input type="date" [(ngModel)]="when" >
+  <button (click)="onSaveCard()" class ="btn">
+      <clr-icon shape="floppy" size="16" ></clr-icon>
+  </button>  
+</div>
+<div class="card-holes">
+  <table>
+    <thead>
+      <tr>
+        <td>Hole</td>
+        <td>Par</td>
+        <td>Score</td>
+        <td>SG</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>4</td>
+        <td>5</td>
+        <td>-.8</td>    
+      </tr>
+    </tbody>
+        <!--<clr-dg-row *ngFor="let user of users">
+            <clr-dg-cell>{{user.id}}</clr-dg-cell>
+            <clr-dg-cell>{{user.name}}</clr-dg-cell>
+            <clr-dg-cell>{{user.creation | date}}</clr-dg-cell>
+            <clr-dg-cell>{{user.color}}</clr-dg-cell>
+        </clr-dg-row>-->
+    
+        
+    </table>
+</div>
+<div class="map-rnd" >
   <app-golf-gmap></app-golf-gmap>
 </div>

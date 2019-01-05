@@ -15,6 +15,7 @@ export const firebaseConfig = environment.firebaseConfig;
 export const olConfig = environment.olConfig;
 
 import { SGCouresService } from './sgcoures.service';
+import { SGRoundsService  } from "./sg-rounds.service";
 import { CourseListComponent } from './course-list/course-list.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import { CourseEditComponent } from './course-edit/course-edit.component';
@@ -53,6 +54,7 @@ import { HoleSummary1 } from './util/calcs'
     })
   ],
   providers: [SGCouresService,
+    SGRoundsService,
     GoogleMapsAPIWrapper
     ],
   bootstrap: [AppComponent]

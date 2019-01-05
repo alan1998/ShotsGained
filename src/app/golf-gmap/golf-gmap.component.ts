@@ -17,6 +17,7 @@ enum DrawMode{
   None,
   Tee,
   Flag,
+  Shot,
 };
 
 
@@ -44,6 +45,8 @@ export class GolfGmapComponent implements OnInit {
   bDrawingCL:boolean = false;
   @Output("cl-event")
   eventCL = new EventEmitter<string>(true);
+  @Output("shot-loc-event")
+  eventShotLoc = new EventEmitter<LatLng>(true);
   
   constructor(public mapsApiLoader: MapsAPILoader,
       private zone: NgZone,
@@ -84,7 +87,7 @@ export class GolfGmapComponent implements OnInit {
           lat: this.lat,
           lng: this.lng
         },
-        zoom: 14
+        zoom: 14,
       }).then(m=> {
         let teePos:any;
         let teeMk:any;
@@ -107,6 +110,10 @@ export class GolfGmapComponent implements OnInit {
               newCl.push(new firebase.firestore.GeoPoint(teePos.lat(),teePos.lng()));
               newCl.push(new firebase.firestore.GeoPoint(evt.latLng.lat(),evt.latLng.lng()));
               this.showCenterLine(newCl,true);
+            }
+            else if(this.state == DrawMode.Shot){
+              //Emit event of lat long
+              this.eventShotLoc.emit(evt.latLng);
             }
           })
         });
@@ -149,6 +156,18 @@ export class GolfGmapComponent implements OnInit {
     }    
   }
 
+  startManEntry(b:boolean){
+    // Manual entry of shots 
+    if(b){
+      this.state = this.DrawMode.Shot;
+      this.wrap.setMapOptions({draggableCursor: 'crosshair'});
+    }
+    else{
+      this.state = this.DrawMode.None;
+      this.wrap.setMapOptions({draggableCursor: ''});
+    }
+  }
+  
   doCenterLine(newLine:boolean){
     if(newLine){
       //Clear any existing and set mode
