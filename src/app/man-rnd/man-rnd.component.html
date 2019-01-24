@@ -13,32 +13,7 @@
   </button>  
 </div>
 <div class="card-holes">
-  <table>
-    <thead>
-      <tr>
-        <td>Hole</td>
-        <td>Par</td>
-        <td>Score</td>
-        <td>SG</td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>4</td>
-        <td>5</td>
-        <td>-.8</td>    
-      </tr>
-    </tbody>
-        <!--<clr-dg-row *ngFor="let user of users">
-            <clr-dg-cell>{{user.id}}</clr-dg-cell>
-            <clr-dg-cell>{{user.name}}</clr-dg-cell>
-            <clr-dg-cell>{{user.creation | date}}</clr-dg-cell>
-            <clr-dg-cell>{{user.color}}</clr-dg-cell>
-        </clr-dg-row>-->
-    
-        
-    </table>
+  <app-score-card></app-score-card>
 </div>
 <div class="map-rnd" >
   <app-golf-gmap></app-golf-gmap>

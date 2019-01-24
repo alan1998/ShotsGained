@@ -8,11 +8,12 @@
 
 .card-rnd {
     grid-column: 1 /5;
-    grid-row: 2/3;    
+    grid-row: 2/3;   
 }
 .card-holes {
-    grid-column: 1 /5;
-    grid-row: 7/-1;    
+    grid-column: 1 /-1;
+    grid-row: 7/-1;
+    border:1px solid rgb(28, 13, 230);     
 }
 .hole-rnd {
     grid-column: 1 /5;
