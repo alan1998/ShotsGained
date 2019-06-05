@@ -21,7 +21,8 @@ export class CourseListComponent implements OnInit {
   srvRef: SGCouresService;
   selId: string;
   selName: string;
-
+  
+  
   constructor(srvCourses : SGCouresService) {
     this.srvRef = srvCourses;
    }

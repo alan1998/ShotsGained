@@ -25,6 +25,7 @@ export class ManRndComponent implements OnInit {
   holeList;
   selHole;
   when;
+  currentInput:any;
 
   constructor(    private route : ActivatedRoute,
     private router : Router,
@@ -58,6 +59,11 @@ export class ManRndComponent implements OnInit {
     this.mapView.showCenterLine(this.course.holes[this.selHole]["cl"],false);
     this.mapView.startManEntry(true);
     
+  }
+
+  onFileSelected(event) {
+    console.log(event.target.files);
+    this.currentInput = event.target.files; 
   }
 
   onShotLocEvent = (evt:any):void=>{
