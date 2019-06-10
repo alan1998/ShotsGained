@@ -6,6 +6,7 @@ import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { SGRoundsService, Round  } from "../sg-rounds.service";
 import { GeoCalcs, ShotsGained } from '../util/calcs'
+import { TxtFilePos} from  "../txt-file-pos"
 
 
 /*Style the hole select a bit better - pipe to get the id, par, sg, length neat?
@@ -25,7 +26,7 @@ export class ManRndComponent implements OnInit {
   holeList;
   selHole;
   when;
-  currentInput:any;
+  gpsList:TxtFilePos;
 
   constructor(    private route : ActivatedRoute,
     private router : Router,
@@ -63,10 +64,12 @@ export class ManRndComponent implements OnInit {
 
   onFileSelected(event) {
     console.log(event.target.files);
-    this.currentInput = event.target.files; 
+    const fName = event.target.files[0];
+    this.gpsList = new TxtFilePos();
+    this.gpsList.Open(fName);
   }
 
-  onShotLocEvent = (evt:any):void=>{
+  onShotLocEvent = (evt: any): void => {
     console.log(evt.lat(), evt.lng());
     this.mapView.startManEntry(false);
   }

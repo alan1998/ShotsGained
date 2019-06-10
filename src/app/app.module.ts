@@ -15,18 +15,19 @@ export const firebaseConfig = environment.firebaseConfig;
 export const olConfig = environment.olConfig;
 
 import { SGCouresService } from './sgcoures.service';
-import { SGRoundsService  } from "./sg-rounds.service";
+import { SGRoundsService  } from './sg-rounds.service';
 import { CourseListComponent } from './course-list/course-list.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import { CourseEditComponent } from './course-edit/course-edit.component';
 import { AppRoutingModule } from './/app-routing.module';
-import { GolfGmapComponent } from './golf-gmap/golf-gmap.component'
+import { GolfGmapComponent } from './golf-gmap/golf-gmap.component';
 
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { ManRndComponent } from './man-rnd/man-rnd.component';
 import { HoleSummary1 } from './util/calcs';
-import { ScoreCardComponent } from './score-card/score-card.component'
+import { ScoreCardComponent } from './score-card/score-card.component';
+
 
 @NgModule({
   declarations: [
