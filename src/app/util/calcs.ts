@@ -3,6 +3,8 @@ import { LatLngLiteral, LatLngBoundsLiteral } from "@agm/core/services/google-ma
 import {Pipe,PipeTransform } from '@angular/core';
 
 import { Hole } from '../sgcoures.service';
+import { logging } from 'protractor';
+import { Timestamp } from 'rxjs/Rx';
 declare function require(url:string);
 
 @Pipe({name : 'holeSum'})
@@ -23,6 +25,23 @@ export class DistSG{
     }
   }
 
+export class GpsLogPoint {
+    pos: firebase.firestore.GeoPoint;
+    when: Date;
+
+    constructor(lat: number, lon: number, dt: string, t: string) {
+        this.pos = new firebase.firestore.GeoPoint(lat, lon);
+        if (( dt.length === 7) && (t.length === 6 )) {
+            const dd = parseInt( dt.substring(1, 3));
+            const mm = parseInt( dt.substring(3, 5));
+            const yy = parseInt(dt.substring( 5, 7)) + 2000;
+            const hr = parseInt(t.substring(0, 2));
+            const mn = parseInt(t.substring(2,4));
+            const ss = parseInt(t.substring(4,6));
+            this.when = new Date( yy, mm, dd, hr, mn, ss);
+        }
+    }
+}
  
 export class GeoCalcs {
     //DIstance between points in lat long as meters
