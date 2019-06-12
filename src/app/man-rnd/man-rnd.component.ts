@@ -7,6 +7,7 @@ import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
 import { SGRoundsService, Round  } from "../sg-rounds.service";
 import { GeoCalcs, ShotsGained } from '../util/calcs'
 import { TxtFilePos} from  "../txt-file-pos"
+import { GpsListComponent } from '../gps-list/gps-list.component';
 
 
 /*Style the hole select a bit better - pipe to get the id, par, sg, length neat?
@@ -21,12 +22,13 @@ import { TxtFilePos} from  "../txt-file-pos"
 })
 export class ManRndComponent implements OnInit {
   @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent
+  @ViewChild(GpsListComponent) gpsListCmp:GpsListComponent
   selId: string;
   course : ICourse;
   holeList;
   selHole;
   when;
-  gpsList:TxtFilePos;
+  gpsList: TxtFilePos;
 
   constructor(    private route : ActivatedRoute,
     private router : Router,
@@ -69,6 +71,7 @@ export class ManRndComponent implements OnInit {
     //const pts = await this.gpsList.Open(fName);
     this.gpsList.Open(fName).then( pts=> {
       console.log(pts);
+      this.gpsListCmp.setPoints(pts);
     });
     
   }

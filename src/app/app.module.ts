@@ -27,6 +27,7 @@ import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { ManRndComponent } from './man-rnd/man-rnd.component';
 import { HoleSummary1 } from './util/calcs';
 import { ScoreCardComponent } from './score-card/score-card.component';
+import { GpsListComponent } from './gps-list/gps-list.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { ScoreCardComponent } from './score-card/score-card.component';
     GolfGmapComponent,
     ManRndComponent,
     HoleSummary1,
-    ScoreCardComponent
+    ScoreCardComponent,
+    GpsListComponent
   ],
   imports: [
     BrowserModule,
