@@ -66,7 +66,11 @@ export class ManRndComponent implements OnInit {
     console.log(event.target.files);
     const fName = event.target.files[0];
     this.gpsList = new TxtFilePos();
-    this.gpsList.Open(fName);
+    //const pts = await this.gpsList.Open(fName);
+    this.gpsList.Open(fName).then( pts=> {
+      console.log(pts);
+    });
+    
   }
 
   onShotLocEvent = (evt: any): void => {
