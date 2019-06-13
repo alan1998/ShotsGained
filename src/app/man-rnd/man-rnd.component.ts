@@ -39,41 +39,41 @@ export class ManRndComponent implements OnInit {
     this.selId = this.route.snapshot.paramMap.get('id');
 
     this.srvDB.GetCourse(this.selId).then((c) => {
-        this.course = c;     
-        this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude,true);
+        this.course = c;
+        this.mapView.initOnLocation(this.course.location.longitude, this.course.location.latitude, true);
         this.holeList = c.holes;
-      }).catch(()=>{
-        console.log("err selecting course to edit")}
+      }).catch(() => {
+        console.log('err selecting course to edit')}
       );
-      let dt = new Date(Date.now());
-      this.when = dt.toISOString().slice(0,10);
+      const dt = new Date(Date.now());
+      this.when = dt.toISOString().slice(0, 10);
       this.mapView.setZoom(16);
       this.mapView.eventShotLoc.subscribe(this.onShotLocEvent);
-      
+      this.gpsListCmp.eventSel.subscribe(this.onGpsPosSel);
+
   }
-  onHoleChanged(event):void{
+  onHoleChanged(event): void {
     this.selHole = event.target.selectedIndex;
-    let cl = this.course.holes[this.selHole]["cl"];
+    const cl = this.course.holes[this.selHole]['cl'];
     this.mapView.showCenterLine(cl, false);
     this.mapView.setBounds(GeoCalcs.getBounds(cl));
   }
 
-  onAddHole():void{
-    this.mapView.showCenterLine(this.course.holes[this.selHole]["cl"],false);
+  onAddHole(): void {
+    this.mapView.showCenterLine(this.course.holes[this.selHole]['cl'], false);
     this.mapView.startManEntry(true);
-    
   }
 
   onFileSelected(event) {
     console.log(event.target.files);
     const fName = event.target.files[0];
     this.gpsList = new TxtFilePos();
-    //const pts = await this.gpsList.Open(fName);
-    this.gpsList.Open(fName).then( pts=> {
+    // const pts = await this.gpsList.Open(fName);
+    this.gpsList.Open(fName).then( pts => {
       console.log(pts);
       this.gpsListCmp.setPoints(pts);
     });
-    
+
   }
 
   onShotLocEvent = (evt: any): void => {
@@ -81,14 +81,18 @@ export class ManRndComponent implements OnInit {
     this.mapView.startManEntry(false);
   }
 
-  onSaveCard():void{
-    //TODO gather info into a Round class instance
+  onSaveCard(): void {
+    // TODO gather info into a Round class instance
     // For now make it up
-    let r:Round =  new Round();
-    r.note = " A note about things";
-    r.where = "TODO";
-    let s:Date = new Date( this.when);
+    const r: Round =  new Round();
+    r.note = ' A note about things';
+    r.where = 'TODO';
+    const s: Date = new Date( this.when);
     r.when = s.toISOString();
     this.srvRnds.addNew(r);
+  }
+
+  onGpsPosSel(p: firebase.firestore.GeoPoint) {
+    console.log( 'evt', p);
   }
 }
