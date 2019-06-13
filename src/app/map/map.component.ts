@@ -306,7 +306,7 @@ export class MapComponent implements OnInit {
   }
 
   setCenter(p:firebase.firestore.GeoPoint){
-    let pt = fromLonLat([p.longitude, p.latitude]);
+    const  pt = fromLonLat([p.longitude, p.latitude]);
     this.view.setCenter(pt);
   }
 
@@ -321,14 +321,33 @@ export class MapComponent implements OnInit {
         for(let n=0; n < fts.length; n++){
           let geo = fts[n].getGeometry();
           if(geo.getType()=='LineString'){
-            let pts = geo.getCoordinates(); 
+            let pts = geo.getCoordinates();
             pts.forEach(element => {
               newPts.push(toLonLat(element));
             });
           }
         }
-      } 
+      }
     }
     return newPts;
   }
+
+  showShotLoc(p: firebase.firestore.GeoPoint) {
+    // Create a circle and show on map
+    // Clear old circle maybe
+    const circ = this.createShotLoc(center: {lat: 37.090, lng: -95.712}) 
+  }
+
+  createShotLoc(cent, color): olStyleCircle {
+    const cityCircle = new olStyleCircle ({
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      center: cent,
+      radius: 10
+    });
+  }
+
 }
