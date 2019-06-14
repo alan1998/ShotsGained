@@ -305,6 +305,44 @@ export class GolfGmapComponent implements OnInit {
     }
     return newPts;
   }
+
+  showShotPos(p:firebase.firestore.GeoPoint) {
+    let pt = {lat:p.latitude,lng:p.longitude} ;
+    this.wrap.getNativeMap().then( m => {
+      let mk = new google.maps.Marker({
+        position: {lat:pt.lat, lng:pt.lng},
+        title: 'Tee',
+        map : m,
+        opacity:0.6,
+        //label: {text:"T", color:'white' },
+        icon : {
+          url:"../../assets/Tee.ico",
+          anchor:{x:12,y:12} ,
+          labelOrigin:{x:15,y:15},
+          scaledSize:{width:24,height:24}
+        },
+      });
+  }
+  /*
+    showShotLoc(p: firebase.firestore.GeoPoint) {
+    // Create a circle and show on map
+    // Clear old circle maybe
+    const circ = this.createShotLoc ({lat: p.latitude, lng: p.longitude},"#ffffff");
+    circ.setMap(this.map);
+  }
+
+  createShotLoc(cent, color): olStyleCircle {
+    const cityCircle = new olStyleCircle ({
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,
+      center: cent,
+      radius: 10
+    });
+  }
+*/
 }
 
 

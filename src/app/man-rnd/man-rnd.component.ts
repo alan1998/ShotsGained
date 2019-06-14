@@ -92,7 +92,20 @@ export class ManRndComponent implements OnInit {
     this.srvRnds.addNew(r);
   }
 
-  onGpsPosSel(p: firebase.firestore.GeoPoint) {
-    console.log( 'evt', p);
+  /*
+    TODO Get showShotPos to do circle
+    Add parameter for colour
+    Get scroll style/size for list working
+    Manage points - i.e. hang on to them some how so can
+     - label shot number
+     - colour code lie
+     - update position from map movement/interaction
+    
+     Also need to mark used in list
+     Fill card for hole as next shot added
+     Flag positioned calc strokes gained etc
+  */
+  onGpsPosSel = (p: firebase.firestore.GeoPoint): void => {
+    this.mapView.showShotPos(p);
   }
 }
