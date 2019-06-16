@@ -25,10 +25,6 @@ import { environment } from '../../environments/environment';
 import { createText } from '@angular/core/src/view/text';
 //import {olConfig} from "../app.module";
 
-/* Next todo
-
-*/
-
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',

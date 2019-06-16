@@ -24,6 +24,7 @@ export class GpsListComponent implements OnInit {
   }
 
   onSelect(n): void {
+    console.log(this.pts[n]);
     this.eventSel.emit(this.pts[n].pos);
   }
 }

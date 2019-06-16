@@ -10,6 +10,7 @@ import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
 import { T } from '@angular/core/src/render3';
 import { GeoCalcs } from '../util/calcs'
 import { Observable } from 'openlayers';
+import { reject } from 'q';
 
 declare var google: any;
 
@@ -306,22 +307,42 @@ export class GolfGmapComponent implements OnInit {
     return newPts;
   }
 
-  showShotPos(p:firebase.firestore.GeoPoint) {
-    let pt = {lat:p.latitude,lng:p.longitude} ;
-    this.wrap.getNativeMap().then( m => {
-      let mk = new google.maps.Marker({
-        position: {lat:pt.lat, lng:pt.lng},
-        title: 'Tee',
-        map : m,
-        opacity:0.6,
-        //label: {text:"T", color:'white' },
-        icon : {
-          url:"../../assets/Tee.ico",
-          anchor:{x:12,y:12} ,
-          labelOrigin:{x:15,y:15},
-          scaledSize:{width:24,height:24}
-        },
-      });
+  showShotPos(p:firebase.firestore.GeoPoint): Promise<any> {
+    return new Promise((resolve,reject) => {
+      let pt = {lat:p.latitude,lng:p.longitude} ;
+      this.wrap.getNativeMap().then( m => {
+        let cir =  new google.maps.Circle({
+          map: m,
+          center: {lat:pt.lat, lng:pt.lng},
+          strokeColor: '#FF0000',
+          strokeWeight: 2,
+          strokeOpacity: 0.8,
+          fillColor: '#FF0000',
+          fillOpacity: 0.5,
+          radius: 1.2
+        });
+        resolve (cir);
+      }).catch(e => {
+        reject (new DOMException("Problem create shot circle"));
+      });      
+    }
+  };
+    
+
+    
+      // let mk = new google.maps.Marker({
+      //   position: {lat:pt.lat, lng:pt.lng},
+      //   title: 'Tee',
+      //   map : m,
+      //   opacity:0.6,
+      //   //label: {text:"T", color:'white' },
+      //   icon : {
+      //     url:"../../assets/Tee.ico",
+      //     anchor:{x:12,y:12} ,
+      //     labelOrigin:{x:15,y:15},
+      //     scaledSize:{width:24,height:24}
+      //   },
+      // });
   }
   /*
     showShotLoc(p: firebase.firestore.GeoPoint) {

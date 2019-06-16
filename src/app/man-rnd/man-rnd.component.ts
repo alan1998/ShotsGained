@@ -105,7 +105,12 @@ export class ManRndComponent implements OnInit {
      Fill card for hole as next shot added
      Flag positioned calc strokes gained etc
   */
+  lastCir: any;
   onGpsPosSel = (p: firebase.firestore.GeoPoint): void => {
-    this.mapView.showShotPos(p);
+    if(this.lastCir != null)
+      this.lastCir.setMap(null);
+    this.mapView.showShotPos(p).then( p => {
+      this.lastCir = p;
+    })
   }
 }
