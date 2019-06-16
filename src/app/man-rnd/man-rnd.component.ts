@@ -93,9 +93,7 @@ export class ManRndComponent implements OnInit {
   }
 
   /*
-    TODO Get showShotPos to do circle
-    Add parameter for colour
-    Get scroll style/size for list working
+    TODO 
     Manage points - i.e. hang on to them some how so can
      - label shot number
      - colour code lie
@@ -105,11 +103,11 @@ export class ManRndComponent implements OnInit {
      Fill card for hole as next shot added
      Flag positioned calc strokes gained etc
   */
-  lastCir: any;
+  lastCir: any; // Todo replace with array for current hole
   onGpsPosSel = (p: firebase.firestore.GeoPoint): void => {
     if(this.lastCir != null)
       this.lastCir.setMap(null);
-    this.mapView.showShotPos(p).then( p => {
+    this.mapView.showShotPos(p, '#ff0000').then( p => {
       this.lastCir = p;
     })
   }

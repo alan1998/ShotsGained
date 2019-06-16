@@ -307,43 +307,29 @@ export class GolfGmapComponent implements OnInit {
     return newPts;
   }
 
-  showShotPos(p:firebase.firestore.GeoPoint): Promise<any> {
+  showShotPos(p:firebase.firestore.GeoPoint, colour: string): Promise<any> {
     return new Promise((resolve,reject) => {
       let pt = {lat:p.latitude,lng:p.longitude} ;
       this.wrap.getNativeMap().then( m => {
         let cir =  new google.maps.Circle({
           map: m,
           center: {lat:pt.lat, lng:pt.lng},
-          strokeColor: '#FF0000',
+          strokeColor: colour,
           strokeWeight: 2,
           strokeOpacity: 0.8,
-          fillColor: '#FF0000',
+          fillColor: colour,
           fillOpacity: 0.5,
-          radius: 1.2
+          radius: 1.2,
+          draggable: true
         });
         resolve (cir);
       }).catch(e => {
         reject (new DOMException("Problem create shot circle"));
       });      
-    }
-  };
-    
-
-    
-      // let mk = new google.maps.Marker({
-      //   position: {lat:pt.lat, lng:pt.lng},
-      //   title: 'Tee',
-      //   map : m,
-      //   opacity:0.6,
-      //   //label: {text:"T", color:'white' },
-      //   icon : {
-      //     url:"../../assets/Tee.ico",
-      //     anchor:{x:12,y:12} ,
-      //     labelOrigin:{x:15,y:15},
-      //     scaledSize:{width:24,height:24}
-      //   },
-      // });
+    });
   }
+
+}
   /*
     showShotLoc(p: firebase.firestore.GeoPoint) {
     // Create a circle and show on map
@@ -364,6 +350,6 @@ export class GolfGmapComponent implements OnInit {
     });
   }
 */
-}
+
 
 
