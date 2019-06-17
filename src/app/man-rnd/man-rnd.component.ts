@@ -109,6 +109,10 @@ export class ManRndComponent implements OnInit {
       this.lastCir.setMap(null);
     this.mapView.showShotPos(p, '#ff0000').then( p => {
       this.lastCir = p;
+       // TODO upadte stuff as event happens
+      this.mapView.addShotPosListener(p);
     })
   }
+
+
 }

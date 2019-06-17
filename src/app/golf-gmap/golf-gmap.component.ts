@@ -322,6 +322,7 @@ export class GolfGmapComponent implements OnInit {
           radius: 1.2,
           draggable: true
         });
+        
         resolve (cir);
       }).catch(e => {
         reject (new DOMException("Problem create shot circle"));
@@ -329,27 +330,19 @@ export class GolfGmapComponent implements OnInit {
     });
   }
 
-}
-  /*
-    showShotLoc(p: firebase.firestore.GeoPoint) {
-    // Create a circle and show on map
-    // Clear old circle maybe
-    const circ = this.createShotLoc ({lat: p.latitude, lng: p.longitude},"#ffffff");
-    circ.setMap(this.map);
+  // TODO pass the event onward to the round component (or other)
+  // Also need remove listener and possible drag start so enclosing component can detect which dragend will correspond to?
+  addShotPosListener(cir){
+    cir.addListener('dragend',this.onDragged);
   }
 
-  createShotLoc(cent, color): olStyleCircle {
-    const cityCircle = new olStyleCircle ({
-      strokeColor: '#FF0000',
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: '#FF0000',
-      fillOpacity: 0.35,
-      center: cent,
-      radius: 10
-    });
+  onDragged(e){
+    //Todo emit another event here for containing component
+    console.log(e);
   }
-*/
+
+}
+
 
 
 
