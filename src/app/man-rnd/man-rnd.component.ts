@@ -29,6 +29,7 @@ export class ManRndComponent implements OnInit {
   selHole;
   when;
   gpsList: TxtFilePos;
+  lastCir: any; // Todo replace with array for current hole
 
   constructor(    private route : ActivatedRoute,
     private router : Router,
@@ -48,9 +49,9 @@ export class ManRndComponent implements OnInit {
       const dt = new Date(Date.now());
       this.when = dt.toISOString().slice(0, 10);
       this.mapView.setZoom(16);
-      this.mapView.eventShotLoc.subscribe(this.onShotLocEvent);
+      this.mapView.shotLocEvt.subscribe(this.onShotLocEvent);
       this.gpsListCmp.eventSel.subscribe(this.onGpsPosSel);
-
+      this.mapView.shotLocDragEvt.subscribe(this.onShotLocDrag);
   }
   onHoleChanged(event): void {
     this.selHole = event.target.selectedIndex;
@@ -102,17 +103,24 @@ export class ManRndComponent implements OnInit {
      Also need to mark used in list
      Fill card for hole as next shot added
      Flag positioned calc strokes gained etc
+     Toolbar 
+      - add shot manual
+      - add from list
+      - penalty 
+      - flag
+      - lie
   */
-  lastCir: any; // Todo replace with array for current hole
   onGpsPosSel = (p: firebase.firestore.GeoPoint): void => {
-    if(this.lastCir != null)
-      this.lastCir.setMap(null);
+    if (this.lastCir != null) {
+      this.lastCir.setMap(null); }
     this.mapView.showShotPos(p, '#ff0000').then( p => {
       this.lastCir = p;
        // TODO upadte stuff as event happens
-      this.mapView.addShotPosListener(p);
-    })
+      this.mapView.addOrRemoveShotPosListener(p, true);
+    } );
   }
-
+  onShotLocDrag(newPos ) {
+    console.log(newPos.lat());
+  }
 
 }

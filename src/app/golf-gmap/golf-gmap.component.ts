@@ -43,12 +43,11 @@ export class GolfGmapComponent implements OnInit {
   centLine:Polyline;
   centMarkers:Array<any>;
   centLineListener;
-  bDrawingCL:boolean = false;
-  @Output("cl-event")
-  eventCL = new EventEmitter<string>(true);
-  @Output("shot-loc-event")
-  eventShotLoc = new EventEmitter<LatLng>(true);
-  
+  bDrawingCL = false;
+  @Output() eventCL = new EventEmitter<string>(true);
+  @Output() shotLocEvt = new EventEmitter<LatLng>(true);
+  @Output() shotLocDragEvt = new EventEmitter<LatLng>(true);
+
   constructor(public mapsApiLoader: MapsAPILoader,
       private zone: NgZone,
       /*private wrap: GoogleMapsAPIWrapper*/) {
@@ -59,23 +58,22 @@ export class GolfGmapComponent implements OnInit {
 
 
   ngOnInit() {
-    
-  }
-
-  ngAfterViewInit(){
 
   }
 
-  initOnLocation(lng:number, lat:number, bPhoto:boolean){
-    if(this.bMapInit){
-      this.wrap.setCenter({lat:lat,lng:lng});
+  ngAfterViewInit() {
+
+  }
+
+  initOnLocation(lng: number, lat: number, bPhoto: boolean) {
+    if (this.bMapInit ) {
+      this.wrap.setCenter({lat: lat, lng: lng});
       this.lat = lat;
       this.lng = lng;
-    }
-    else{
+    } else {
       let type = 'roadmap';
-      if(bPhoto)
-        type = 'satellite';
+      if ( bPhoto ) {
+        type = 'satellite'; }
       this.lat = lat;
       this.lng = lng;
       this.wrap.createMap(this.mapView.nativeElement,<MapOptions>{
@@ -83,7 +81,7 @@ export class GolfGmapComponent implements OnInit {
         zoomControl: true,
         mapTypeControl: false,
         mapTypeId: type,
-        fullscreenControl:false,      
+        fullscreenControl: false,
         center: {
           lat: this.lat,
           lng: this.lng
@@ -114,7 +112,7 @@ export class GolfGmapComponent implements OnInit {
             }
             else if(this.state == DrawMode.Shot){
               //Emit event of lat long
-              this.eventShotLoc.emit(evt.latLng);
+              this.shotLocEvt.emit(evt.latLng);
             }
           })
         });
@@ -322,24 +320,27 @@ export class GolfGmapComponent implements OnInit {
           radius: 1.2,
           draggable: true
         });
-        
+
         resolve (cir);
       }).catch(e => {
-        reject (new DOMException("Problem create shot circle"));
-      });      
+        reject (new DOMException('Problem create shot circle'));
+      });
     });
   }
 
   // TODO pass the event onward to the round component (or other)
   // Also need remove listener and possible drag start so enclosing component can detect which dragend will correspond to?
-  addShotPosListener(cir){
-    cir.addListener('dragend',this.onDragged);
+  addOrRemoveShotPosListener(cir, bAdd: boolean) {
+    if (bAdd) {
+      cir.addListener('dragend', ( evt) => {
+        console.log(evt);
+        this.shotLocDragEvt.emit(evt.latLng);
+      });
+    } else {
+      cir.removeListener();
+    }
   }
 
-  onDragged(e){
-    //Todo emit another event here for containing component
-    console.log(e);
-  }
 
 }
 

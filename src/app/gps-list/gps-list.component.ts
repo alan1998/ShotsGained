@@ -4,6 +4,10 @@ import { GpsLogPoint } from '../util/calcs';
 // Component to display list and hold list of positions
 // Raise event when selected so can be displayed on map
 // Maybe update from map interaction
+/*
+  TODO style like hole list on course edit i.e. highlight selection
+  Disable after used
+*/
 
 @Component({
   selector: 'app-gps-list',
