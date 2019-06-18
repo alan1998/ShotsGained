@@ -16,6 +16,8 @@ import { GpsLogPoint } from '../util/calcs';
 })
 export class GpsListComponent implements OnInit {
   pts: GpsLogPoint [];
+  selShot: number;
+
   @Output() eventSel = new EventEmitter<firebase.firestore.GeoPoint>(true);
 
   constructor() { }
@@ -29,6 +31,7 @@ export class GpsListComponent implements OnInit {
 
   onSelect(n): void {
     console.log(this.pts[n]);
+    this.selShot=n;
     this.eventSel.emit(this.pts[n].pos);
   }
 }

@@ -1,7 +1,12 @@
 <div style='overflow-y:auto;max-height: 30vh' >
-<ul>
-<li *ngFor="let p of pts; let i=index" (click)="onSelect(i)" >
-    <span>{{i+1}}</span>
-</li>
-</ul>
+    <table class='table'>
+        <tbody>
+            <tr *ngFor="let p of pts; let i=index" 
+            [ngClass] ="{'activeShot': this.selShot==i}"
+            (click)="onSelect(i)">
+                <td>{{i+1}}</td>
+                <td>{{p.when | date:"HH:mm"}}</td>
+            </tr>      
+        </tbody>
+    </table>
 </div>
