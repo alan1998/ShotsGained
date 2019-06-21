@@ -17,7 +17,7 @@ import { SGCouresService, Course } from '../sgcoures.service';
   host: {class: 'mid-container'}
 })
 export class CourseListComponent implements OnInit {
-  @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent
+  @ViewChild(GolfGmapComponent,{static:false}) mapView:GolfGmapComponent
   srvRef: SGCouresService;
   selId: string;
   selName: string;

@@ -7,7 +7,7 @@ import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline,
 import * as firebase from 'firebase/app';
 
 import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
-import { T } from '@angular/core/src/render3';
+//import { T } from '@angular/core/src/render3';
 import { GeoCalcs } from '../util/calcs'
 import { Observable } from 'openlayers';
 import { reject } from 'q';
@@ -37,7 +37,7 @@ export class GolfGmapComponent implements OnInit {
   state:DrawMode = DrawMode.None;
   bMapInit:boolean = false;
   //@ViewChild(AgmMap) mapView:any;
-  @ViewChild("map") mapView:any;
+  @ViewChild("map",{static:false}) mapView:any;
   public wrap:GoogleMapsAPIWrapper;
   polyLineMgr:PolylineManager;
   centLine:Polyline;

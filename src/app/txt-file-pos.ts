@@ -15,7 +15,7 @@ export class TxtFilePos {
             };
 
             fs.onload = () => {
-                const data: string  =  fs.result;
+                const data: string   =  <string>fs.result;
                 const lines = data.split('\n');
                 lines.forEach( e => {
                     const tk = e.split(',');

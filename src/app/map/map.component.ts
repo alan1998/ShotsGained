@@ -22,7 +22,7 @@ import { fromLonLat, toLonLat } from '../../../node_modules/ol/proj';
 import { GeoCalcs } from '../util/calcs'
 import * as firebase from 'firebase/app';
 import { environment } from '../../environments/environment';
-import { createText } from '@angular/core/src/view/text';
+//import { createText } from '@angular/core/src/view/text';
 //import {olConfig} from "../app.module";
 
 @Component({

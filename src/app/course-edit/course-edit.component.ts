@@ -26,7 +26,7 @@ export class CourseEditComponent implements OnInit {
   course : ICourse;
   selId : string;
   //@ViewChild(MapComponent) mapView:MapComponent;
-  @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent;
+  @ViewChild(GolfGmapComponent,{static:false}) mapView:GolfGmapComponent;
   SIs:Array<string>;
   h:Hole;
   vectorSrcCL;

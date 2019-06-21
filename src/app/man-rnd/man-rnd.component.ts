@@ -21,8 +21,8 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
   host: {class: 'man-rnd-container'}
 })
 export class ManRndComponent implements OnInit {
-  @ViewChild(GolfGmapComponent) mapView:GolfGmapComponent
-  @ViewChild(GpsListComponent) gpsListCmp:GpsListComponent
+  @ViewChild(GolfGmapComponent,{static:false}) mapView:GolfGmapComponent
+  @ViewChild(GpsListComponent,{static:false}) gpsListCmp:GpsListComponent
   selId: string;
   course : ICourse;
   holeList;
