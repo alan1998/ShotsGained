@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ClarityModule, ClrFormsNextModule, ClrIconModule  } from "@clr/angular";
+import { ClarityModule,  ClrIconModule  } from "@clr/angular";
 
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
@@ -49,7 +49,6 @@ import { GpsListComponent } from './gps-list/gps-list.component';
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
     ClarityModule,
-    ClrFormsNextModule,
     ClrIconModule, 
     FormsModule,
     AppRoutingModule,
