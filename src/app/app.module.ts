@@ -9,6 +9,7 @@ import { MapComponent } from './map/map.component';
 
 import { AngularFireModule } from '@angular/fire/firebase.app.module';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAuthModule} from '@angular/fire/auth'
 
 import { environment } from '../environments/environment';
 export const firebaseConfig = environment.firebaseConfig;
@@ -48,6 +49,7 @@ import { GpsListComponent } from './gps-list/gps-list.component';
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
+    AngularFireAuthModule,
     ClarityModule,
     ClrIconModule, 
     FormsModule,
