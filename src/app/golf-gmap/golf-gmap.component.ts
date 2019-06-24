@@ -1,6 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, AfterViewInit, ViewChild, NgZone } from '@angular/core';
 import {AgmCoreModule , AgmMap, GoogleMapsAPIWrapper, MapsAPILoader, AgmPolyline,   } from '@agm/core';
-import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, 
+import { GoogleMap, Marker, MarkerOptions, MapOptions, InfoWindow, Polyline, MVCArray,
                   LatLngLiteral, LatLng , LatLngBoundsLiteral, MVCObject } from "@agm/core/services/google-maps-types";
 
 
@@ -294,8 +294,8 @@ export class GolfGmapComponent implements OnInit {
   getCenterLine():Array<LatLngLiteral>{
     let newPts = new Array<LatLngLiteral>();
     if(this.centLine != null){
-      let path:Array<LatLng> = this.centLine.getPath();
-      if(path.length>=1){
+      let path:MVCArray<LatLng> = this.centLine.getPath();
+      if(path.getLength()>=1){
         path.forEach(p => {
           let pt = {lat:p.lat(),lng:p.lng()} ;
           newPts.push(pt);
