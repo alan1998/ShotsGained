@@ -1,15 +1,15 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ClarityModule,  ClrIconModule  } from "@clr/angular";
+import { ClarityModule,  ClrIconModule  } from '@clr/angular';
 
 import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 
 import { AngularFireModule } from '@angular/fire/firebase.app.module';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { AngularFireAuthModule} from '@angular/fire/auth'
+import { AngularFireAuthModule} from '@angular/fire/auth';
 
 import { environment } from '../environments/environment';
 export const firebaseConfig = environment.firebaseConfig;
@@ -29,6 +29,7 @@ import { ManRndComponent } from './man-rnd/man-rnd.component';
 import { HoleSummary1 } from './util/calcs';
 import { ScoreCardComponent } from './score-card/score-card.component';
 import { GpsListComponent } from './gps-list/gps-list.component';
+import { LoginComponent } from './login/login.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { GpsListComponent } from './gps-list/gps-list.component';
     ManRndComponent,
     HoleSummary1,
     ScoreCardComponent,
-    GpsListComponent
+    GpsListComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,7 @@ import { GpsListComponent } from './gps-list/gps-list.component';
     AngularFirestoreModule,
     AngularFireAuthModule,
     ClarityModule,
-    ClrIconModule, 
+    ClrIconModule,
     FormsModule,
     AppRoutingModule,
     ReactiveFormsModule,
@@ -66,8 +68,8 @@ import { GpsListComponent } from './gps-list/gps-list.component';
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  
-  //ngOnInit(){
-    
-  //}
+
+  // ngOnInit(){
+
+  // }
  }

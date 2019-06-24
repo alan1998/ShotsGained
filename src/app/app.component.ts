@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 import { SGCouresService, Course } from './sgcoures.service';
-import * as firebase from 'firebase/app'
+import * as firebase from 'firebase/app';
 import {MapComponent} from './map/map.component';
-import { AngularFireAuth } from '@angular/fire/auth'
-import { auth } from 'firebase/app'
+import { AngularFireAuth } from '@angular/fire/auth';
+import { auth } from 'firebase/app';
 /*
  
   
@@ -27,14 +27,13 @@ import { auth } from 'firebase/app'
 export class AppComponent {
   title = 'app';
   srvRef: SGCouresService;
-  
 
-  constructor(public afAuth:AngularFireAuth, srvCourses : SGCouresService){
+  constructor(public afAuth: AngularFireAuth, srvCourses: SGCouresService) {
     this.srvRef = srvCourses;
-      
+
   }
-  ngOnInit(){ 
-  } 
+  ngOnInit() {
+  }
   login() {
     this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
   }
