@@ -34,10 +34,5 @@ export class AppComponent {
   }
   ngOnInit() {
   }
-  login() {
-    this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider());
-  }
-  logout() {
-    this.afAuth.auth.signOut();
-  }
+  
 }
