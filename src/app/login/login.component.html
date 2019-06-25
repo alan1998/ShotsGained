@@ -1,8 +1,21 @@
-<div>
-  <div *ngIf="afAuth.user | async as user; else showLogin">
-    <h1>Hello {{ user.displayName }}!</h1>
-    <button (click)="logout()">Logout</button>
+<div >
+  <nav class="subnav">
+    <ul class="nav">
+<!--      <li class="nav-item">
+        <button class="nav-link active" [disabled]="nonSelected()" [routerLink]="['/list']">Courses</button>
+      </li>-->
+    </ul>
+  </nav>  
+</div>
+<div class="mid-content">
+  <div *ngIf="afAuth.user | async then authenticated else showLogin">
   </div>
+  <ng-template #authenticated>
+     <h1>Hello {{ user.displayName }}!</h1>
+    <button (click)="logout()">Logout</button>
+   
+  </ng-template>
+
   <ng-template #showLogin>
     <p>Please login.</p>
     <button (click)="login()">Login with Google</button>

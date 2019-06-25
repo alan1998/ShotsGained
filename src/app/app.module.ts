@@ -22,6 +22,7 @@ import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import { CourseEditComponent } from './course-edit/course-edit.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { GolfGmapComponent } from './golf-gmap/golf-gmap.component';
+import { CoreModule } from './core/core.module'
 
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
@@ -59,7 +60,8 @@ import { LoginComponent } from './login/login.component';
     ReactiveFormsModule,
     AgmCoreModule.forRoot({
       apiKey: olConfig.apikeyG
-    })
+    }),
+    CoreModule
   ],
   providers: [SGCouresService,
     SGRoundsService,

@@ -12,7 +12,7 @@ import { LoginComponent } from 'src/app/login/login.component';
 const routes: Routes = [
   {path: 'edit/:id', component : CourseEditComponent},
   {path: 'man-rnd/:id', component : ManRndComponent},
-  {path: 'list/:id', component : CourseListComponent},
+  {path: 'list', component : CourseListComponent},
   {path: '', component : LoginComponent},
   {path: '**', component: PageNotFoundComponent}
 ];
