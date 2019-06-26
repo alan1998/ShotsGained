@@ -28,7 +28,9 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.afAuth.googleLogin().then((u)=> {
-      console.log(this.afAuth.user);
+      console.log("Login then");
+      console.log(this.afAuth.user['uid']);
+      this.router.navigate(['/list'])
     });
     // this.afAuth.auth.signInWithPopup(new auth.GoogleAuthProvider()).then((v) => {
     //   console.log(v);

@@ -8,8 +8,12 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { Observable, of } from 'rxjs';
 import { switchMap} from 'rxjs/operators';
 
-export interface User {
+interface User {
+  uid: string;
+  email: string;
+  photoURL?: string;
   displayName?: string;
+  favoriteColor?: string;
 }
 
 
@@ -29,7 +33,7 @@ export class AuthService {
         switchMap(user => {
           if (user) {
             console.log(user)
-            return user.displayName;
+            return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
           } else {
             return of(null)
           }
@@ -38,16 +42,33 @@ export class AuthService {
   }
 
   googleLogin() {
-    const provider = new auth.GoogleAuthProvider()
+    const provider = new auth.GoogleAuthProvider();
+    
     return this.oAuthLogin(provider);
   }
   private oAuthLogin(provider) {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((credential) => {
-        //this.updateUserData(credential.user)
+        console.log("Update credential",  credential);
+        this.updateUserData(credential.user);
       })
   }
 
+  private updateUserData(user) {
+    // Sets user data to firestore on login
+
+    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+
+    const data: User = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL
+    }
+
+    return userRef.set(data, { merge: true })
+
+  }
   signOut() {
     this.afAuth.auth.signOut().then(() => {
         this.router.navigate(['/']);
