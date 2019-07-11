@@ -2,7 +2,7 @@ import { Component, OnInit} from '@angular/core';
 //import { AngularFireAuth } from '@angular/fire/auth';
 //import { auth } from 'firebase/app';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { AuthService, User} from '../core/auth.service';
+import { AuthService } from '../core/auth.service';
 
 //import {RouterModule } from '../app.component'
 /*

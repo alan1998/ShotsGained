@@ -6,7 +6,10 @@ import {MapComponent} from './map/map.component';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { auth } from 'firebase/app';
 /*
- 
+  Next : 27/6 
+    Put menus / links along top. including link to login
+    Guard them / by auth
+    Start with course list page
   
     Edit page-
     save, delete - sub menu bar ? 

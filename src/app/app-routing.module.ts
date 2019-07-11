@@ -7,12 +7,12 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { CourseEditComponent } from './course-edit/course-edit.component';
 import { ManRndComponent } from 'src/app/man-rnd/man-rnd.component';
 import { LoginComponent } from 'src/app/login/login.component';
-
+import { AuthGuard } from './core/auth.guard'
 
 const routes: Routes = [
   {path: 'edit/:id', component : CourseEditComponent},
   {path: 'man-rnd/:id', component : ManRndComponent},
-  {path: 'list', component : CourseListComponent},
+  {path: 'list', component : CourseListComponent, canActivate: [AuthGuard]},
   {path: '', component : LoginComponent},
   {path: '**', component: PageNotFoundComponent}
 ];
@@ -20,7 +20,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, {enableTracing: true}),
+    RouterModule.forRoot(routes, {enableTracing: false}),
   ],
   declarations: [],
   exports: [

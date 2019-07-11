@@ -23,6 +23,7 @@ import { CourseEditComponent } from './course-edit/course-edit.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { GolfGmapComponent } from './golf-gmap/golf-gmap.component';
 import { CoreModule } from './core/core.module'
+import { AuthService } from './core/auth.service'
 
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
@@ -65,7 +66,8 @@ import { LoginComponent } from './login/login.component';
   ],
   providers: [SGCouresService,
     SGRoundsService,
-    GoogleMapsAPIWrapper
+    GoogleMapsAPIWrapper,
+    AuthService
     ],
   bootstrap: [AppComponent]
 })

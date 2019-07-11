@@ -32,7 +32,7 @@ export class AuthService {
       this.user = this.afAuth.authState.pipe(
         switchMap(user => {
           if (user) {
-            console.log(user)
+            console.log("switch",user)
             return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
           } else {
             return of(null)
@@ -74,4 +74,5 @@ export class AuthService {
         this.router.navigate(['/']);
     });
   }
+
 }
