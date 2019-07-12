@@ -43,15 +43,16 @@ export class ManRndComponent implements OnInit {
         this.course = c;
         this.mapView.initOnLocation(this.course.location.longitude, this.course.location.latitude, true);
         this.holeList = c.holes;
+        this.mapView.setZoom(16);
+        this.mapView.shotLocEvt.subscribe(this.onShotLocEvent);
+        this.mapView.shotLocDragEvt.subscribe(this.onShotLocDrag);
       }).catch(() => {
         console.log('err selecting course to edit')}
       );
       const dt = new Date(Date.now());
       this.when = dt.toISOString().slice(0, 10);
-      this.mapView.setZoom(16);
-      this.mapView.shotLocEvt.subscribe(this.onShotLocEvent);
-      this.gpsListCmp.eventSel.subscribe(this.onGpsPosSel);
-      this.mapView.shotLocDragEvt.subscribe(this.onShotLocDrag);
+      
+      
   }
   onHoleChanged(event): void {
     this.selHole = event.target.selectedIndex;
@@ -73,6 +74,7 @@ export class ManRndComponent implements OnInit {
     this.gpsList.Open(fName).then( pts => {
       console.log(pts);
       this.gpsListCmp.setPoints(pts);
+      this.gpsListCmp.eventSel.subscribe(this.onGpsPosSel);
     });
 
   }

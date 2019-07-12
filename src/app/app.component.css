@@ -1,3 +1,12 @@
 #map-view {
     height: 80vh;
 }
+
+.active-head {
+    background-color: beige;
+}
+
+.head-menu-link {
+    margin-left: 3px;
+    
+}

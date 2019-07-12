@@ -11,8 +11,8 @@ import { AuthGuard } from './core/auth.guard'
 
 const routes: Routes = [
   {path: 'edit/:id', component : CourseEditComponent},
-  {path: 'man-rnd/:id', component : ManRndComponent},
-  {path: 'list', component : CourseListComponent, canActivate: [AuthGuard]},
+  {path: 'man-rnd/:id', component : ManRndComponent,  canActivate: [AuthGuard]},
+  {path: 'list', component : CourseListComponent,  canActivate: [AuthGuard] },
   {path: '', component : LoginComponent},
   {path: '**', component: PageNotFoundComponent}
 ];
@@ -20,7 +20,8 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule.forRoot(routes, {enableTracing: false}),
+    RouterModule.forRoot(routes, {enableTracing: true}),
+    
   ],
   declarations: [],
   exports: [

@@ -24,6 +24,7 @@ import { AppRoutingModule } from './/app-routing.module';
 import { GolfGmapComponent } from './golf-gmap/golf-gmap.component';
 import { CoreModule } from './core/core.module'
 import { AuthService } from './core/auth.service'
+import { AuthGuard} from './core/auth.guard'
 
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
@@ -67,7 +68,8 @@ import { LoginComponent } from './login/login.component';
   providers: [SGCouresService,
     SGRoundsService,
     GoogleMapsAPIWrapper,
-    AuthService
+    AuthService,
+    AuthGuard
     ],
   bootstrap: [AppComponent]
 })
@@ -77,3 +79,12 @@ export class AppModule {
 
   // }
  }
+
+ /*
+  App todo
+  - Title link style enable (style space around link)
+  - More text links at top for course edit and card entry with router guards
+  - get course map working again (Auth modules?)
+  - Button bar for manual entry of shots
+  - Have card entry with list of courses as sub menus? Or explicit link to card at springs
+ */

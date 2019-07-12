@@ -1,14 +1,12 @@
 <div class="my-container">
 	<!--<header class="header-3">-->
-		<div class="my-header branding">
+		<div class="header-nav">
 			<a class="nav-link" routerLink="">
 				<clr-icon shape="home" size="24"></clr-icon>
-				<span class="title">SG</span>
+				<span class="title head-menu-link">SG</span>
 			</a>
-			<a class="nav-link" routerLink="/list">
-				<clr-icon shape="home" size="24"></clr-icon>
-				<span class="title">List</span>
-			</a>
+			<a class="nav-link nav-text head-menu-link" routerLink="/list" routerLinkActive="active-head">List</a>
+			<a class="nav-link nav-text head-menu-link" [routerLink]="['/man-rnd',selId]" routerLinkActive="active-head">Round</a>
 		</div>
 	<!--</header>-->
 	<div class="my-content">	

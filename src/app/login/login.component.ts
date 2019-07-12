@@ -4,12 +4,6 @@ import { Component, OnInit} from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 
-//import {RouterModule } from '../app.component'
-/*
-  Next style / position login prompt a bit
-  Navigate to course list on sucessful login
-  Put router guards in place
-*/
 
 @Component({
   selector: 'app-login',
