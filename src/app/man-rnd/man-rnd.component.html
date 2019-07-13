@@ -1,3 +1,6 @@
+<div class="gps-file">
+  <input type="file" name="currentInput" [(ngModel)]="currentInput" (change)="onFileSelected($event)"/>
+</div>
 <div class="hole-rnd" >
   <select   (change)="onHoleChanged($event)">
     <option [ngValue]="h" *ngFor="let h of holeList">{{h | holeSum}}</option>
@@ -5,14 +8,13 @@
   <button (click)="onAddHole()" class ="btn">
     <clr-icon shape="plus" size="16"></clr-icon>
   </button>
-  <input type="file" name="currentInput" [(ngModel)]="currentInput" (change)="onFileSelected($event)"/>
 </div>
-<div class="card-rnd">
+<!--<div class="card-rnd">
   <input type="date" [(ngModel)]="when" >
   <button (click)="onSaveCard()" class ="btn">
       <clr-icon shape="floppy" size="16" ></clr-icon>
   </button>
-</div>
+</div>-->
 <div class="card-holes">
   <app-score-card></app-score-card>
 </div>

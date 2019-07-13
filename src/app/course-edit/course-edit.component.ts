@@ -92,12 +92,13 @@ export class CourseEditComponent implements OnInit {
       console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
       
       this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude,true);
+      this.mapView.setZoom(16);
       if(this.course.holes== null)
         this.course.holes =  new Array<Object>();
       }).catch(()=>{
         console.log("err selecting course to edit")}
       );
-      this.mapView.setZoom(16);
+      
   }
  
   onSave(){

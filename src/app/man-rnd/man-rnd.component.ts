@@ -41,6 +41,8 @@ export class ManRndComponent implements OnInit {
 
     this.srvDB.GetCourse(this.selId).then((c) => {
         this.course = c;
+        console.log("Course selected for round");
+        console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
         this.mapView.initOnLocation(this.course.location.longitude, this.course.location.latitude, true);
         this.holeList = c.holes;
         this.mapView.setZoom(16);
