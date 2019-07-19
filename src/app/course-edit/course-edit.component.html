@@ -99,6 +99,10 @@
     </div>
   </div>
 </div>
+<div class="mid-content" style="margin:2px">
+  <!--<app-golf-gmap class="editHoleMap"  id='mapView' (cl-event)="onCLEvent($event)"></app-golf-gmap>-->
+  <app-golf-gmap></app-golf-gmap>
+</div>
 
 <clr-modal [(clrModalOpen)]="isDeleteConfirmVisible" [clrModalClosable]="false" [clrModalSize]="'sm'">
   <h3 class="modal-title">Delete hole</h3>
@@ -122,8 +126,3 @@
   </div>
 </clr-modal>
 
-<div class="mid-content" style="margin:2px">
-
-  <!--<app-golf-gmap class="editHoleMap"  id='mapView' (cl-event)="onCLEvent($event)"></app-golf-gmap>-->
-  <app-golf-gmap></app-golf-gmap>
-</div>

@@ -5,7 +5,8 @@ import { switchMap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 
 import { SGCouresService, ICourse, Hole } from '../sgcoures.service';
-import { MapComponent } from '../map/map.component'
+
+//import { MapComponent } from '../map/map.component'
 import { GolfGmapComponent } from '../golf-gmap/golf-gmap.component'
 import { GeoCalcs, ShotsGained } from '../util/calcs'
 
@@ -23,10 +24,11 @@ enum PageState{
   host: {class: 'mid-container'}
 })
 export class CourseEditComponent implements OnInit {
+  @ViewChild(GolfGmapComponent,{static:false}) 
+  mapView:GolfGmapComponent;
   course : ICourse;
   selId : string;
   //@ViewChild(MapComponent) mapView:MapComponent;
-  @ViewChild(GolfGmapComponent,{static:false}) mapView:GolfGmapComponent;
   SIs:Array<string>;
   h:Hole;
   vectorSrcCL;
@@ -53,7 +55,6 @@ export class CourseEditComponent implements OnInit {
  
   constructor(
     private route : ActivatedRoute,
-    private router : Router,
     private srvDB : SGCouresService
   ) {
     this.SIs = new Array<string>(18);
@@ -91,14 +92,19 @@ export class CourseEditComponent implements OnInit {
       console.log("Course selected for edit");
       console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
       
-      this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude,true);
-      this.mapView.setZoom(16);
-      if(this.course.holes== null)
+     if(this.course.holes== null)
         this.course.holes =  new Array<Object>();
       }).catch(()=>{
         console.log("err selecting course to edit")}
       );
       
+  }
+
+  ngAfterViewInit() {
+    console.log("After onInit");
+    this.mapView.initOnLocation(this.course.location.longitude,this.course.location.latitude,true);
+    this.mapView.setZoom(16);
+
   }
  
   onSave(){

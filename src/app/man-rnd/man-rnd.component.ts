@@ -8,9 +8,12 @@ import { SGRoundsService, Round  } from "../sg-rounds.service";
 import { GeoCalcs, ShotsGained } from '../util/calcs'
 import { TxtFilePos} from  "../txt-file-pos"
 import { GpsListComponent } from '../gps-list/gps-list.component';
+import { ShotData } from '../util/golf-types';
 
+/*
+Next on + of hole list start array of hole shot data
 
-/*Style the hole select a bit better - pipe to get the id, par, sg, length neat?
+Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 
 */
 
@@ -30,6 +33,7 @@ export class ManRndComponent implements OnInit {
   when;
   gpsList: TxtFilePos;
   lastCir: any; // Todo replace with array for current hole
+  holeShots: Array<ShotData>;
 
   constructor(    private route : ActivatedRoute,
     private router : Router,
@@ -66,6 +70,12 @@ export class ManRndComponent implements OnInit {
   onAddHole(): void {
     this.mapView.showCenterLine(this.course.holes[this.selHole]['cl'], false);
     this.mapView.startManEntry(true);
+    this.holeShots = new Array< ShotData>();
+    
+    let s:ShotData;
+    s.lie = "Tee";
+    s.num = 1;
+    this.holeShots.push(s);
   }
 
   onFileSelected(event) {
