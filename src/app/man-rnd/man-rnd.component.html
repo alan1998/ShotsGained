@@ -12,7 +12,7 @@
 <div class="hole-shots">
   <table class="table">
     <thead>
-      <tr>
+      <tr >
         <th>#</th>
         <th>Lie</th>
         <th>Club</th>
@@ -21,8 +21,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-
+      <tr *ngFor="let s of holeShots; let i=index">
+        <td>{{s.num}}</td>
+        <td>{{s.lie}}</td>
+        <td>b</td>
+        <td>c</td>
       </tr>
     </tbody>
   </table>
