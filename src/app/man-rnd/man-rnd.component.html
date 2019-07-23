@@ -23,9 +23,13 @@
     <tbody>
       <tr *ngFor="let s of holeShots; let i=index">
         <td>{{s.num}}</td>
-        <td>{{s.lie}}</td>
-        <td>b</td>
+        <td>
+          <select>
+            <option *ngFor="let l of lies" [ngValue]=s.lie>{{l}}</option>
+          </select>
+        </td>
         <td>c</td>
+        <td>d</td>
       </tr>
     </tbody>
   </table>

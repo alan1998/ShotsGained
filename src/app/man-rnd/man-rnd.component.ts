@@ -25,10 +25,10 @@ Style the hole select a bit better - pipe to get the id, par, sg, length neat?
   host: {class: 'man-rnd-container'}
 })
 export class ManRndComponent implements OnInit {
-  @ViewChild(GolfGmapComponent,{static:false}) mapView:GolfGmapComponent
-  @ViewChild(GpsListComponent,{static:false}) gpsListCmp:GpsListComponent
+  @ViewChild(GolfGmapComponent, {static: false}) mapView: GolfGmapComponent;
+  @ViewChild(GpsListComponent, { static: false}) gpsListCmp: GpsListComponent;
   selId: string;
-  course : ICourse;
+  course: ICourse;
   holeList;
   selHole;
   when;
@@ -36,10 +36,15 @@ export class ManRndComponent implements OnInit {
   lastCir: any; // Todo replace with array for current hole
   holeShots: Array<ShotData>;
 
-  constructor(    private route : ActivatedRoute,
-    private router : Router,
-    private srvDB : SGCouresService,
-    private srvRnds : SGRoundsService) { }
+  lies = [
+    'Tee',
+    'Fairway'
+  ];
+
+  constructor(    private route: ActivatedRoute,
+    private router: Router,
+    private srvDB: SGCouresService,
+    private srvRnds: SGRoundsService) { }
 
   ngOnInit() {
     this.selId = this.route.snapshot.paramMap.get('id');
@@ -71,10 +76,12 @@ export class ManRndComponent implements OnInit {
   onAddHole(): void {
     this.mapView.showCenterLine(this.course.holes[this.selHole]['cl'], false);
     this.mapView.startManEntry(true);
-    this.holeShots = new Array< ShotData>();
+    if (this.holeShots == null) {
+      this.holeShots = new Array< ShotData>();
+    }
 
     const s: ShotData = new ShotData();
-    s.lie = 'Tee';
+    s.lie = this.lies[1];
     s.num = 1;
     this.holeShots.push(s);
   }
