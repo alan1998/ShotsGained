@@ -30,15 +30,21 @@ export class ManRndComponent implements OnInit {
   selId: string;
   course: ICourse;
   holeList;
-  selHole;
+  selHole=0;
   when;
   gpsList: TxtFilePos;
   lastCir: any; // Todo replace with array for current hole
   holeShots: Array<ShotData>;
+  shotSel: number = -1; //Selection in shot list for hole being edited
 
-  lies = [
-    'Tee',
-    'Fairway'
+  lies: object [] = [
+    {name: 'Tee', ab: 'Te'},
+    {name:'Fair', ab: 'Fa'},
+    {name:'Rough', ab: 'Ro'},
+    {name:'Bunker',ab: 'Ro'},
+    {name:'Hazard',ab: 'Ha'},
+    {name:'Fringe',ab: 'Fr'},
+    {name:'Green', ab: 'Gr'},
   ];
 
   constructor(    private route: ActivatedRoute,
@@ -66,6 +72,15 @@ export class ManRndComponent implements OnInit {
       
       
   }
+
+  ngAfterViewInit() {
+    this.mapView.shotLocDragEvt.subscribe((evt) => {
+      // Todo what show moved and how to update data etc
+      // Use selected shot and by default that willbe the last
+      console.log("Event in man round",evt);
+    })
+  }
+
   onHoleChanged(event): void {
     this.selHole = event.target.selectedIndex;
     const cl = this.course.holes[this.selHole]['cl'];
@@ -76,14 +91,31 @@ export class ManRndComponent implements OnInit {
   onAddHole(): void {
     this.mapView.showCenterLine(this.course.holes[this.selHole]['cl'], false);
     this.mapView.startManEntry(true);
-    if (this.holeShots == null) {
+    //if (this.holeShots == null) {
       this.holeShots = new Array< ShotData>();
-    }
+    //}
+   
+    
+  }
 
-    const s: ShotData = new ShotData();
-    s.lie = this.lies[1];
-    s.num = 1;
-    this.holeShots.push(s);
+  onAddShot() : ShotData{
+    const s1 = new ShotData();
+    s1.num = this.holeShots.length+1;
+    this.holeShots.push(s1);
+    this.shotSel = -1;
+    if(s1.num == 1) {
+      this.mapView.doClearCenterLine();
+      s1.start = this.course.holes[this.selHole]['cl'][0];
+      s1.lie = this.lies[0]['ab'];
+    }
+    else {
+      const off = 0.01;
+      s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num-2].start.latitude+off,this.holeShots[s1.num-2].start.longitude+off);
+    }
+    this.mapView.showShotPos(s1.start,'yellow').then(mark => {
+      this.mapView.addOrRemoveShotPosListener(mark, true);
+    });
+    return s1;
   }
 
   onFileSelected(event) {
@@ -97,6 +129,13 @@ export class ManRndComponent implements OnInit {
       this.gpsListCmp.eventSel.subscribe(this.onGpsPosSel);
     });
 
+  }
+
+  onLieChanged($event, n: any) {
+    if( n>=0 && n < this.holeShots.length ){
+      this.holeShots[n].lie = this.lies[$event.target.value]['ab'];
+      console.log(n,$event.target.value, this.holeShots[n]);
+    }  
   }
 
   onShotLocEvent = (evt: any): void => {

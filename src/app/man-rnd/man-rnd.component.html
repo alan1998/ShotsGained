@@ -24,8 +24,8 @@
       <tr *ngFor="let s of holeShots; let i=index">
         <td>{{s.num}}</td>
         <td>
-          <select>
-            <option *ngFor="let l of lies" [ngValue]=s.lie>{{l}}</option>
+          <select (change)="onLieChanged($event,s.n)">
+            <option *ngFor="let l of lies" [value]="i">{{l.name}}</option>
           </select>
         </td>
         <td>c</td>
@@ -33,6 +33,9 @@
       </tr>
     </tbody>
   </table>
+</div>
+<div   class="btn-group btn-icon shot-tools" style="justify-content: center">
+  <button (click)="onAddShot()" class ="btn"  >+</button>
 </div>
 <!--<div class="card-rnd">
   <input type="date" [(ngModel)]="when" >

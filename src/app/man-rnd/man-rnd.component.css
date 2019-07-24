@@ -10,8 +10,13 @@
 
 .hole-shots {
     grid-column: 1 /4;
-    grid-row: 3/6;
+    grid-row: 3/8;
+    align-items: initial;
+}
 
+.shot-tools {
+    grid-column: 1 /4;
+    grid-row: 8/9;
 }
 
 .map-rnd {
