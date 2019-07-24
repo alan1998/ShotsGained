@@ -35,6 +35,7 @@ export class ManRndComponent implements OnInit {
   gpsList: TxtFilePos;
   lastCir: any; // Todo replace with array for current hole
   holeShots: Array<ShotData>;
+  holeShotMarks: Array<any>;
   shotSel: number = -1; //Selection in shot list for hole being edited
 
   lies: object [] = [
@@ -77,7 +78,8 @@ export class ManRndComponent implements OnInit {
     this.mapView.shotLocDragEvt.subscribe((evt) => {
       // Todo what show moved and how to update data etc
       // Use selected shot and by default that willbe the last
-      console.log("Event in man round",evt);
+      console.log("Event in man round",evt,this.shotSel);
+      this.holeShots[this.shotSel-1].start = new firebase.firestore.GeoPoint(evt.lat(),evt.lng());
     })
   }
 
@@ -93,6 +95,12 @@ export class ManRndComponent implements OnInit {
     this.mapView.startManEntry(true);
     //if (this.holeShots == null) {
       this.holeShots = new Array< ShotData>();
+      if(this.holeShotMarks != null) {
+        this.holeShotMarks.forEach(circMk => {
+          circMk.setMap( null);
+        });
+      }
+      this.holeShotMarks = new Array<any>();
     //}
    
     
@@ -109,12 +117,14 @@ export class ManRndComponent implements OnInit {
       s1.lie = this.lies[0]['ab'];
     }
     else {
-      const off = 0.01;
+      const off = 0.00005;
       s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num-2].start.latitude+off,this.holeShots[s1.num-2].start.longitude+off);
     }
     this.mapView.showShotPos(s1.start,'yellow').then(mark => {
       this.mapView.addOrRemoveShotPosListener(mark, true);
+      this.holeShotMarks.push(mark);
     });
+    this.shotSel = s1.num;
     return s1;
   }
 
