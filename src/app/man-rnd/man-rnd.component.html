@@ -21,15 +21,15 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let s of holeShots; let i=index">
+      <tr *ngFor="let s of holeShots; let i=index" (click)="onShotRowSelected(s.num)"  [className]="s.num==shotSel ? 'selected' : ''">
         <td>{{s.num}}</td>
         <td>
           <select (change)="onLieChanged($event,s.n)">
             <option *ngFor="let l of lies" [value]="i">{{l.name}}</option>
           </select>
         </td>
-        <td>c</td>
         <td>d</td>
+        <td>{{s.dist | distYrd}}</td>
       </tr>
     </tbody>
   </table>

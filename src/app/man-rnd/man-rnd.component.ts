@@ -78,8 +78,9 @@ export class ManRndComponent implements OnInit {
     this.mapView.shotLocDragEvt.subscribe((evt) => {
       // Todo what show moved and how to update data etc
       // Use selected shot and by default that willbe the last
-      console.log("Event in man round",evt,this.shotSel);
+      //console.log("Event in man round",evt,this.shotSel);
       this.holeShots[this.shotSel-1].start = new firebase.firestore.GeoPoint(evt.lat(),evt.lng());
+      this.updateShots();
     })
   }
 
@@ -120,12 +121,25 @@ export class ManRndComponent implements OnInit {
       const off = 0.00005;
       s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num-2].start.latitude+off,this.holeShots[s1.num-2].start.longitude+off);
     }
+    this.fixMarks();
     this.mapView.showShotPos(s1.start,'yellow').then(mark => {
       this.mapView.addOrRemoveShotPosListener(mark, true);
       this.holeShotMarks.push(mark);
     });
     this.shotSel = s1.num;
+    this.updateShots();
     return s1;
+  }
+
+  onShotRowSelected(n: number) {
+    this.fixMarks();
+    this.shotSel = n;
+    const mk = this.holeShotMarks[n-1];
+    mk['draggable'] = true;
+    mk.setOptions({
+      strokeColor: 'yellow',
+      //fillColor: 'red'
+    })
   }
 
   onFileSelected(event) {
@@ -194,4 +208,26 @@ export class ManRndComponent implements OnInit {
     console.log(newPos.lat());
   }
 
+  fixMarks(){
+    //Stop marks being draggable
+    //Change colour to show not dragabble
+    this.holeShotMarks.forEach(mk => {
+      mk['draggable'] = false;
+      mk.setOptions({
+        strokeColor: 'red',
+        //fillColor: 'red'
+      })
+    });
+  }
+
+  updateShots() {
+    // Cycle through updating end of shot to be start of next
+    for(let i=0; i < this.holeShots.length-1; i++ ){
+      this.holeShots[i].setFinish( this.holeShots[i+1].start);
+      console.log("shot",i)
+    }
+    
+
+
+  }
 }

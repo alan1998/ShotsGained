@@ -29,7 +29,7 @@ import { AuthGuard} from './core/auth.guard'
 
 import { AgmCoreModule, GoogleMapsAPIWrapper } from '@agm/core';
 import { ManRndComponent } from './man-rnd/man-rnd.component';
-import { HoleSummary1 } from './util/calcs';
+import { HoleSummary1, distYrds } from './util/calcs';
 import { ScoreCardComponent } from './score-card/score-card.component';
 import { GpsListComponent } from './gps-list/gps-list.component';
 import { LoginComponent } from './login/login.component';
@@ -47,7 +47,8 @@ import { LoginComponent } from './login/login.component';
     HoleSummary1,
     ScoreCardComponent,
     GpsListComponent,
-    LoginComponent
+    LoginComponent,
+    distYrds
   ],
   imports: [
     BrowserModule,

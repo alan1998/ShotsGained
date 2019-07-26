@@ -1,4 +1,5 @@
 import * as firebase from 'firebase/app';
+import { GeoCalcs } from './calcs';
 
 export class ShotData{
     num:number;
@@ -10,5 +11,16 @@ export class ShotData{
     finish: firebase.firestore.GeoPoint;
     constructor(){
 
+    }
+
+    setFinish(p:firebase.firestore.GeoPoint){
+      this.finish = p;
+      this.calcLength();
+    }
+
+    calcLength() {
+      if( this.start != null && this.finish != null){
+        this.dist = GeoCalcs.dist(this.start.longitude,this.start.latitude,this.finish.longitude,this.finish.latitude);
+      }
     }
   }

@@ -42,3 +42,9 @@
     grid-row: 9/-1;
     border:1px solid rgb(28, 13, 230);     
 }
+
+tr.selected td {
+    background-color: rgb(73, 71, 107);
+    color: #fff;    
+}
+

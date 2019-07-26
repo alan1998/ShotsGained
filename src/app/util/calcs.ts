@@ -14,7 +14,15 @@ export class HoleSummary1 implements PipeTransform{
         return `${(h.id+":......").substring(0,4)} ${l.toFixed(0)} ${h.par}  ${h.sg_scr.toFixed(2)}` ;
     }
 }
- 
+
+@Pipe({name : 'distYrd'})
+export class distYrds implements PipeTransform{
+    transform(d:number){
+        let l = GeoCalcs.m2yrd(d);
+        return `${l.toFixed(1)}` ;
+    }
+}
+
 export class DistSG{
     d:number;
     s:number;
