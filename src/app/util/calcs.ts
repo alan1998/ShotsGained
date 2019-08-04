@@ -5,6 +5,7 @@ import {Pipe,PipeTransform } from '@angular/core';
 import { Hole } from '../sgcoures.service';
 import { logging } from 'protractor';
 import { Timestamp } from 'rxjs/Rx';
+import { ShotData } from './golf-types';
 declare function require(url:string);
 
 @Pipe({name : 'holeSum'})
@@ -205,6 +206,12 @@ export class ShotsGained{
             }
         }
         return ret;
+    }
+
+    calcShotSequence(shots:Array<ShotData>, cl: Array<firebase.firestore.GeoPoint>){
+        // First calc SG for the center line
+        const  d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl));
+        const sgH = this.strokesHoleOut(d,ShotsGained.tee, false)
     }
 
 }

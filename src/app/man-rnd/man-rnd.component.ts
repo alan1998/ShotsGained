@@ -11,11 +11,12 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
-Next on + of hole list start array of hole shot data
-Drop list of lies, clubs
-Add position to shot data and default first to tee
-Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 
+Learn how to make dist update in table as shots dragged
+Style the hole select a bit better - pipe to get the id, par, sg, length neat?
+Take local copy of CL and adjust Tee position to first shot
+Do same for hole out
+Calc SG for each shot (default end point of shot to hole each time?)
 */
 
 @Component({
@@ -36,7 +37,10 @@ export class ManRndComponent implements OnInit {
   lastCir: any; // Todo replace with array for current hole
   holeShots: Array<ShotData>;
   holeShotMarks: Array<any>;
+  holeCentreLine: Array<firebase.firestore.GeoPoint>;
+  holeSG: number;
   shotSel: number = -1; //Selection in shot list for hole being edited
+  sgCalcs: ShotsGained;
 
   lies: object [] = [
     {name: 'Tee', ab: 'Te'},
@@ -51,7 +55,9 @@ export class ManRndComponent implements OnInit {
   constructor(    private route: ActivatedRoute,
     private router: Router,
     private srvDB: SGCouresService,
-    private srvRnds: SGRoundsService) { }
+    private srvRnds: SGRoundsService) { 
+      this.sgCalcs = new ShotsGained();
+    }
 
   ngOnInit() {
     this.selId = this.route.snapshot.paramMap.get('id');
@@ -64,7 +70,12 @@ export class ManRndComponent implements OnInit {
         this.holeList = c.holes;
         this.mapView.setZoom(16);
         this.mapView.shotLocEvt.subscribe(this.onShotLocEvent);
-        this.mapView.shotLocDragEvt.subscribe(this.onShotLocDrag);
+        
+        // this.mapView.shotLocDragEvt.subscribe((p)=>{
+
+        //     this.updateShots();
+        //     this.calcHoleSG();
+        // });
       }).catch(() => {
         console.log('err selecting course to edit')}
       );
@@ -79,8 +90,9 @@ export class ManRndComponent implements OnInit {
       // Todo what show moved and how to update data etc
       // Use selected shot and by default that willbe the last
       //console.log("Event in man round",evt,this.shotSel);
-      this.holeShots[this.shotSel-1].start = new firebase.firestore.GeoPoint(evt.lat(),evt.lng());
+      //this.holeShots[this.shotSel-1].start = new firebase.firestore.GeoPoint(evt.lat(),evt.lng());
       this.updateShots();
+      this.calcHoleSG();
     })
   }
 
@@ -102,12 +114,19 @@ export class ManRndComponent implements OnInit {
         });
       }
       this.holeShotMarks = new Array<any>();
+      this.holeCentreLine = new Array<firebase.firestore.GeoPoint>();
+      this.course.holes[this.selHole]['cl'].forEach(p => {
+        this.holeCentreLine.push(p);
+      });
+      let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
+      this.holeSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
     //}
-   
+    this.calcHoleSG(); 
     
   }
 
   onAddShot() : ShotData{
+    // Add Shot at end of list
     const s1 = new ShotData();
     s1.num = this.holeShots.length+1;
     this.holeShots.push(s1);
@@ -116,6 +135,8 @@ export class ManRndComponent implements OnInit {
       this.mapView.doClearCenterLine();
       s1.start = this.course.holes[this.selHole]['cl'][0];
       s1.lie = this.lies[0]['ab'];
+      this.holeCentreLine[0] = s1.start;
+      this.calcHoleSG();
     }
     else {
       const off = 0.00005;
@@ -204,9 +225,12 @@ export class ManRndComponent implements OnInit {
       this.mapView.addOrRemoveShotPosListener(p, true);
     } );
   }
-  onShotLocDrag(newPos ) {
-    console.log(newPos.lat());
-  }
+
+  // onShotLocDrag(newPos ) {
+  //   console.log(newPos.lat());
+  //   this.updateShots();
+  //   this.calcHoleSG();
+  // }
 
   fixMarks(){
     //Stop marks being draggable
@@ -222,12 +246,27 @@ export class ManRndComponent implements OnInit {
 
   updateShots() {
     // Cycle through updating end of shot to be start of next
+    //this.logShotPos();
+    for( let n=0; n < this.holeShotMarks.length; n++){
+      this.holeShots[n].start = new firebase.firestore.GeoPoint( this.holeShotMarks[n]['center'].lat(),this.holeShotMarks[n]['center'].lng());
+    }
     for(let i=0; i < this.holeShots.length-1; i++ ){
       this.holeShots[i].setFinish( this.holeShots[i+1].start);
       console.log("shot",i)
     }
-    
+    this.holeCentreLine[0] = this.holeShots[0].start;
+  }
+  
+  calcHoleSG() {
+    let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
+    this.holeSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+    console.log("SG= ",this.holeSG);
+  }
 
-
+  logShotPos() {
+    this.holeShots.forEach(s => {
+      console.log('Hole shot starts');
+      console.log(s.start);
+    })
   }
 }

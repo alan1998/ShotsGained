@@ -18,6 +18,10 @@ export class ShotData{
       this.calcLength();
     }
 
+    setSG(sg:number){
+      this.sg = sg;
+    }
+
     calcLength() {
       if( this.start != null && this.finish != null){
         this.dist = GeoCalcs.dist(this.start.longitude,this.start.latitude,this.finish.longitude,this.finish.latitude);
