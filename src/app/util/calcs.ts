@@ -209,15 +209,33 @@ export class ShotsGained{
         return ret;
     }
 
+    // TODO Dist needs to be 'to hole' not the shot length
     calcShotSequence(shots:Array<ShotData>, cl: Array<firebase.firestore.GeoPoint>){
         // First calc SG for the center line
         const  d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl));
         const sgH = this.strokesHoleOut(d,ShotsGained.tee, false)
+        console.log('Hole SG = ',sgH);
         const nMaxShot = shots.length -1;
+        let sgTot: number = 0;
         // Calc for last shot
         let sg = this.strokesHoleOut(shots[nMaxShot].dist,ShotsGained.tee,false);
-        shots[nMaxShot].setSG(sg);
-        console.log("Shot SG , dist ",sg, shots[nMaxShot].dist);
+        console.log('last - ',nMaxShot,sg);
+        sgTot += sg;
+        shots[nMaxShot].setSG(sg-1);
+        //console.log("Shot SG , dist ",sg, shots[nMaxShot].dist);
+        if(nMaxShot >= 2){
+            for(let n= nMaxShot-1; n > 0; n--){
+                sg = this.strokesHoleOut(shots[n].dist,ShotsGained.tee,false);
+                console.log(n,sg);
+                sgTot += sg;
+                sg = sg - shots[n+1].sg - 1;
+                shots[n].setSG(sg);
+            }
+        }
+        //First shot
+        if(nMaxShot > 0){
+            shots[0].sg = sgH - sgTot -1;
+        }
     }
 
 }

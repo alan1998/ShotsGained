@@ -250,25 +250,26 @@ export class ManRndComponent implements OnInit {
 
   updateShots() {
     // Cycle through updating end of shot to be start of next
-    this.logShotPos();
+    //this.logShotPos();
     for( let n=0; n < this.holeShotMarks.length; n++){
       this.holeShots[n].start = new firebase.firestore.GeoPoint( this.holeShotMarks[n]['center'].lat(),this.holeShotMarks[n]['center'].lng());
     }
     for(let i=0; i < this.holeShots.length-1; i++ ){
       this.holeShots[i].setFinish( this.holeShots[i+1].start);
-      console.log("shot",i)
+      //console.log("shot",i)
     }
     //Adjust hole start point to tee position
     this.holeCentreLine[0] = this.holeShots[0].start;
     //Adjust hole end point to last shot or other way round
     if(this.holeShots[this.holeShots.length-1].finish === undefined){
-      //console.log(this.holeShots.length-1," finish undefined set to cl pt ", this.holeCentreLine.length-1);
+      console.log('set finish of shot ',this.holeShots.length);
       this.holeShots[this.holeShots.length-1].setFinish(this.holeCentreLine[this.holeCentreLine.length-1]);
     }
     // else{
     //   //Todo set center line end point to known hole position
     // }
-    this.logShotPos();
+    this.holeShots[this.holeShots.length-1].calcLength();
+    //this.logShotPos();
   }
   
   calcHoleSG() {
@@ -296,9 +297,9 @@ export class ManRndComponent implements OnInit {
   }
 
   logShotPos() {
+    console.log('Hole shot starts, finishes');
     this.holeShots.forEach(s => {
-      console.log('Hole shot starts, finishes');
-      console.log(s.start,s.finish);
+      //console.log(s.start.latitude,s.start.longitude, s.finish.latitude, s.finish.longitude);
     })
   }
 }

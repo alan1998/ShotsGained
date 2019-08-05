@@ -17,7 +17,7 @@ export class ShotData{
     setFinish(p:firebase.firestore.GeoPoint){
       this.finish = p;
       this.calcLength();
-      console.log(this.dist, " m");
+      //console.log(this.dist*1.1, " m");
     }
 
     setSG(sg:number){
