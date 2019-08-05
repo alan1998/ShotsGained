@@ -37,6 +37,7 @@ export class ManRndComponent implements OnInit {
   lastCir: any; // Todo replace with array for current hole
   holeShots: Array<ShotData>;
   holeShotMarks: Array<any>;
+  holeShotTrace: Array<any>;
   holeCentreLine: Array<firebase.firestore.GeoPoint>;
   holeSG: number;
   shotSel: number = -1; //Selection in shot list for hole being edited
@@ -91,8 +92,11 @@ export class ManRndComponent implements OnInit {
       // Use selected shot and by default that willbe the last
       //console.log("Event in man round",evt,this.shotSel);
       //this.holeShots[this.shotSel-1].start = new firebase.firestore.GeoPoint(evt.lat(),evt.lng());
+      console.log(evt.lat(),evt.lng());
       this.updateShots();
       this.calcHoleSG();
+      this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+      this.shotTrace();  
     })
   }
 
@@ -246,7 +250,7 @@ export class ManRndComponent implements OnInit {
 
   updateShots() {
     // Cycle through updating end of shot to be start of next
-    //this.logShotPos();
+    this.logShotPos();
     for( let n=0; n < this.holeShotMarks.length; n++){
       this.holeShots[n].start = new firebase.firestore.GeoPoint( this.holeShotMarks[n]['center'].lat(),this.holeShotMarks[n]['center'].lng());
     }
@@ -254,19 +258,47 @@ export class ManRndComponent implements OnInit {
       this.holeShots[i].setFinish( this.holeShots[i+1].start);
       console.log("shot",i)
     }
+    //Adjust hole start point to tee position
     this.holeCentreLine[0] = this.holeShots[0].start;
+    //Adjust hole end point to last shot or other way round
+    if(this.holeShots[this.holeShots.length-1].finish === undefined){
+      //console.log(this.holeShots.length-1," finish undefined set to cl pt ", this.holeCentreLine.length-1);
+      this.holeShots[this.holeShots.length-1].setFinish(this.holeCentreLine[this.holeCentreLine.length-1]);
+    }
+    // else{
+    //   //Todo set center line end point to known hole position
+    // }
+    this.logShotPos();
   }
   
   calcHoleSG() {
     let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
     this.holeSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
-    console.log("SG= ",this.holeSG);
+  }
+
+  shotTrace(){
+    //If we have any traces clear them from map and daelete
+    if(this.holeShotTrace !== undefined){
+      this.holeShotTrace.forEach(tr => {
+        tr.setMap(null);
+      });
+    }
+    if(this.holeShots.length > 0){
+      this.holeShotTrace = new Array<any>();
+      this.holeShots.forEach( sh => {
+        if(sh.start !== undefined && sh.finish !== undefined){
+          this.mapView.showShotTrace(sh.start, sh.finish,'yellow').then(ln => {
+            this.holeShotTrace.push(ln);
+          });         
+        }
+      });
+    }
   }
 
   logShotPos() {
     this.holeShots.forEach(s => {
-      console.log('Hole shot starts');
-      console.log(s.start);
+      console.log('Hole shot starts, finishes');
+      console.log(s.start,s.finish);
     })
   }
 }

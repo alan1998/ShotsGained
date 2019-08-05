@@ -5,7 +5,8 @@ export class ShotData{
     num:number;
     lie:string;
     sg:number;
-    dist:number;
+    dist:number; // Dist it went
+    //Todo probably need dist start
     club:string;
     start: firebase.firestore.GeoPoint;
     finish: firebase.firestore.GeoPoint;
@@ -16,6 +17,7 @@ export class ShotData{
     setFinish(p:firebase.firestore.GeoPoint){
       this.finish = p;
       this.calcLength();
+      console.log(this.dist, " m");
     }
 
     setSG(sg:number){

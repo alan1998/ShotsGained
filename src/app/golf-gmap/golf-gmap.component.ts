@@ -328,6 +328,25 @@ export class GolfGmapComponent implements OnInit {
     });
   }
 
+  showShotTrace(s: firebase.firestore.GeoPoint,f: firebase.firestore.GeoPoint, colour: string): Promise<any> {
+    return new Promise((resolve,reject) => {
+      let ptS = {lat:s.latitude,lng:s.longitude} ;
+      let ptF = {lat:f.latitude,lng:f.longitude} ;
+      this.wrap.getNativeMap().then( m => {
+        let ln =  new google.maps.Polyline({
+          map: m,
+          path: [{lat: ptS.lat, lng: ptS.lng},{lat: ptF.lat, lng: ptF.lng}],
+          strokeColor: colour,
+          strokeOpacity: 1.0,
+          strokeWeight: 1
+        });
+        resolve( ln);
+      }).catch(e => {
+        reject( new DOMException('Problem create shot trace'));
+      });
+    });
+  }
+
   // TODO pass the event onward to the round component (or other)
   // Also need remove listener and possible drag start so enclosing component can detect which dragend will correspond to?
   addOrRemoveShotPosListener(cir, bAdd: boolean) {

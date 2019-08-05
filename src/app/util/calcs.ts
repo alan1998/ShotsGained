@@ -137,6 +137,7 @@ export class GeoCalcs {
     }
 }
 
+//TODO - check units being used here. Yrds?
 export class ShotsGained{
     static readonly  tee : number = 0;
     static readonly  fairway : number = 1;
@@ -212,6 +213,11 @@ export class ShotsGained{
         // First calc SG for the center line
         const  d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl));
         const sgH = this.strokesHoleOut(d,ShotsGained.tee, false)
+        const nMaxShot = shots.length -1;
+        // Calc for last shot
+        let sg = this.strokesHoleOut(shots[nMaxShot].dist,ShotsGained.tee,false);
+        shots[nMaxShot].setSG(sg);
+        console.log("Shot SG , dist ",sg, shots[nMaxShot].dist);
     }
 
 }
