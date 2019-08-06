@@ -155,6 +155,8 @@ export class ShotsGained{
     static proSand : Array<DistSG>;
     static scrRcvy : Array<DistSG>;
     static proRcvy : Array<DistSG>;
+    static scrGrn : Array<DistSG>;
+    static proGrn : Array<DistSG>;
 
     constructor(){   
     }
@@ -170,6 +172,7 @@ export class ShotsGained{
          4,5   Rough
          6,7   Sand
          8,9   Recovery
+         10,11 Putting
         */
         if(a[0] != null){
             ShotsGained.proTee = new Array<DistSG>();
@@ -241,6 +244,20 @@ export class ShotsGained{
                 ShotsGained.scrRcvy.push(new DistSG(parseFloat(dist),val));
             }  
         }
+        if(a[10] != null){
+            ShotsGained.proGrn = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[0])){
+                console.log(dist,val);
+                ShotsGained.proGrn.push(new DistSG(parseFloat(dist),val));
+            }
+        }
+        if(a[11] != null){
+            ShotsGained.scrGrn = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[1])){
+                console.log(dist,val);
+                ShotsGained.scrGrn.push(new DistSG(parseFloat(dist),val));
+            }  
+        }
 
     }
    }
@@ -283,6 +300,12 @@ export class ShotsGained{
                 else
                     ret = this.interpolateDistStokes(dist,ShotsGained.scrRcvy);
                 break;
+            case ShotsGained.green:
+                if(bPro)
+                    ret = this.interpolateDistStokes(dist,ShotsGained.proGrn);
+                else
+                    ret = this.interpolateDistStokes(dist, ShotsGained.scrGrn);
+                break;
             default:
                 console.log("Impossible lie");
                 break;
@@ -321,7 +344,8 @@ export class ShotsGained{
         const holePt = cl[cl.length-1];
         for(let n=0; n < nMaxShot ; n++){
             let dShot = GeoCalcs.m2yrd(GeoCalcs.dist(shots[n].finish.longitude,shots[n].finish.latitude,holePt.longitude,holePt.latitude));
-            nSGs.push( this.strokesHoleOut(dShot,ShotsGained.tee,false));
+            //nSGs.push( this.strokesHoleOut(dShot,ShotsGained.tee,false));
+            nSGs.push( this.strokesHoleOut(dShot,shots[n+1].lie,false));
         }
         nSGs.push(0); // Holed out so last (nMaxShot) cost is zero
         // Now calculate each shot value
