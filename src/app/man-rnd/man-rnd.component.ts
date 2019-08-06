@@ -11,7 +11,8 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
-
+Use lie in SG calculation
+Update table and shot trace as shots added
 Learn how to make dist update in table as shots dragged
 Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 Take local copy of CL and adjust Tee position to first shot
@@ -88,10 +89,6 @@ export class ManRndComponent implements OnInit {
 
   ngAfterViewInit() {
     this.mapView.shotLocDragEvt.subscribe((evt) => {
-      // Todo what show moved and how to update data etc
-      // Use selected shot and by default that willbe the last
-      //console.log("Event in man round",evt,this.shotSel);
-      //this.holeShots[this.shotSel-1].start = new firebase.firestore.GeoPoint(evt.lat(),evt.lng());
       console.log(evt.lat(),evt.lng());
       this.updateShots();
       this.calcHoleSG();

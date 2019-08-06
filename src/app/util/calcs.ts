@@ -143,9 +143,19 @@ export class ShotsGained{
     static readonly  fairway : number = 1;
     static readonly  rough : number = 2;
     static readonly  hazard : number = 3;
-    static readonly  green : number = 4;
+    static readonly  recovery : number = 4;
+    static readonly  green : number = 5;
     static scrTee : Array<DistSG>;
     static proTee : Array<DistSG>;
+    static scrFair : Array<DistSG>;
+    static proFair : Array<DistSG>;
+    static scrRgh : Array<DistSG>;
+    static proRgh : Array<DistSG>;
+    static scrSand : Array<DistSG>;
+    static proSand : Array<DistSG>;
+    static scrRcvy : Array<DistSG>;
+    static proRcvy : Array<DistSG>;
+
     constructor(){   
     }
 
@@ -154,6 +164,13 @@ export class ShotsGained{
     console.log(a);
     
     if(a.length >= 10){
+        /*
+         0,1   Tee pro , scr
+         2,3   Fairway
+         4,5   Rough
+         6,7   Sand
+         8,9   Recovery
+        */
         if(a[0] != null){
             ShotsGained.proTee = new Array<DistSG>();
             for(const [dist,val] of Object.entries(a[0])){
@@ -168,6 +185,63 @@ export class ShotsGained{
                 ShotsGained.scrTee.push(new DistSG(parseFloat(dist),val));
             }  
         }
+        if(a[2] != null){
+            ShotsGained.proFair = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[0])){
+                console.log(dist,val);
+                ShotsGained.proFair.push(new DistSG(parseFloat(dist),val));
+            }
+        }
+        if(a[3] != null){
+            ShotsGained.scrFair = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[1])){
+                console.log(dist,val);
+                ShotsGained.scrFair.push(new DistSG(parseFloat(dist),val));
+            }  
+        }
+        if(a[4] != null){
+            ShotsGained.proRgh = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[0])){
+                console.log(dist,val);
+                ShotsGained.proRgh.push(new DistSG(parseFloat(dist),val));
+            }
+        }
+        if(a[5] != null){
+            ShotsGained.scrRgh = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[1])){
+                console.log(dist,val);
+                ShotsGained.scrRgh.push(new DistSG(parseFloat(dist),val));
+            }  
+        }
+        if(a[6] != null){
+            ShotsGained.proSand = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[0])){
+                console.log(dist,val);
+                ShotsGained.proSand.push(new DistSG(parseFloat(dist),val));
+            }
+        }
+        if(a[7] != null){
+            ShotsGained.scrSand = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[1])){
+                console.log(dist,val);
+                ShotsGained.scrSand.push(new DistSG(parseFloat(dist),val));
+            }  
+        }
+        if(a[8] != null){
+            ShotsGained.proRcvy = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[0])){
+                console.log(dist,val);
+                ShotsGained.proRcvy.push(new DistSG(parseFloat(dist),val));
+            }
+        }
+        if(a[9] != null){
+            ShotsGained.scrRcvy = new Array<DistSG>();
+            for(const [dist,val] of Object.entries(a[1])){
+                console.log(dist,val);
+                ShotsGained.scrRcvy.push(new DistSG(parseFloat(dist),val));
+            }  
+        }
+
     }
    }
 
@@ -184,6 +258,30 @@ export class ShotsGained{
                 ret = this.interpolateDistStokes(dist,ShotsGained.proTee);
             else
                 ret = this.interpolateDistStokes(dist,ShotsGained.scrTee);              
+                break;
+            case ShotsGained.fairway:
+                if( bPro)
+                    ret = this.interpolateDistStokes(dist,ShotsGained.proFair);
+                else
+                    ret = this.interpolateDistStokes(dist,ShotsGained.scrFair);
+                break;
+            case ShotsGained.rough:
+                if( bPro)
+                    ret = this.interpolateDistStokes(dist,ShotsGained.proRgh);
+                else
+                    ret = this.interpolateDistStokes(dist,ShotsGained.scrRgh);
+                break;
+            case ShotsGained.hazard:
+                if( bPro)
+                    ret = this.interpolateDistStokes(dist,ShotsGained.proSand);
+                else
+                    ret = this.interpolateDistStokes(dist,ShotsGained.scrSand);
+                break;
+            case ShotsGained.recovery:
+                if( bPro)
+                    ret = this.interpolateDistStokes(dist,ShotsGained.proRcvy);
+                else
+                    ret = this.interpolateDistStokes(dist,ShotsGained.scrRcvy);
                 break;
             default:
                 console.log("Impossible lie");
@@ -212,30 +310,25 @@ export class ShotsGained{
     // TODO Dist needs to be 'to hole' not the shot length
     calcShotSequence(shots:Array<ShotData>, cl: Array<firebase.firestore.GeoPoint>){
         // First calc SG for the center line
-        const  d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl));
-        const sgH = this.strokesHoleOut(d,ShotsGained.tee, false)
+        const  dHole = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl));
+        const sgH = this.strokesHoleOut(dHole,ShotsGained.tee, false)
         console.log('Hole SG = ',sgH);
         const nMaxShot = shots.length -1;
         let sgTot: number = 0;
-        // Calc for last shot
-        let sg = this.strokesHoleOut(shots[nMaxShot].dist,ShotsGained.tee,false);
-        console.log('last - ',nMaxShot,sg);
-        sgTot += sg;
-        shots[nMaxShot].setSG(sg-1);
-        //console.log("Shot SG , dist ",sg, shots[nMaxShot].dist);
-        if(nMaxShot >= 2){
-            for(let n= nMaxShot-1; n > 0; n--){
-                sg = this.strokesHoleOut(shots[n].dist,ShotsGained.tee,false);
-                console.log(n,sg);
-                sgTot += sg;
-                sg = sg - shots[n+1].sg - 1;
-                shots[n].setSG(sg);
-            }
+        // For all shots calculate final distance from hole to get sg to hole out ( 1 more positions than shots)
+        let nSGs: number [] =  new Array<number>();
+        nSGs.push(sgH);
+        const holePt = cl[cl.length-1];
+        for(let n=0; n < nMaxShot ; n++){
+            let dShot = GeoCalcs.m2yrd(GeoCalcs.dist(shots[n].finish.longitude,shots[n].finish.latitude,holePt.longitude,holePt.latitude));
+            nSGs.push( this.strokesHoleOut(dShot,ShotsGained.tee,false));
         }
-        //First shot
-        if(nMaxShot > 0){
-            shots[0].sg = sgH - sgTot -1;
+        nSGs.push(0); // Holed out so last (nMaxShot) cost is zero
+        // Now calculate each shot value
+        for(let n=0; n <= nMaxShot; n++){
+            shots[n].sg = nSGs[n] - nSGs[n+1] -1;
         }
+        
     }
 
 }
