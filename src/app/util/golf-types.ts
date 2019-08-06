@@ -3,7 +3,7 @@ import { GeoCalcs } from './calcs';
 
 export class ShotData{
     num:number;
-    lie:string;
+    lie:number;
     sg:number;
     dist:number; // Dist it went
     //Todo probably need dist start

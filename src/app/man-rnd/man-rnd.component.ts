@@ -11,8 +11,9 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
-Use lie in SG calculation
-Update table and shot trace as shots added
+Use lie in SG calculation (putting todo)
+Update table and shot trace as shots added 
+Tools for penalty/S&D
 Learn how to make dist update in table as shots dragged
 Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 Take local copy of CL and adjust Tee position to first shot
@@ -45,13 +46,14 @@ export class ManRndComponent implements OnInit {
   sgCalcs: ShotsGained;
 
   lies: object [] = [
-    {name: 'Tee', ab: 'Te'},
-    {name:'Fair', ab: 'Fa'},
-    {name:'Rough', ab: 'Ro'},
-    {name:'Bunker',ab: 'Ro'},
-    {name:'Hazard',ab: 'Ha'},
-    {name:'Fringe',ab: 'Fr'},
-    {name:'Green', ab: 'Gr'},
+    {name: 'Tee', code: ShotsGained.tee},
+    {name:'Fair', code: ShotsGained.fairway},
+    {name:'Rough', code: ShotsGained.rough},
+    {name:'Bunker',code: ShotsGained.hazard},
+    {name:'Hazard',code: ShotsGained.hazard},
+    {name:'Recovery',code: ShotsGained.recovery},
+    {name:'Fringe',code: ShotsGained.fairway},
+    {name:'Green', code: ShotsGained.green},
   ];
 
   constructor(    private route: ActivatedRoute,
@@ -178,9 +180,10 @@ export class ManRndComponent implements OnInit {
   }
 
   onLieChanged($event, n: any) {
-    if( n>=0 && n < this.holeShots.length ){
-      this.holeShots[n].lie = this.lies[$event.target.value]['ab'];
-      console.log(n,$event.target.value, this.holeShots[n]);
+    console.log($event.target.value,n);
+    if( n>0 && n <= this.holeShots.length ){  
+      this.holeShots[n-1].lie = $event.target.value;
+      console.log(n,$event.target.value, this.holeShots[n-1]);
     }  
   }
 
