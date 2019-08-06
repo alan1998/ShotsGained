@@ -1,5 +1,6 @@
 import * as firebase from 'firebase/app';
 import { GeoCalcs } from './calcs';
+import { ShotsGained } from '../util/calcs'
 
 export class ShotData{
     num:number;
@@ -11,7 +12,7 @@ export class ShotData{
     start: firebase.firestore.GeoPoint;
     finish: firebase.firestore.GeoPoint;
     constructor(){
-
+      this.lie = ShotsGained.tee;
     }
 
     setFinish(p:firebase.firestore.GeoPoint){

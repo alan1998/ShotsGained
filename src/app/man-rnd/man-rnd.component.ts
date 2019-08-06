@@ -11,9 +11,10 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
-Use lie in SG calculation (putting todo)
+
 Update table and shot trace as shots added 
-Tools for penalty/S&D
+
+Tools for penalty/S&D and remove
 Learn how to make dist update in table as shots dragged
 Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 Take local copy of CL and adjust Tee position to first shot
@@ -37,11 +38,12 @@ export class ManRndComponent implements OnInit {
   when;
   gpsList: TxtFilePos;
   lastCir: any; // Todo replace with array for current hole
-  holeShots: Array<ShotData>;
+  holeShots: Array<ShotData> = new Array<ShotData>();
   holeShotMarks: Array<any>;
   holeShotTrace: Array<any>;
   holeCentreLine: Array<firebase.firestore.GeoPoint>;
-  holeSG: number;
+  holeSGOrg: number;
+  holeScoreSG: number = 0;
   shotSel: number = -1; //Selection in shot list for hole being edited
   sgCalcs: ShotsGained;
 
@@ -94,8 +96,9 @@ export class ManRndComponent implements OnInit {
       console.log(evt.lat(),evt.lng());
       this.updateShots();
       this.calcHoleSG();
-      this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-      this.shotTrace();  
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+      this.shotTrace();
+      console.log(this.holeScoreSG);  
     })
   }
 
@@ -122,10 +125,10 @@ export class ManRndComponent implements OnInit {
         this.holeCentreLine.push(p);
       });
       let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
-      this.holeSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+      this.holeSGOrg = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
     //}
     this.calcHoleSG(); 
-    
+    this.holeScoreSG = 0;
   }
 
   onAddShot() : ShotData{
@@ -137,7 +140,6 @@ export class ManRndComponent implements OnInit {
     if(s1.num == 1) {
       this.mapView.doClearCenterLine();
       s1.start = this.course.holes[this.selHole]['cl'][0];
-      s1.lie = this.lies[0]['ab'];
       this.holeCentreLine[0] = s1.start;
       this.calcHoleSG();
     }
@@ -151,6 +153,7 @@ export class ManRndComponent implements OnInit {
       this.holeShotMarks.push(mark);
     });
     this.shotSel = s1.num;
+    
     this.updateShots();
     return s1;
   }
@@ -180,10 +183,10 @@ export class ManRndComponent implements OnInit {
   }
 
   onLieChanged($event, n: any) {
-    console.log($event.target.value,n);
     if( n>0 && n <= this.holeShots.length ){  
-      this.holeShots[n-1].lie = $event.target.value;
-      console.log(n,$event.target.value, this.holeShots[n-1]);
+      this.holeShots[n-1].lie = parseFloat( $event.target.value);
+      this.calcHoleSG();
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
     }  
   }
 
@@ -274,7 +277,7 @@ export class ManRndComponent implements OnInit {
   
   calcHoleSG() {
     let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
-    this.holeSG = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+    this.holeSGOrg = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
   }
 
   shotTrace(){

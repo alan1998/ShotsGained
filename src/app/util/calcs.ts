@@ -190,70 +190,70 @@ export class ShotsGained{
         }
         if(a[2] != null){
             ShotsGained.proFair = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[0])){
+            for(const [dist,val] of Object.entries(a[2])){
                 console.log(dist,val);
                 ShotsGained.proFair.push(new DistSG(parseFloat(dist),val));
             }
         }
         if(a[3] != null){
             ShotsGained.scrFair = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[1])){
+            for(const [dist,val] of Object.entries(a[3])){
                 console.log(dist,val);
                 ShotsGained.scrFair.push(new DistSG(parseFloat(dist),val));
             }  
         }
         if(a[4] != null){
             ShotsGained.proRgh = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[0])){
+            for(const [dist,val] of Object.entries(a[4])){
                 console.log(dist,val);
                 ShotsGained.proRgh.push(new DistSG(parseFloat(dist),val));
             }
         }
         if(a[5] != null){
             ShotsGained.scrRgh = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[1])){
+            for(const [dist,val] of Object.entries(a[5])){
                 console.log(dist,val);
                 ShotsGained.scrRgh.push(new DistSG(parseFloat(dist),val));
             }  
         }
         if(a[6] != null){
             ShotsGained.proSand = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[0])){
+            for(const [dist,val] of Object.entries(a[6])){
                 console.log(dist,val);
                 ShotsGained.proSand.push(new DistSG(parseFloat(dist),val));
             }
         }
         if(a[7] != null){
             ShotsGained.scrSand = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[1])){
+            for(const [dist,val] of Object.entries(a[7])){
                 console.log(dist,val);
                 ShotsGained.scrSand.push(new DistSG(parseFloat(dist),val));
             }  
         }
         if(a[8] != null){
             ShotsGained.proRcvy = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[0])){
+            for(const [dist,val] of Object.entries(a[8])){
                 console.log(dist,val);
                 ShotsGained.proRcvy.push(new DistSG(parseFloat(dist),val));
             }
         }
         if(a[9] != null){
             ShotsGained.scrRcvy = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[1])){
+            for(const [dist,val] of Object.entries(a[9])){
                 console.log(dist,val);
                 ShotsGained.scrRcvy.push(new DistSG(parseFloat(dist),val));
             }  
         }
         if(a[10] != null){
             ShotsGained.proGrn = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[0])){
+            for(const [dist,val] of Object.entries(a[10])){
                 console.log(dist,val);
                 ShotsGained.proGrn.push(new DistSG(parseFloat(dist),val));
             }
         }
         if(a[11] != null){
             ShotsGained.scrGrn = new Array<DistSG>();
-            for(const [dist,val] of Object.entries(a[1])){
+            for(const [dist,val] of Object.entries(a[11])){
                 console.log(dist,val);
                 ShotsGained.scrGrn.push(new DistSG(parseFloat(dist),val));
             }  
@@ -334,25 +334,33 @@ export class ShotsGained{
     calcShotSequence(shots:Array<ShotData>, cl: Array<firebase.firestore.GeoPoint>){
         // First calc SG for the center line
         const  dHole = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(cl));
-        const sgH = this.strokesHoleOut(dHole,ShotsGained.tee, false)
-        console.log('Hole SG = ',sgH);
         const nMaxShot = shots.length -1;
+        let sgH = this.strokesHoleOut(dHole,ShotsGained.tee, false)
+        // if(nMaxShot > 0){
+        //     sgH = this.strokesHoleOut(dHole,shots[1].lie, false)
+        // }
+        console.log('Hole SG = ',sgH);
         let sgTot: number = 0;
         // For all shots calculate final distance from hole to get sg to hole out ( 1 more positions than shots)
         let nSGs: number [] =  new Array<number>();
         nSGs.push(sgH);
         const holePt = cl[cl.length-1];
-        for(let n=0; n < nMaxShot ; n++){
-            let dShot = GeoCalcs.m2yrd(GeoCalcs.dist(shots[n].finish.longitude,shots[n].finish.latitude,holePt.longitude,holePt.latitude));
+        for(let n=1; n <= nMaxShot ; n++){
+            let dShot = GeoCalcs.m2yrd(GeoCalcs.dist(shots[n].start.longitude,shots[n].start.latitude,holePt.longitude,holePt.latitude));
             //nSGs.push( this.strokesHoleOut(dShot,ShotsGained.tee,false));
-            nSGs.push( this.strokesHoleOut(dShot,shots[n+1].lie,false));
+            let sgShot = this.strokesHoleOut(dShot,shots[n].lie,false);
+            nSGs.push( sgShot );
+            console.log(n,shots[n].lie,dShot,sgShot);
         }
         nSGs.push(0); // Holed out so last (nMaxShot) cost is zero
         // Now calculate each shot value
+        let SG = 0;
         for(let n=0; n <= nMaxShot; n++){
             shots[n].sg = nSGs[n] - nSGs[n+1] -1;
+            SG += shots[n].sg;
         }
-        
+        console.log(SG);
+        return SG;
     }
 
 }
