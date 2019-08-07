@@ -12,14 +12,16 @@ import { ShotData } from '../util/golf-types';
 
 /*
 
-Update table and shot trace as shots added 
-
-Tools for penalty/S&D and remove
+Tools for penalty/S&D and remove (shot trace different colour?)
+Update table and shot trace as shots added
+Better defaults for lie (based on previous lie and shot number)
+Better position ie move along center line/toward hole say 70% but not more than 200yrds
 Learn how to make dist update in table as shots dragged
+Get GPS working
 Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 Take local copy of CL and adjust Tee position to first shot
 Do same for hole out
-Calc SG for each shot (default end point of shot to hole each time?)
+Entry of puts in feet and way to enter on grid exact dist and poistion flag
 */
 
 @Component({
@@ -42,7 +44,7 @@ export class ManRndComponent implements OnInit {
   holeShotMarks: Array<any>;
   holeShotTrace: Array<any>;
   holeCentreLine: Array<firebase.firestore.GeoPoint>;
-  holeSGOrg: number;
+  holeSGOrg: number=1;
   holeScoreSG: number = 0;
   shotSel: number = -1; //Selection in shot list for hole being edited
   sgCalcs: ShotsGained;
@@ -97,8 +99,7 @@ export class ManRndComponent implements OnInit {
       this.updateShots();
       this.calcHoleSG();
       this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-      this.shotTrace();
-      console.log(this.holeScoreSG);  
+      this.shotTrace();  
     })
   }
 
@@ -155,7 +156,25 @@ export class ManRndComponent implements OnInit {
     this.shotSel = s1.num;
     
     this.updateShots();
+    this.calcHoleSG();
+    this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+    this.shotTrace();
     return s1;
+  }
+
+  onDeleteShot() : void {
+    //Delete the last shot (maybe extend to selected shot later)
+    if(this.holeShots.length > 0){
+      this.holeShots.pop();
+      let mk = this.holeShotMarks.pop();
+      mk.setMap(null);
+      this.shotSel = -1;
+      this.updateShots();
+      this.calcHoleSG();
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+      this.shotTrace();      
+    }
+
   }
 
   onShotRowSelected(n: number) {

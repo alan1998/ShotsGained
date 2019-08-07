@@ -17,7 +17,9 @@
 .shot-tools {
     grid-column: 1 /4;
     grid-row: 8/9;
+
 }
+
 
 .map-rnd {
     grid-column: 5 / -1;
