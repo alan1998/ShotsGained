@@ -28,7 +28,7 @@
             <option *ngFor="let l of lies" [value]="l.code">{{l.name}}</option>
           </select>
         </td>
-        <td>d</td>
+        <td>{{s.clubDisp()}}</td>
         <td>{{s.dist | distYrd}}</td>
         <td>{{s.sg | number: '1.1-2'}}</td>
       </tr>
@@ -44,6 +44,8 @@
 </div>
 <div   class="btn-group btn-icon shot-tools" style="justify-content: center">
   <button (click)="onAddShot()" class ="btn"  >+</button>
+  <button (click)="onAddPenalty(false)" class= "btn" >Dp</button>
+  <button (click)="onAddPenalty(true)" class= "btn" >OB</button>
   <button (click)="onDeleteShot()" class ="btn"  >-</button>
 </div>
 <!--<div class="card-rnd">

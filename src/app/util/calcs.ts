@@ -145,27 +145,26 @@ export class ShotsGained{
     static readonly  hazard : number = 3;
     static readonly  recovery : number = 4;
     static readonly  green : number = 5;
-    static scrTee : Array<DistSG>;
-    static proTee : Array<DistSG>;
-    static scrFair : Array<DistSG>;
-    static proFair : Array<DistSG>;
-    static scrRgh : Array<DistSG>;
-    static proRgh : Array<DistSG>;
-    static scrSand : Array<DistSG>;
-    static proSand : Array<DistSG>;
-    static scrRcvy : Array<DistSG>;
-    static proRcvy : Array<DistSG>;
-    static scrGrn : Array<DistSG>;
-    static proGrn : Array<DistSG>;
+    static scrTee: Array<DistSG>;
+    static proTee: Array<DistSG>;
+    static scrFair: Array<DistSG>;
+    static proFair: Array<DistSG>;
+    static scrRgh: Array<DistSG>;
+    static proRgh: Array<DistSG>;
+    static scrSand: Array<DistSG>;
+    static proSand: Array<DistSG>;
+    static scrRcvy: Array<DistSG>;
+    static proRcvy: Array<DistSG>;
+    static scrGrn: Array<DistSG>;
+    static proGrn: Array<DistSG>;
 
-    constructor(){   
+    constructor(){
     }
 
-    fillTables(a:Array<object>){
-    console.log("Fill");
-    console.log(a);
-    
-    if(a.length >= 10){
+    fillTables(a: Array<object>){
+
+
+    if (a.length >= 10) {
         /*
          0,1   Tee pro , scr
          2,3   Fairway
@@ -355,11 +354,20 @@ export class ShotsGained{
         nSGs.push(0); // Holed out so last (nMaxShot) cost is zero
         // Now calculate each shot value
         let SG = 0;
-        for(let n=0; n <= nMaxShot; n++){
-            shots[n].sg = nSGs[n] - nSGs[n+1] -1;
+        for (let n = 0; n <= nMaxShot; n++) {
+            shots[n].sg = nSGs[n] - nSGs[n + 1] - 1;
+            if ( shots[n].penalty && n > 0) {
+                shots[n - 1].sg -= 1;
+                shots[n].sg += 1;
+            } else if ( shots[n].outB && n > 0 ) {
+                shots[n - 1].sg = -2;
+                shots[n].sg = 0;
+            }
+
+        }
+        for (let n = 0; n <= nMaxShot; n++) {
             SG += shots[n].sg;
         }
-        console.log(SG);
         return SG;
     }
 

@@ -13,6 +13,7 @@ import { ShotData } from '../util/golf-types';
 /*
 
 Tools for penalty/S&D and remove (shot trace different colour?)
+Drop - SG neutral add to previous shot
 Update table and shot trace as shots added
 Better defaults for lie (based on previous lie and shot number)
 Better position ie move along center line/toward hole say 70% but not more than 200yrds
@@ -36,7 +37,7 @@ export class ManRndComponent implements OnInit {
   selId: string;
   course: ICourse;
   holeList;
-  selHole=0;
+  selHole = 0;
   when;
   gpsList: TxtFilePos;
   lastCir: any; // Todo replace with array for current hole
@@ -44,9 +45,9 @@ export class ManRndComponent implements OnInit {
   holeShotMarks: Array<any>;
   holeShotTrace: Array<any>;
   holeCentreLine: Array<firebase.firestore.GeoPoint>;
-  holeSGOrg: number=1;
-  holeScoreSG: number = 0;
-  shotSel: number = -1; //Selection in shot list for hole being edited
+  holeSGOrg = 1;
+  holeScoreSG = 0;
+  shotSel = -1; // Selection in shot list for hole being edited
   sgCalcs: ShotsGained;
 
   lies: object [] = [
@@ -72,13 +73,13 @@ export class ManRndComponent implements OnInit {
 
     this.srvDB.GetCourse(this.selId).then((c) => {
         this.course = c;
-        console.log("Course selected for round");
-        console.log("Name = " + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
+        console.log('Course selected for round');
+        console.log('Name = ' + this.course.id + " Location " +this.course.location.latitude + " : " + this.course.location.longitude);
         this.mapView.initOnLocation(this.course.location.longitude, this.course.location.latitude, true);
         this.holeList = c.holes;
         this.mapView.setZoom(16);
         this.mapView.shotLocEvt.subscribe(this.onShotLocEvent);
-        
+
         // this.mapView.shotLocDragEvt.subscribe((p)=>{
 
         //     this.updateShots();
@@ -89,8 +90,7 @@ export class ManRndComponent implements OnInit {
       );
       const dt = new Date(Date.now());
       this.when = dt.toISOString().slice(0, 10);
-      
-      
+
   }
 
   ngAfterViewInit() {
@@ -154,7 +154,7 @@ export class ManRndComponent implements OnInit {
       this.holeShotMarks.push(mark);
     });
     this.shotSel = s1.num;
-    
+
     this.updateShots();
     this.calcHoleSG();
     this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
@@ -162,8 +162,39 @@ export class ManRndComponent implements OnInit {
     return s1;
   }
 
+  onAddPenalty(OB: boolean): ShotData {
+    if (this.holeShots.length === 0) {
+      return;
+    }
+    const s1 = new ShotData();
+    if ( OB ) {
+      s1.outB = true;
+    } else {
+      s1.penalty = true;
+    }
+    s1.num = this.holeShots.length + 1;
+    this.holeShots.push(s1);
+    this.shotSel = -1;
+    const off = 0.00001;
+    s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num - 2].start.latitude + off,
+       this.holeShots[s1.num - 2].start.longitude + off);
+    this.fixMarks();
+    this.mapView.showShotPos(s1.start, 'purple').then(mark => {
+      this.mapView.addOrRemoveShotPosListener(mark, true);
+      this.holeShotMarks.push(mark);
+    });
+    this.shotSel = s1.num;
+
+    this.updateShots();
+    this.calcHoleSG();
+    this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+    this.shotTrace();
+    return s1;
+
+  }
+
   onDeleteShot() : void {
-    //Delete the last shot (maybe extend to selected shot later)
+    // Delete the last shot (maybe extend to selected shot later)
     if(this.holeShots.length > 0){
       this.holeShots.pop();
       let mk = this.holeShotMarks.pop();
