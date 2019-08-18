@@ -1,11 +1,14 @@
 import * as firebase from 'firebase/app';
-import { LatLngLiteral, LatLngBoundsLiteral } from "@agm/core/services/google-maps-types";
+import { LatLngLiteral, LatLngBoundsLiteral, MapTypeControlStyle } from "@agm/core/services/google-maps-types";
 import {Pipe,PipeTransform } from '@angular/core';
 
 import { Hole } from '../sgcoures.service';
 import { logging } from 'protractor';
 import { Timestamp } from 'rxjs/Rx';
 import { ShotData } from './golf-types';
+import { del } from 'selenium-webdriver/http';
+
+
 declare function require(url:string);
 
 @Pipe({name : 'holeSum'})
@@ -54,6 +57,10 @@ export class GpsLogPoint {
  
 export class GeoCalcs {
     //DIstance between points in lat long as meters
+    static distFire(pt1: firebase.firestore.GeoPoint, pt2: firebase.firestore.GeoPoint ): number {
+        return this.dist(pt1.longitude, pt1.latitude, pt2.longitude, pt2.latitude);
+    }
+
     static dist(lon1:number,lat1:number,lon2:number,lat2:number):number{
         var R = 6371; // Radius of the earth in km
         var dLat = GeoCalcs.deg2rad(lat2-lat1);  // deg2rad below
@@ -97,8 +104,17 @@ export class GeoCalcs {
     static deg2rad(deg:number):number {
         return deg * (Math.PI/180)
     }
+
+    static rad2deg(rad:number): number {
+        return rad * 180 / Math.PI;
+    }
+
     static m2yrd(D_in_M:number):number{
         return D_in_M * 1.09361;
+    }
+
+    static yrd2m(D_in_yrds:number): number {
+        return  D_in_yrds / 1.09361;
     }
     static centerPt(pts:Array<firebase.firestore.GeoPoint>):firebase.firestore.GeoPoint{
         let ret = new firebase.firestore.GeoPoint(51.5,-1);
@@ -134,6 +150,33 @@ export class GeoCalcs {
         });
         let r:LatLngBoundsLiteral = {east:lngNE,west:lngSW,north:latNE,south:latSW}; 
         return r;
+    }
+
+    static bearing(st: firebase.firestore.GeoPoint, fin: firebase.firestore.GeoPoint): number {
+        //https://www.movable-type.co.uk/scripts/latlong.html
+        const dLon = this.deg2rad( fin.longitude ) - this.deg2rad(st.longitude);
+        let y = Math.sin(dLon);
+        y = y * Math.cos(this.deg2rad(fin.latitude));
+        let x = Math.cos(this.deg2rad(st.latitude))*Math.sin(this.deg2rad(fin.latitude));
+        x = x - Math.sin(this.deg2rad(st.latitude)) * Math.cos(this.deg2rad(fin.latitude)) * Math.cos(dLon);
+        const bear = (this.rad2deg( Math.atan2(y,x))+360)%360;
+        return bear; 
+    }
+
+    static destination(st: firebase.firestore.GeoPoint,yrds: number, bear: number): firebase.firestore.GeoPoint {
+        const delta = this.yrd2m(yrds)/1000/6371;
+        const phi = this.deg2rad(st.latitude);
+        const lam = this.deg2rad(st.longitude);
+        let lat = Math.sin(phi)*Math.cos(delta);
+        lat += Math.cos(phi)*Math.sin(delta)*Math.cos(this.deg2rad(bear));
+        lat = Math.asin(lat);
+
+        const a = Math.sin(this.deg2rad(bear))*Math.sin(delta)*Math.cos(phi);
+        const b = Math.cos(delta)-Math.sin(phi)*Math.sin(lat);
+        let lon = lam + Math.atan2(a,b)
+        lat = this.rad2deg(lat);
+        lon = this.rad2deg(lon);
+        return new firebase.firestore.GeoPoint(lat,lon);
     }
 }
 

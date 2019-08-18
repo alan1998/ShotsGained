@@ -145,8 +145,14 @@ export class ManRndComponent implements OnInit {
       this.calcHoleSG();
     }
     else {
-      const off = 0.00005;
-      s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num-2].start.latitude+off,this.holeShots[s1.num-2].start.longitude+off);
+      // Calculate bearing to go 
+      // If have only 1 shot so far and dist to go > 220 go along CL else limit length
+      // If not 2nd shot then simply head to flag
+      let dest: firebase.firestore.GeoPoint = new firebase.firestore.GeoPoint(0,0);
+      let dir = 0;
+      let dist = 200;
+      dest = this.getDefaultStart();
+      s1.start = dest;
     }
     this.fixMarks();
     this.mapView.showShotPos(s1.start,'yellow').then(mark => {
@@ -243,6 +249,38 @@ export class ManRndComponent implements OnInit {
   onShotLocEvent = (evt: any): void => {
     console.log(evt.lat(), evt.lng());
     this.mapView.startManEntry(false);
+  }
+
+  getDefaultStart(): firebase.firestore.GeoPoint {
+    // Calculate a start/finish position and distance
+    // for last shot on array
+    if(this.holeShots.length < 2)
+      return null;
+    let s = this.holeShots[this.holeShots.length-1];
+    var tgt;
+    s.lie = ShotsGained.fairway;
+    if( s.num == 2){
+      tgt = this.holeCentreLine[1];  
+    } else {
+      tgt = this.holeCentreLine[this.holeCentreLine.length-1];
+    }
+    if(this.holeShots[s.num-2].lie === ShotsGained.tee ){
+      s.lie = ShotsGained.fairway;
+    }else if(this.holeShots[s.num-2].lie === ShotsGained.fairway ){
+      s.lie = ShotsGained.fairway;
+    }else if(this.holeShots[s.num-2].lie === ShotsGained.green ){
+      s.lie = ShotsGained.green;
+    }
+    const bear = GeoCalcs.bearing(this.holeShots[s.num-2].start,tgt);
+    const distToGo = GeoCalcs.distFire(this.holeShots[s.num-2].start,tgt);
+    var dist;
+    if(distToGo > 202) {
+      dist = 220;
+    }
+    else{
+      dist = GeoCalcs.m2yrd( distToGo )-1;
+    }
+    return GeoCalcs.destination(this.holeShots[this.holeShots.length-2].start,dist,bear);
   }
 
   onSaveCard(): void {
