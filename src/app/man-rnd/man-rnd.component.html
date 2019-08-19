@@ -24,7 +24,7 @@
       <tr *ngFor="let s of holeShots ; let i=index" (click)="onShotRowSelected(s.num)"  [className]="s.num==shotSel ? 'selected' : ''">
         <td>{{s.num}}</td>
         <td>
-          <select (change)="onLieChanged($event,s.num)">
+          <select (change)="onLieChanged($event,s.num)" [(ngModel)] = "s.lie">
             <option *ngFor="let l of lies" [value]="l.code">{{l.name}}</option>
           </select>
         </td>

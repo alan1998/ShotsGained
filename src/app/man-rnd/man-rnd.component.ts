@@ -11,13 +11,12 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
-
+Add penalty - default shot position and which active/selected
+Move flag - interaction
+Display - pipe to show distance as feet if below a threshold (or better when on green) 
 Tools for penalty/S&D and remove (shot trace different colour?)
 Drop - SG neutral add to previous shot
-Update table and shot trace as shots added
-Better defaults for lie (based on previous lie and shot number)
-Better position ie move along center line/toward hole say 70% but not more than 200yrds
-Learn how to make dist update in table as shots dragged
+
 Get GPS working
 Style the hole select a bit better - pipe to get the id, par, sg, length neat?
 Take local copy of CL and adjust Tee position to first shot
