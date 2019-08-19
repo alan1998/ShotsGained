@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit, ViewChild, Pipe, PipeTransform, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import * as firebase from 'firebase/app';
 
@@ -64,7 +64,8 @@ export class ManRndComponent implements OnInit {
   constructor(    private route: ActivatedRoute,
     private router: Router,
     private srvDB: SGCouresService,
-    private srvRnds: SGRoundsService) { 
+    private srvRnds: SGRoundsService,
+    private ref: ChangeDetectorRef) { 
       this.sgCalcs = new ShotsGained();
     }
 
@@ -99,7 +100,8 @@ export class ManRndComponent implements OnInit {
       this.updateShots();
       this.calcHoleSG();
       this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-      this.shotTrace();  
+      this.shotTrace();
+      this.ref.detectChanges();  
     })
   }
 
@@ -165,6 +167,9 @@ export class ManRndComponent implements OnInit {
     this.calcHoleSG();
     this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
     this.shotTrace();
+    this.holeShots.forEach(s => {
+      console.log(s.lie);
+    });
     return s1;
   }
 
