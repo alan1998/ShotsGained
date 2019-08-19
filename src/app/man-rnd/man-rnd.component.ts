@@ -133,25 +133,22 @@ export class ManRndComponent implements OnInit {
     this.holeScoreSG = 0;
   }
 
-  onAddShot() : ShotData{
+  onAddShot(): ShotData {
     // Add Shot at end of list
     const s1 = new ShotData();
-    s1.num = this.holeShots.length+1;
+    s1.num = this.holeShots.length + 1;
     this.holeShots.push(s1);
     this.shotSel = -1;
-    if(s1.num == 1) {
+    if (s1.num === 1) {
       this.mapView.doClearCenterLine();
       s1.start = this.course.holes[this.selHole]['cl'][0];
       this.holeCentreLine[0] = s1.start;
       this.calcHoleSG();
-    }
-    else {
+    } else {
       // Calculate bearing to go 
       // If have only 1 shot so far and dist to go > 220 go along CL else limit length
       // If not 2nd shot then simply head to flag
       let dest: firebase.firestore.GeoPoint = new firebase.firestore.GeoPoint(0,0);
-      let dir = 0;
-      let dist = 200;
       dest = this.getDefaultStart();
       s1.start = dest;
     }
@@ -186,15 +183,22 @@ export class ManRndComponent implements OnInit {
     this.holeShots.push(s1);
     this.shotSel = -1;
     const off = 0.00001;
-    s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num - 2].start.latitude + off,
-       this.holeShots[s1.num - 2].start.longitude + off);
+    if ( OB ) {
+      s1.start = this.getDefaultStart();
+    } else {
+      s1.start = new firebase.firestore.GeoPoint(this.holeShots[s1.num - 2].start.latitude + off,
+        this.holeShots[s1.num - 2].start.longitude + off);
+    }
     this.fixMarks();
     this.mapView.showShotPos(s1.start, 'purple').then(mark => {
       this.mapView.addOrRemoveShotPosListener(mark, true);
       this.holeShotMarks.push(mark);
     });
     this.shotSel = s1.num;
-
+    if ( OB ) {
+      //Add another shot back where started
+      this.onAddShot();
+    }
     this.updateShots();
     this.calcHoleSG();
     this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
@@ -203,17 +207,17 @@ export class ManRndComponent implements OnInit {
 
   }
 
-  onDeleteShot() : void {
+  onDeleteShot(): void {
     // Delete the last shot (maybe extend to selected shot later)
-    if(this.holeShots.length > 0){
+    if (this.holeShots.length > 0) {
       this.holeShots.pop();
-      let mk = this.holeShotMarks.pop();
+      const mk = this.holeShotMarks.pop();
       mk.setMap(null);
       this.shotSel = -1;
       this.updateShots();
       this.calcHoleSG();
       this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-      this.shotTrace();      
+      this.shotTrace();
     }
 
   }
@@ -258,12 +262,18 @@ export class ManRndComponent implements OnInit {
   getDefaultStart(): firebase.firestore.GeoPoint {
     // Calculate a start/finish position and distance
     // for last shot on array
-    if(this.holeShots.length < 2)
+    if ( this.holeShots.length < 2 ) {
       return null;
-    let s = this.holeShots[this.holeShots.length-1];
-    var tgt;
+    }
+    const s = this.holeShots[this.holeShots.length - 1];
+    let tgt;
     s.lie = ShotsGained.fairway;
-    if( s.num == 2){
+    if ( s.outB && s.num >= 2 ) {
+      const sToReplay = this.holeShots[this.holeShots.length - 2];
+      tgt = this.holeCentreLine[this.holeCentreLine.length - 1];
+      s.lie = sToReplay.lie;
+      s.start = sToReplay.start;
+    } else if ( s.num === 2) {
       tgt = this.holeCentreLine[1];  
     } else {
       tgt = this.holeCentreLine[this.holeCentreLine.length-1];
@@ -277,14 +287,13 @@ export class ManRndComponent implements OnInit {
     }
     const bear = GeoCalcs.bearing(this.holeShots[s.num-2].start,tgt);
     const distToGo = GeoCalcs.distFire(this.holeShots[s.num-2].start,tgt);
-    var dist;
-    if(distToGo > 202) {
+    let dist;
+    if (distToGo > 202) {
       dist = 220;
+    } else {
+      dist = GeoCalcs.m2yrd( distToGo ) - 1;
     }
-    else{
-      dist = GeoCalcs.m2yrd( distToGo )-1;
-    }
-    return GeoCalcs.destination(this.holeShots[this.holeShots.length-2].start,dist,bear);
+    return GeoCalcs.destination(this.holeShots[this.holeShots.length -  2].start, dist, bear);
   }
 
   onSaveCard(): void {
