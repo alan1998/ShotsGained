@@ -11,11 +11,13 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
-Add penalty - default shot position and which active/selected
+Add penalty - default shot position and which active/selected - need AddShotAt(pos) so marks get done asnc
 Move flag - interaction
 Display - pipe to show distance as feet if below a threshold (or better when on green) 
 Tools for penalty/S&D and remove (shot trace different colour?)
 Drop - SG neutral add to previous shot
+Target line so can calculate error
+Score card and save 
 
 Get GPS working
 Style the hole select a bit better - pipe to get the id, par, sg, length neat?
@@ -198,6 +200,17 @@ export class ManRndComponent implements OnInit {
     if ( OB ) {
       //Add another shot back where started
       this.onAddShot();
+      let replayShot = this.holeShots[this.holeShots.length - 1];
+      let startShot = this.holeShots[this.holeShots.length -3];
+      replayShot.start = startShot.start;
+      replayShot.club = startShot.club;
+      replayShot.lie = startShot.lie;
+      this.holeShots[this.holeShots.length - 1] = replayShot;
+      let mk = this.holeShotMarks[this.holeShots.length - 1];
+      //mk.setOptions({
+      //  center: {lat:startShot.start.latitude, lng:startShot.start.longitude},
+        //fillColor: 'red'
+      //})
     }
     this.updateShots();
     this.calcHoleSG();
