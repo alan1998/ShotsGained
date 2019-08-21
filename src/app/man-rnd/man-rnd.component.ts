@@ -11,6 +11,8 @@ import { GpsListComponent } from '../gps-list/gps-list.component';
 import { ShotData } from '../util/golf-types';
 
 /*
+Pass marker to listener so that it can update shot start
+Then Update shots method need not use markers - so should be able to simplify other stuff
 Add penalty - default shot position and which active/selected - need AddShotAt(pos) so marks get done asnc
 Move flag - interaction
 Display - pipe to show distance as feet if below a threshold (or better when on green) 
@@ -158,16 +160,16 @@ export class ManRndComponent implements OnInit {
     this.mapView.showShotPos(s1.start,'yellow').then(mark => {
       this.mapView.addOrRemoveShotPosListener(mark, true);
       this.holeShotMarks.push(mark);
+      this.updateShots();
+      this.calcHoleSG();
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+      this.shotTrace();
     });
     this.shotSel = s1.num;
 
-    this.updateShots();
-    this.calcHoleSG();
-    this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-    this.shotTrace();
-    this.holeShots.forEach(s => {
-      console.log(s.lie);
-    });
+    //  this.holeShots.forEach(s => {
+  //    console.log(s.lie);
+  //  });
     return s1;
   }
 
@@ -195,27 +197,29 @@ export class ManRndComponent implements OnInit {
     this.mapView.showShotPos(s1.start, 'purple').then(mark => {
       this.mapView.addOrRemoveShotPosListener(mark, true);
       this.holeShotMarks.push(mark);
+      this.updateShots();
+      this.calcHoleSG();
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+      this.shotTrace();  
+      if ( OB ) {
+        //Add another shot back where started
+        this.onAddShot();
+        let replayShot = this.holeShots[this.holeShots.length - 1];
+        let startShot = this.holeShots[this.holeShots.length -3];
+        replayShot.start = startShot.start;
+        replayShot.club = startShot.club;
+        replayShot.lie = startShot.lie;
+        this.holeShots[this.holeShots.length - 1] = replayShot;
+        let mk = this.holeShotMarks[this.holeShots.length - 1];
+        console.log('Count of shots / marks = ',this.holeShots.length,this.holeShotMarks.length);
+        //mk.setOptions({
+        //  center: {lat:startShot.start.latitude, lng:startShot.start.longitude},
+          //fillColor: 'red'
+        //})
+      }
     });
     this.shotSel = s1.num;
-    if ( OB ) {
-      //Add another shot back where started
-      this.onAddShot();
-      let replayShot = this.holeShots[this.holeShots.length - 1];
-      let startShot = this.holeShots[this.holeShots.length -3];
-      replayShot.start = startShot.start;
-      replayShot.club = startShot.club;
-      replayShot.lie = startShot.lie;
-      this.holeShots[this.holeShots.length - 1] = replayShot;
-      let mk = this.holeShotMarks[this.holeShots.length - 1];
-      //mk.setOptions({
-      //  center: {lat:startShot.start.latitude, lng:startShot.start.longitude},
-        //fillColor: 'red'
-      //})
-    }
-    this.updateShots();
-    this.calcHoleSG();
-    this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-    this.shotTrace();
+    
     return s1;
 
   }

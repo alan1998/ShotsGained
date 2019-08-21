@@ -318,7 +318,8 @@ export class GolfGmapComponent implements OnInit {
           fillColor: colour,
           fillOpacity: 0.5,
           radius: 1.2,
-          draggable: true
+          draggable: true,
+          label: 'L'
         });
 
         resolve (cir);
