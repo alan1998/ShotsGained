@@ -11,6 +11,7 @@ import { PolylineManager } from '@agm/core/services/managers/polyline-manager';
 import { GeoCalcs } from '../util/calcs'
 import { Observable } from 'openlayers';
 import { reject } from 'q';
+import { ShotData } from '../util/golf-types';
 
 declare var google: any;
 
@@ -46,7 +47,7 @@ export class GolfGmapComponent implements OnInit {
   bDrawingCL = false;
   @Output() eventCL = new EventEmitter<string>(true);
   @Output() shotLocEvt = new EventEmitter<LatLng>(true);
-  @Output() shotLocDragEvt = new EventEmitter<LatLng>(true);
+  @Output() shotLocDragEvt = new EventEmitter<void >(true);
 
   constructor(public mapsApiLoader: MapsAPILoader,
       private zone: NgZone,
@@ -350,11 +351,13 @@ export class GolfGmapComponent implements OnInit {
 
   // TODO pass the event onward to the round component (or other)
   // Also need remove listener and possible drag start so enclosing component can detect which dragend will correspond to?
-  addOrRemoveShotPosListener(cir, bAdd: boolean) {
+  addOrRemoveShotPosListener(cir, s: ShotData, bAdd: boolean) {
     if (bAdd) {
       cir.addListener('dragend', ( evt) => {
         console.log(evt);
-        this.shotLocDragEvt.emit(evt.latLng);
+        s.start = new firebase.firestore.GeoPoint(evt.latLng.lat(), evt.latLng.lng());
+        cir.setCenter(evt.latLng);
+        this.shotLocDragEvt.emit();
       });
     } else {
       cir.removeListener();

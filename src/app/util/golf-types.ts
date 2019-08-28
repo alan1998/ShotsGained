@@ -31,6 +31,19 @@ export class ShotData{
       }
     }
 
+    // Distance for display
+    distDisp(): string {
+      let d = GeoCalcs.m2yrd(this.dist);
+      let ret = '';
+      if ( this.lie === ShotsGained.green ) {
+        d *= 3;
+        ret = d.toFixed(0) + ' ft';
+      } else {
+        ret = d.toFixed(1);
+      }
+      return ret;
+    }
+
     setSG(sg: number){
       this.sg = sg;
     }

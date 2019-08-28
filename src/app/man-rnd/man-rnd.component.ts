@@ -98,8 +98,10 @@ export class ManRndComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.mapView.shotLocDragEvt.subscribe((evt) => {
-      console.log(evt.lat(),evt.lng());
+    this.mapView.shotLocDragEvt.subscribe(() => {
+      this.holeShots.forEach( s => {
+        console.log(s.start);
+      });
       this.updateShots();
       this.calcHoleSG();
       this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
@@ -149,20 +151,20 @@ export class ManRndComponent implements OnInit {
       this.holeCentreLine[0] = s1.start;
       this.calcHoleSG();
     } else {
-      // Calculate bearing to go 
+      // Calculate bearing to go
       // If have only 1 shot so far and dist to go > 220 go along CL else limit length
       // If not 2nd shot then simply head to flag
-      let dest: firebase.firestore.GeoPoint = new firebase.firestore.GeoPoint(0,0);
+      let dest: firebase.firestore.GeoPoint = new firebase.firestore.GeoPoint(0, 0);
       dest = this.getDefaultStart();
       s1.start = dest;
     }
     this.fixMarks();
-    this.mapView.showShotPos(s1.start,'yellow').then(mark => {
-      this.mapView.addOrRemoveShotPosListener(mark, true);
+    this.mapView.showShotPos(s1.start, 'yellow').then(mark => {
+      this.mapView.addOrRemoveShotPosListener(mark, s1, true);
       this.holeShotMarks.push(mark);
       this.updateShots();
       this.calcHoleSG();
-      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots, this.holeCentreLine);
       this.shotTrace();
     });
     this.shotSel = s1.num;
@@ -195,33 +197,31 @@ export class ManRndComponent implements OnInit {
     }
     this.fixMarks();
     this.mapView.showShotPos(s1.start, 'purple').then(mark => {
-      this.mapView.addOrRemoveShotPosListener(mark, true);
+      this.mapView.addOrRemoveShotPosListener(mark, s1, true);
       this.holeShotMarks.push(mark);
       this.updateShots();
       this.calcHoleSG();
-      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots,this.holeCentreLine);
-      this.shotTrace();  
+      this.holeScoreSG = this.sgCalcs.calcShotSequence(this.holeShots, this.holeCentreLine);
+      this.shotTrace();
       if ( OB ) {
-        //Add another shot back where started
-        this.onAddShot();
-        let replayShot = this.holeShots[this.holeShots.length - 1];
-        let startShot = this.holeShots[this.holeShots.length -3];
+        // Add another shot back where started
+        console.log('len = ', this.holeShots.length);
+        const replayShot = this.onAddShot();
+        console.log('len = ', this.holeShots.length);
+        // let replayShot = this.holeShots[this.holeShots.length - 1];
+        const startShot = this.holeShots[this.holeShots.length - 3];
         replayShot.start = startShot.start;
         replayShot.club = startShot.club;
         replayShot.lie = startShot.lie;
         this.holeShots[this.holeShots.length - 1] = replayShot;
-        let mk = this.holeShotMarks[this.holeShots.length - 1];
-        console.log('Count of shots / marks = ',this.holeShots.length,this.holeShotMarks.length);
-        //mk.setOptions({
-        //  center: {lat:startShot.start.latitude, lng:startShot.start.longitude},
-          //fillColor: 'red'
-        //})
+        console.log('OB rplay = ', replayShot.start);
+        this.holeShots.forEach(x => {
+          console.log(x.num, x.start);
+        });
       }
     });
     this.shotSel = s1.num;
-    
     return s1;
-
   }
 
   onDeleteShot(): void {
@@ -242,12 +242,12 @@ export class ManRndComponent implements OnInit {
   onShotRowSelected(n: number) {
     this.fixMarks();
     this.shotSel = n;
-    const mk = this.holeShotMarks[n-1];
+    const mk = this.holeShotMarks[n - 1];
     mk['draggable'] = true;
     mk.setOptions({
       strokeColor: 'yellow',
-      //fillColor: 'red'
-    })
+      // fillColor: 'red'
+    });
   }
 
   onFileSelected(event) {
@@ -291,13 +291,13 @@ export class ManRndComponent implements OnInit {
       s.lie = sToReplay.lie;
       s.start = sToReplay.start;
     } else if ( s.num === 2) {
-      tgt = this.holeCentreLine[1];  
+      tgt = this.holeCentreLine[1];
     } else {
-      tgt = this.holeCentreLine[this.holeCentreLine.length-1];
+      tgt = this.holeCentreLine[this.holeCentreLine.length - 1];
     }
-    if(this.holeShots[s.num-2].lie === ShotsGained.tee ){
+    if (this.holeShots[s.num - 2].lie === ShotsGained.tee ){
       s.lie = ShotsGained.fairway;
-    }else if(this.holeShots[s.num-2].lie === ShotsGained.fairway ){
+    } else if (this.holeShots[s.num - 2].lie === ShotsGained.fairway ){
       s.lie = ShotsGained.fairway;
     }else if(this.holeShots[s.num-2].lie === ShotsGained.green ){
       s.lie = ShotsGained.green;
@@ -347,7 +347,8 @@ export class ManRndComponent implements OnInit {
     this.mapView.showShotPos(p, '#ff0000').then( p => {
       this.lastCir = p;
        // TODO upadte stuff as event happens
-      this.mapView.addOrRemoveShotPosListener(p, true);
+      const s = new ShotData();
+      this.mapView.addOrRemoveShotPosListener(p, s, true);
     } );
   }
 
@@ -372,55 +373,72 @@ export class ManRndComponent implements OnInit {
   updateShots() {
     // Cycle through updating end of shot to be start of next
     //this.logShotPos();
-    for( let n=0; n < this.holeShotMarks.length; n++){
-      this.holeShots[n].start = new firebase.firestore.GeoPoint( this.holeShotMarks[n]['center'].lat(),this.holeShotMarks[n]['center'].lng());
+    //for( let n=0; n < this.holeShotMarks.length; n++){
+    //  this.holeShots[n].start = new firebase.firestore.GeoPoint( this.holeShotMarks[n]['center'].lat(),this.holeShotMarks[n]['center'].lng());
+    //}
+    for (let i = 0; i < this.holeShots.length - 1; i++ ) {
+      this.holeShots[i].setFinish( this.holeShots[i + 1].start);
+      console.log('shot ', i, this.holeShots[i].start);
     }
-    for(let i=0; i < this.holeShots.length-1; i++ ){
-      this.holeShots[i].setFinish( this.holeShots[i+1].start);
-      //console.log("shot",i)
-    }
-    //Adjust hole start point to tee position
+    // Adjust hole start point to tee position
     this.holeCentreLine[0] = this.holeShots[0].start;
-    //Adjust hole end point to last shot or other way round
-    if(this.holeShots[this.holeShots.length-1].finish === undefined){
-      console.log('set finish of shot ',this.holeShots.length);
+    // Adjust hole end point to last shot or other way round
+    if (this.holeShots[this.holeShots.length - 1].finish === undefined){
+      console.log('set finish of shot ', this.holeShots.length);
       this.holeShots[this.holeShots.length-1].setFinish(this.holeCentreLine[this.holeCentreLine.length-1]);
     }
     // else{
     //   //Todo set center line end point to known hole position
     // }
-    this.holeShots[this.holeShots.length-1].calcLength();
-    //this.logShotPos();
+    this.holeShots[this.holeShots.length - 1].calcLength();
+    // this.logShotPos();
   }
-  
+
   calcHoleSG() {
-    let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
+    const d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
     this.holeSGOrg = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
   }
 
-  shotTrace(){
-    //If we have any traces clear them from map and daelete
-    if(this.holeShotTrace !== undefined){
+  shotTrace() {
+    // If we have any traces clear them from map and daelete
+    if (this.holeShotTrace !== undefined) {
       this.holeShotTrace.forEach(tr => {
         tr.setMap(null);
       });
     }
-    if(this.holeShots.length > 0){
+    if (this.holeShots.length > 0) {
       this.holeShotTrace = new Array<any>();
-      this.holeShots.forEach( sh => {
-        if(sh.start !== undefined && sh.finish !== undefined){
-          this.mapView.showShotTrace(sh.start, sh.finish,'yellow').then(ln => {
-            this.holeShotTrace.push(ln);
-          });         
+      let bNextOB = false;
+      for (let n = 0; n < this.holeShots.length; n++ ) {
+        const sh = this.holeShots[n];
+        if ( n < this.holeShots.length - 2) {
+          if ( this.holeShots[n + 1].outB ) {
+            bNextOB = true;
+          } else {
+            bNextOB = false;
+          }
+        } else {
+          bNextOB = false;
         }
-      });
+        if (sh.start !== undefined && sh.finish !== undefined) {
+            if (bNextOB) {
+              this.mapView.showShotTrace(sh.start, sh.finish, 'purple').then(ln => {
+                this.holeShotTrace.push(ln);
+              });
+            } else if (!sh.outB) {
+              this.mapView.showShotTrace(sh.start, sh.finish, 'yellow').then(ln => {
+                this.holeShotTrace.push(ln);
+              });
+            }
+        }
+      }
     }
   }
 
   logShotPos() {
     console.log('Hole shot starts, finishes');
     this.holeShots.forEach(s => {
-      //console.log(s.start.latitude,s.start.longitude, s.finish.latitude, s.finish.longitude);
-    })
+      // console.log(s.start.latitude,s.start.longitude, s.finish.latitude, s.finish.longitude);
+    });
   }
 }
