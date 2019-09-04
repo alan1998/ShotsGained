@@ -246,7 +246,24 @@ export class GolfGmapComponent implements OnInit {
     return mk;
   }
 
-  showLineLengths(pts:Array<LatLngLiteral>){
+  makeFlagMarker(pt: LatLngLiteral) {
+    const mk = new google.maps.Marker({
+      position: pt,
+      title: 'Flag',
+      opacity: 0.6,
+      zIndex: 1,
+      // label: {text:"T", color:'white' },
+      icon : {
+        url: '../../assets/Flag.ico',
+        anchor: {x: 12, y: 12} ,
+        labelOrigin: {x: 15, y: 24},
+        scaledSize: {width: 24, height: 24}
+      },
+    });
+    return mk;
+  }
+
+  showLineLengths(pts: Array<LatLngLiteral>) {
     this.doClearCenterMarkers();
     this.wrap.getNativeMap().then( m => {
       let mk = new google.maps.Marker({

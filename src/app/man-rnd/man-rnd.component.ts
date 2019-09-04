@@ -48,6 +48,7 @@ export class ManRndComponent implements OnInit {
   holeShotMarks: Array<any>;
   holeShotTrace: Array<any>;
   holeCentreLine: Array<firebase.firestore.GeoPoint>;
+  flagPos: any;
   holeSGOrg = 1;
   holeScoreSG = 0;
   shotSel = -1; // Selection in shot list for hole being edited
@@ -127,15 +128,18 @@ export class ManRndComponent implements OnInit {
           circMk.setMap( null);
         });
       }
+      if ( this.flagPos != null) {
+        this.flagPos.setMap(null);
+      }
       this.holeShotMarks = new Array<any>();
       this.holeCentreLine = new Array<firebase.firestore.GeoPoint>();
       this.course.holes[this.selHole]['cl'].forEach(p => {
         this.holeCentreLine.push(p);
       });
       let d = GeoCalcs.m2yrd(GeoCalcs.lineLengthGeo(this.holeCentreLine));
-      this.holeSGOrg = this.sgCalcs.strokesHoleOut(d,ShotsGained.tee, false)
+      this.holeSGOrg = this.sgCalcs.strokesHoleOut(d, ShotsGained.tee, false);
     //}
-    this.calcHoleSG(); 
+    this.calcHoleSG();
     this.holeScoreSG = 0;
   }
 
@@ -400,7 +404,7 @@ export class ManRndComponent implements OnInit {
   }
 
   shotTrace() {
-    // If we have any traces clear them from map and daelete
+    // If we have any traces clear them from map and delete
     if (this.holeShotTrace !== undefined) {
       this.holeShotTrace.forEach(tr => {
         tr.setMap(null);
@@ -433,6 +437,13 @@ export class ManRndComponent implements OnInit {
         }
       }
     }
+    if ( this.flagPos === undefined) {
+      const p = this.holeShots[this.holeShots.length - 1].finish;
+      const f = this.mapView.makeFlagMarker( {lat: p.latitude, lng: p.longitude} );
+      f.setMap(this.mapView.wrap.getNativeMap);
+      this.flagPos = f;
+    }
+
   }
 
   logShotPos() {
