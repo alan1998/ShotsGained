@@ -440,7 +440,9 @@ export class ManRndComponent implements OnInit {
     if ( this.flagPos === undefined) {
       const p = this.holeShots[this.holeShots.length - 1].finish;
       const f = this.mapView.makeFlagMarker( {lat: p.latitude, lng: p.longitude} );
-      f.setMap(this.mapView.wrap.getNativeMap);
+      this.mapView.wrap.getNativeMap().then(m => {
+        f.setMap(m);
+      });
       this.flagPos = f;
     }
 

@@ -229,7 +229,7 @@ export class GolfGmapComponent implements OnInit {
     }
   }
 
-  makeTeeMarker(pt:LatLngLiteral){
+  makeTeeMarker(pt: LatLngLiteral) {
     var mk = new google.maps.Marker({
       position: pt,
       title: 'Tee',
@@ -279,7 +279,7 @@ export class GolfGmapComponent implements OnInit {
           scaledSize:{width:24,height:24}
         },
       });
-      this.centMarkers.push(mk);
+
       //Continue to add distances of segments
       let length:number = 0;
       for(let n=0; n < pts.length-1; n++){
