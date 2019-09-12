@@ -12,6 +12,7 @@ import { GeoCalcs } from '../util/calcs'
 import { Observable } from 'openlayers';
 import { reject } from 'q';
 import { ShotData } from '../util/golf-types';
+import { runInThisContext } from 'vm';
 
 declare var google: any;
 
@@ -45,6 +46,7 @@ export class GolfGmapComponent implements OnInit {
   centMarkers:Array<any>;
   centLineListener;
   bDrawingCL = false;
+  teeMk: any;
   @Output() eventCL = new EventEmitter<string>(true);
   @Output() shotLocEvt = new EventEmitter<LatLng>(true);
   @Output() shotLocDragEvt = new EventEmitter<void >(true);
@@ -90,20 +92,19 @@ export class GolfGmapComponent implements OnInit {
         zoom: 14,
       }).then(m=> {
         let teePos:any;
-        let teeMk:any;
         this.bMapInit=true;
         let e = this.wrap.subscribeToMapEvent("click");
         this.wrap.getNativeMap().then(m =>{
           m.addListener("click",(evt)=>{
             if(this.state == DrawMode.Tee){
               teePos = evt.latLng;
-              teeMk = this.makeTeeMarker({lat:teePos.lat(),lng:teePos.lng()});
-              teeMk.setMap(m);
+              this.teeMk = this.makeTeeMarker({lat:teePos.lat(),lng:teePos.lng()});
+              this.teeMk.setMap(m);
               this.state = DrawMode.Flag;
             }
             else if(this.state == DrawMode.Flag){
-              teeMk.setMap(null);
-              teeMk = null;
+              this.teeMk.setMap(null);
+              this.teeMk = null;
               this.state = DrawMode.None;
               //Turn 2 points into poly line of center and show as edit
               let newCl = new Array<firebase.firestore.GeoPoint>();
@@ -255,7 +256,7 @@ export class GolfGmapComponent implements OnInit {
       // label: {text:"T", color:'white' },
       icon : {
         url: '../../assets/Flag.ico',
-        anchor: {x: 12, y: 12} ,
+        anchor: {x: 8, y: 20} ,
         labelOrigin: {x: 15, y: 24},
         scaledSize: {width: 24, height: 24}
       },
@@ -265,11 +266,14 @@ export class GolfGmapComponent implements OnInit {
 
   showLineLengths(pts: Array<LatLngLiteral>) {
     this.doClearCenterMarkers();
+    if(this.teeMk != undefined){
+      this.teeMk.setMap(null);
+      this.teeMk = undefined;
+    }
     this.wrap.getNativeMap().then( m => {
-      let mk = new google.maps.Marker({
+        this.teeMk = new google.maps.Marker({
         position: {lat:pts[0].lat+0.00003,lng:pts[0].lng+0.00003},
         title: 'Tee',
-        map : m,
         opacity:0.6,
         //label: {text:"T", color:'white' },
         icon : {
@@ -278,7 +282,8 @@ export class GolfGmapComponent implements OnInit {
           labelOrigin:{x:15,y:15},
           scaledSize:{width:24,height:24}
         },
-      });
+      })
+      this.teeMk.setMap(m);
 
       //Continue to add distances of segments
       let length:number = 0;

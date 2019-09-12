@@ -130,6 +130,7 @@ export class ManRndComponent implements OnInit {
       }
       if ( this.flagPos != null) {
         this.flagPos.setMap(null);
+        this.flagPos = undefined;
       }
       this.holeShotMarks = new Array<any>();
       this.holeCentreLine = new Array<firebase.firestore.GeoPoint>();
